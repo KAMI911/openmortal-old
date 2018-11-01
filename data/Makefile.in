@@ -80,8 +80,8 @@ perl_embed_ldflags = @perl_embed_ldflags@
 @MAIN_TRUE@MSUBDIRS = fonts gfx script sound
 @MAIN_FALSE@MSUBDIRS = 
 
-# CSUBDIRS = characters
-CSUBDIRS = 
+CSUBDIRS = characters
+# CSUBDIRS = 
 
 SUBDIRS = $(CSUBDIRS) $(MSUBDIRS)
 DIST_SUBDIRS = $(CSUBDIRS) $(MSUBDIRS)

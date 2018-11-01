@@ -7,8 +7,8 @@ MSUBDIRS =
 endif
 
 
-# CSUBDIRS = characters
-CSUBDIRS = 
+CSUBDIRS = characters
+#CSUBDIRS = 
 
 
 SUBDIRS= $(CSUBDIRS) $(MSUBDIRS)
