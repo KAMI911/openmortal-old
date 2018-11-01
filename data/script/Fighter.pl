@@ -1,3 +1,11 @@
+
+BEGIN {
+    use Cwd;
+    our $directory = cwd;
+}
+
+use lib $directory;
+
 require 'Collision.pl';
 require 'DataHelper.pl';
 require 'Damage.pl';

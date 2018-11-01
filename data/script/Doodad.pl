@@ -35,6 +35,12 @@ Doodad types are:
 
 =cut
 
+BEGIN {
+    use Cwd;
+    our $directory = cwd;
+}
+
+use lib $directory;
 
 use strict;
 

@@ -1,8 +1,14 @@
 # DataHelper contains subroutines useful for loading a character's
 # frames, and creating his states.
 
-use strict;
+BEGIN {
+    use Cwd;
+    our $directory = cwd;
+}
 
+use lib $directory;
+
+use strict;
 
 require 'FighterStats.pl';
 

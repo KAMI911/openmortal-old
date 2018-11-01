@@ -38,6 +38,13 @@ MAIN CONSTANTS
 
 =cut
 
+BEGIN {
+    use Cwd;
+    our $directory = cwd;
+}
+
+use lib $directory;
+
 sub InitMainConstants($$)
 {
 	my ($wide, $numplayers) = @_;

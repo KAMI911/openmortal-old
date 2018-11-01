@@ -1,5 +1,12 @@
 #!/usr/bin/perl -w
 
+BEGIN {
+    use Cwd;
+    our $directory = cwd;
+}
+
+use lib $directory;
+
 require 'FighterStats.pl';
 require 'QuickSave.pl';
 
