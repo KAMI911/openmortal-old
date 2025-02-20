@@ -13,12 +13,31 @@
 #include <vector>
 struct SDL_Surface;
 
+struct AnimFrame;  // from AnimBG.h
+
 struct BackgroundLayer
 {
-	SDL_Surface*	m_poSurface;
+	SDL_Surface*	m_poSurface;    ///< Static frame (or NULL if animated)
 	int				m_iXOffset;
 	int				m_iYOffset;
 	double			m_dDistance;
+
+	// --- Animation support ---
+	std::vector<AnimFrame*> m_aFrames;  ///< Non-empty iff this layer is animated
+	int             m_iCurrentFrame;
+	unsigned int    m_uNextFrameMs;     ///< SDL_GetTicks() value when we advance
+
+	BackgroundLayer()
+		: m_poSurface(0), m_iXOffset(0), m_iYOffset(0), m_dDistance(1.0)
+		, m_iCurrentFrame(0), m_uNextFrameMs(0) {}
+
+	bool IsAnimated() const { return !m_aFrames.empty(); }
+
+	/// Returns the surface to draw this tick (static or current anim frame).
+	SDL_Surface* CurrentSurface() const;
+
+	/// Advances the animation if enough time has passed.
+	void Advance();
 };
 typedef std::vector<BackgroundLayer> LayerVector;
 typedef LayerVector::iterator LayerIterator;

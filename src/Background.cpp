@@ -7,6 +7,7 @@
  ***************************************************************************/
 
 #include "Background.h"
+#include "AnimBG.h"
 
 #include "SDL.h"
 #include "sge_surface.h"
@@ -14,6 +15,7 @@
 #include "common.h"
 #include <string>
 #include <fstream>
+#include <cstring>
 
 
 
@@ -32,6 +34,30 @@ D = (BW - 640) / 1280
 */
 
 
+
+// ---------------------------------------------------------------------------
+// BackgroundLayer animation helpers
+// ---------------------------------------------------------------------------
+
+SDL_Surface* BackgroundLayer::CurrentSurface() const
+{
+	if ( !IsAnimated() )
+		return m_poSurface;
+	return m_aFrames[ m_iCurrentFrame ]->surface;
+}
+
+void BackgroundLayer::Advance()
+{
+	if ( !IsAnimated() ) return;
+	unsigned int now = SDL_GetTicks();
+	if ( now < m_uNextFrameMs ) return;
+	m_iCurrentFrame = ( m_iCurrentFrame + 1 ) % (int)m_aFrames.size();
+	m_uNextFrameMs  = now + m_aFrames[ m_iCurrentFrame ]->delay_ms;
+}
+
+// ---------------------------------------------------------------------------
+// Background class
+// ---------------------------------------------------------------------------
 
 Background::Background()
 {
@@ -52,7 +78,16 @@ void Background::Clear()
 	for( LayerIterator it=m_aLayers.begin(); it!=m_aLayers.end(); ++it )
 	{
 		BackgroundLayer& roLayer = *it;
-		if ( roLayer.m_poSurface )
+		if ( roLayer.IsAnimated() )
+		{
+			for ( size_t i = 0; i < roLayer.m_aFrames.size(); ++i )
+			{
+				SDL_FreeSurface( roLayer.m_aFrames[i]->surface );
+				delete roLayer.m_aFrames[i];
+			}
+			roLayer.m_aFrames.clear();
+		}
+		else if ( roLayer.m_poSurface )
 		{
 			SDL_FreeSurface( roLayer.m_poSurface );
 			roLayer.m_poSurface = NULL;
@@ -108,13 +143,35 @@ void Background::Load( int a_iBackgroundNumber )
 		BackgroundLayer oLayer;
 		std::string sFilename;
 		oInput >> sFilename >> oLayer.m_iXOffset >> oLayer.m_iYOffset >> oLayer.m_dDistance;
-		
-		oLayer.m_poSurface = LoadBackground( sFilename.c_str(), 64, 0 );
-		if ( NULL == oLayer.m_poSurface )
+
+		// Detect animated GIF by extension
+		size_t dot = sFilename.rfind('.');
+		bool isGif = ( dot != std::string::npos &&
+		               sFilename.substr(dot) == ".gif" );
+
+		if ( isGif )
 		{
-			continue;
+			char acFilepath[FILENAME_MAX+1];
+			snprintf( acFilepath, sizeof(acFilepath), "%s/gfx/%s",
+			          DATADIR, sFilename.c_str() );
+			std::vector<AnimFrame> loaded = LoadAnimatedGIF( acFilepath );
+			if ( loaded.empty() ) continue;
+
+			oLayer.m_iCurrentFrame = 0;
+			oLayer.m_uNextFrameMs  = SDL_GetTicks() + loaded[0].delay_ms;
+			for ( size_t f = 0; f < loaded.size(); ++f )
+			{
+				AnimFrame* pf = new AnimFrame( loaded[f] );
+				oLayer.m_aFrames.push_back( pf );
+			}
+			m_aLayers.push_back( oLayer );
 		}
-		m_aLayers.push_back( oLayer );
+		else
+		{
+			oLayer.m_poSurface = LoadBackground( sFilename.c_str(), 64, 0 );
+			if ( NULL == oLayer.m_poSurface ) continue;
+			m_aLayers.push_back( oLayer );
+		}
 	}
 	
 	m_iFirstExtraLayer = m_aLayers.size();
@@ -156,7 +213,10 @@ void Background::Draw( int a_iXPosition, int a_iYPosition, int a_iYOffset )
 	for ( LayerIterator it = m_aLayers.begin(); it != m_aLayers.end(); ++it )
 	{
 		BackgroundLayer& roLayer = *it;
-		sge_Blit( roLayer.m_poSurface, gamescreen,
+		roLayer.Advance();
+		SDL_Surface* surf = roLayer.CurrentSurface();
+		if ( !surf ) continue;
+		sge_Blit( surf, gamescreen,
 			0, 0,	// source position
 			roLayer.m_iXOffset - (int)( ((double)a_iXPosition) * roLayer.m_dDistance ),
 			roLayer.m_iYOffset - (int)( ((double)a_iYPosition) * roLayer.m_dDistance ) + a_iYOffset,

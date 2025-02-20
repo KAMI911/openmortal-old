@@ -2,22 +2,23 @@
 
 bin_PROGRAMS = openmortal
 openmortal_SOURCES = \
-	Audio.cpp         FlyingChars.cpp  MortalNetworkImpl.cpp       sge_primitives.cpp \
-	Backend.cpp       Game.cpp         OnlineChat.cpp              sge_surface.cpp \
-	Background.cpp    GameOver.cpp     PlayerSelectController.cpp  sge_tt_text.cpp \
-	Chooser.cpp       gfx.cpp          PlayerSelect.cpp            State.cpp \
-	common.cpp        Joystick.cpp     PlayerSelectView.cpp        TextArea.cpp \
-	Demo.cpp          main.cpp         RlePack.cpp \
-	FighterStats.cpp  menu.cpp         sge_bm_text.cpp
+	AnimBG.cpp        FlyingChars.cpp  MortalNetworkImpl.cpp       sge_primitives.cpp \
+	Audio.cpp         Game.cpp         OnlineChat.cpp              sge_surface.cpp \
+	Backend.cpp       GameOver.cpp     PlayerSelectController.cpp  sge_tt_text.cpp \
+	Background.cpp    gfx.cpp          PlayerSelect.cpp            State.cpp \
+	Chooser.cpp       Joystick.cpp     PlayerSelectView.cpp        TextArea.cpp \
+	common.cpp        main.cpp         RlePack.cpp \
+	Demo.cpp          menu.cpp         sge_bm_text.cpp \
+	FighterStats.cpp
 
 EXTRA_DIST = $(openmortal_SOURCES)\
-	Audio.h       Event.h         menu.h                    PlayerSelectView.h  sge_tt_text.h \
-	Backend.h     FighterEnum.h   MortalNetwork.h           RlePack.h           State.h \
-	Background.h  FighterStats.h  MortalNetworkImpl.h       sge_bm_text.h       TextArea.h \
-	Chooser.h     FlyingChars.h   MszPerl.h                 sge_config.h \
-	common.h      Game.h          OnlineChat.h              sge_internal.h \
-	Demo.h        gfx.h           PlayerSelectController.h  sge_primitives.h \
-	DrawRle.h     Joystick.h      PlayerSelect.h            sge_surface.h
+	AnimBG.h      Event.h         menu.h                    PlayerSelectView.h  sge_tt_text.h \
+	Audio.h       FighterEnum.h   MortalNetwork.h           RlePack.h           State.h \
+	Backend.h     FighterStats.h  MortalNetworkImpl.h       sge_bm_text.h       TextArea.h \
+	Background.h  FlyingChars.h   MszPerl.h                 sge_config.h \
+	Chooser.h     Game.h          OnlineChat.h              sge_internal.h \
+	common.h      gfx.h           PlayerSelectController.h  sge_primitives.h \
+	Demo.h        DrawRle.h       Joystick.h                PlayerSelect.h      sge_surface.h
 
 CXXFLAGS= @CXXFLAGS@ -DDATADIR=\"${pkgdatadir}\" -Wall
 
