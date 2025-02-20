@@ -15,6 +15,7 @@
 
 #include "AnimBG.h"
 #include "SDL.h"
+#include "SDL_image.h"
 #include "common.h"
 
 #include <cstdio>
@@ -543,6 +544,67 @@ std::vector<AnimFrame> LoadAnimatedGIF( const char* a_pcFilepath )
         debug( "AnimBG: no frames decoded from %s\n", a_pcFilepath );
     else
         debug( "AnimBG: loaded %d frames from %s\n", (int)frames.size(), a_pcFilepath );
+
+    return frames;
+}
+
+// ---------------------------------------------------------------------------
+// Frame-sequence loader (.anim descriptor)
+// ---------------------------------------------------------------------------
+
+std::vector<AnimFrame> LoadFrameSequence( const char* a_pcFilepath )
+{
+    std::vector<AnimFrame> frames;
+
+    FILE* f = fopen( a_pcFilepath, "r" );
+    if ( !f )
+    {
+        debug( "AnimBG: cannot open sequence file: %s\n", a_pcFilepath );
+        return frames;
+    }
+
+    char line[FILENAME_MAX + 32];
+    while ( fgets( line, (int)sizeof(line), f ) )
+    {
+        // Skip comments and blank lines
+        char* s = line;
+        while ( *s == ' ' || *s == '\t' ) ++s;
+        if ( *s == '#' || *s == '\n' || *s == '\r' || *s == '\0' ) continue;
+
+        char fname[FILENAME_MAX + 1];
+        fname[0] = '\0';
+        unsigned int delay_ms = 100;
+        sscanf( s, "%s %u", fname, &delay_ms );
+        if ( !fname[0] ) continue;
+
+        // Build full path: DATADIR/gfx/<fname>
+        char path[FILENAME_MAX + 1];
+        snprintf( path, sizeof(path), "%s/gfx/%s", DATADIR, fname );
+
+        SDL_Surface* raw = IMG_Load( path );
+        if ( !raw )
+        {
+            debug( "AnimBG: cannot load frame: %s\n", path );
+            continue;
+        }
+
+        // Convert to display format with alpha so transparency works
+        SDL_Surface* conv = SDL_DisplayFormatAlpha( raw );
+        SDL_FreeSurface( raw );
+        if ( !conv ) continue;
+
+        AnimFrame af;
+        af.surface  = conv;
+        af.delay_ms = delay_ms ? delay_ms : 100;
+        frames.push_back( af );
+    }
+
+    fclose( f );
+
+    if ( frames.empty() )
+        debug( "AnimBG: no frames in sequence %s\n", a_pcFilepath );
+    else
+        debug( "AnimBG: loaded %d frames from sequence %s\n", (int)frames.size(), a_pcFilepath );
 
     return frames;
 }

@@ -23,15 +23,26 @@ struct AnimFrame
 };
 
 /**
- * Load an animated GIF from disk into a list of SDL_Surface frames.
+ * Load an animated GIF (GIF87a / GIF89a) from disk.
  *
- * Each frame has already been converted to the current display format via
- * SDL_DisplayFormat / SDL_DisplayFormatAlpha so blitting is fast.
+ * Self-contained decoder — no giflib required.
+ * Handles transparency, all disposal methods, interlacing, local colour tables.
  *
- * Returns an empty vector on failure (file not found, not a GIF, etc.).
- * The caller is responsible for calling SDL_FreeSurface() on each frame and
- * clearing the vector when done.
+ * Returns an empty vector on failure.
  */
 std::vector<AnimFrame> LoadAnimatedGIF( const char* a_pcFilepath );
+
+/**
+ * Load a frame-sequence animation from a plain-text .anim descriptor file.
+ *
+ * File format (one frame per line, '#' lines are comments):
+ *   <filename>  <delay_ms>
+ *
+ * Filenames are relative to DATADIR/gfx/.  Any format supported by
+ * SDL_image (PNG, JPG, BMP …) can be used — no 256-colour limit.
+ *
+ * Returns an empty vector on failure.
+ */
+std::vector<AnimFrame> LoadFrameSequence( const char* a_pcFilepath );
 
 #endif // __ANIMGIF_H
