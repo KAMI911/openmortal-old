@@ -37,3 +37,6 @@ What to do in case something goes wrong during installation:
    3. Check OpenMortal Bugs tracker on the website.
    4. File new bug report if no solution is found.
 
+Developer packages for Debian, Ubuntu, Linux Mint and its derivates:
+
+apt install -y libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype-dev

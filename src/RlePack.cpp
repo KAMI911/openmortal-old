@@ -189,12 +189,13 @@ int CRlePack::LoadFile( const char* a_pcFilename, int a_iNumColors )
 		debug( "Warning CRlePack(): iFileSize=%d, iRead=%d\n", iFileSize, iRead );
 	}
 	
+	#pragma pack(push, 1)
 	struct SHeader
 	{
 		char	acDummy[8];
 		Uint32	iDatacount;
 	} *poHeader = (SHeader*) p->m_pData;
-	
+	#pragma pack(pop)
 	ChangeEndian32( poHeader->iDatacount );
 	debug( "File '%s' contains %d entries.\n", a_pcFilename, poHeader->iDatacount );
 	

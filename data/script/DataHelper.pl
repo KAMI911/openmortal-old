@@ -96,9 +96,8 @@ sub LoadFrames ($$$)
 	# Make sure that Whatever.dat also exists.
 	$DatName = $DataName;
 	$DatName =~ s/\.txt$//;
-	open DATFILE, "../data/characters/$DatName" || die ("Couldn't open ../data/characters/$DatName");
-	close DATFILE;
-	
+	die "File ../data/characters/$DatName not found" unless -e "../data/characters/$DatName";
+
 	open DATAFILE, "../data/characters/$DataName" || die ("Couldn't open ../data/characters/$DataName");
 	$data = '';
 	while ( read DATAFILE, $data, 16384, length($data) )

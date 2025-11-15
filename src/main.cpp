@@ -340,7 +340,7 @@ int DrawMainScreen()
 	r.x = r.y = 0;
 	
 	std::string sStaffFilename = DATADIR;
-	sStaffFilename += "/characters/STAFF.DAT";
+	sStaffFilename += "/characters/staff.dat";
 	CRlePack pack( sStaffFilename.c_str(), 256 );
 	pack.ApplyPalette();
 	SDL_BlitSurface( background, NULL, gamescreen, &r );
@@ -571,7 +571,7 @@ void ChatLoop()
 }
 
 
-void PgTest();
+/*void PgTest();*/
 
 
 int main(int argc, char *argv[])
@@ -608,7 +608,7 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	PgTest();
+/*	PgTest();*/
 
 	InitJoystick();
 	

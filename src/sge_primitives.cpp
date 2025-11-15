@@ -468,7 +468,7 @@ void sge_AALineAlpha(SDL_Surface *dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y
 {
 	Sint32 xx0,yy0,xx1,yy1;
 	Uint32 intshift, erracc=0, erradj;
-	Uint32 erracctmp, wgt, wgtcompmask;
+	Uint32 erracctmp, wgt;
 	Sint16 dx, dy, tmp, xdir, y0p1, x0pxdir;
 
 	/* Keep on working with 32bit numbers */
@@ -522,7 +522,6 @@ void sge_AALineAlpha(SDL_Surface *dst, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y
 
 	
 	intshift = 32 - AAbits;  /* # of bits by which to shift erracc to get intensity level */
-	wgtcompmask = AAlevels - 1;  /* Mask used to flip all bits in an intensity weighting */
 
 	if(alpha==255)
 		_PutPixel(dst,x1,y1, color);  /* Draw the initial pixel in the foreground color */

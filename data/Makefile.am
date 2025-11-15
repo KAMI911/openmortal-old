@@ -1,7 +1,7 @@
  ## Process this file with automake to produce Makefile.in
 
 if MAIN
-MSUBDIRS = fonts gfx script sound
+MSUBDIRS = fonts gfx script sound characters
 else
 MSUBDIRS =
 endif

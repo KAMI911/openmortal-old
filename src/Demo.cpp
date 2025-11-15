@@ -330,7 +330,7 @@ public:
 		DrawTextMSZ( "Version " VERSION "  © 2003-2004 by UPi", inkFont, 320, 430, UseShadow | AlignHCenter, C_WHITE, m_poBackground, false );
 		
 		std::string sStaffFilename = DATADIR;
-		sStaffFilename += "/characters/STAFF.DAT";
+		sStaffFilename += "/characters/staff.dat";
 		m_poPack = new CRlePack( sStaffFilename.c_str(), 255 );
 		m_poPack->ApplyPalette();
 		SDL_BlitSurface( m_poBackground, NULL, gamescreen, NULL );

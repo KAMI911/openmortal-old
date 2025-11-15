@@ -123,7 +123,7 @@ CFighterStatsDemo::CFighterStatsDemo( FighterEnum a_iFighter )
 	else
 	{
 		std::string sStaffFilename = DATADIR;
-		sStaffFilename += "/characters/STAFF.DAT";
+		sStaffFilename += "/characters/staff.dat";
 		m_poStaff = new CRlePack( sStaffFilename.c_str(), 255 );
 	}
 
