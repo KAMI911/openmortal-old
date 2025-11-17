@@ -20,7 +20,7 @@ jobs:
     - name: generate configure script
       run: autoheader --force && automake --add-missing && autoreconf -fi
     - name: configure
-      run: ./configure --enable-main --enable-characters --enable-additional --enable-thirdparty -disable-freetypetest
+      run: ./configure --enable-main --enable-characters --enable-additional --enable-thirdparty --disable-freetypetest
     - name: make
       run: make
     - name: make check
