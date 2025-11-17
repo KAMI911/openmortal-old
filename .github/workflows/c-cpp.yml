@@ -13,8 +13,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: build preparations
-      run: aclocal && automake --add-missing && autoconf
+    - name: install autotools
+      run: sudo apt-get update && sudo apt-get install -y autoconf automake libtool
+    - name: generate configure script
+      run: autoreconf -fi
     - name: configure
       run: ./configure --enable-main --enable-characters --enable-additional --enable-thirdparty -disable-freetypetest
     - name: make
