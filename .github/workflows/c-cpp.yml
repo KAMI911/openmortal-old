@@ -13,6 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: build preparations
+      run: aclocal && automake --add-missing && autoconf
     - name: configure
       run: ./configure --enable-main --enable-characters --enable-additional --enable-thirdparty -disable-freetypetest
     - name: make
