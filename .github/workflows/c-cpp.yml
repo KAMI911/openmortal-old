@@ -16,7 +16,7 @@ jobs:
     - name: install autotools
       run: sudo apt-get update && sudo apt-get install -y autoconf automake libtool
     - name: install external header files
-      run: sudo apt install -y libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype-dev
+      run: sudo apt install -y libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype-dev libfreetype6
     - name: generate configure script
       run: autoheader --force && automake --add-missing && autoreconf -fi
     - name: configure
