@@ -16,7 +16,7 @@ jobs:
     - name: install autotools
       run: sudo apt-get update && sudo apt-get install -y autoconf automake libtool
     - name: generate configure script
-      run: autoreconf -fi
+      run: autoheader --force && automake --add-missing && autoreconf -fi
     - name: configure
       run: ./configure --enable-main --enable-characters --enable-additional --enable-thirdparty -disable-freetypetest
     - name: make
