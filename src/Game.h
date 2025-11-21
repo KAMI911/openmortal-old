@@ -77,11 +77,11 @@ This involves reading the game state data from a source (be it a replay
 file or the backend), handling the keystrokes and network, etc.
 */
 
-class CGame
+class Game
 {
 public:
-	CGame( bool a_bIsReplay, bool m_bWide, bool a_bDebug );
-	~CGame();
+	Game( bool a_bIsReplay, bool m_bWide, bool a_bDebug );
+	~Game();
 	int Run();
 	std::string& GetReplay();
 	void DoReplay( const char* a_pcReplayFile );
@@ -120,7 +120,7 @@ protected:
 	bool				m_bWide;		///< 800 or 640 pixel width.
 	int					m_iYOffset;		///< For wide mode.
 	bool				m_bDebug;
-	CBackground*		m_poBackground;
+	Background*			m_poBackground;
 	SDL_Surface*		m_poDoodads;
 
 	int					m_aiHitPointDisplayX[MAXPLAYERS];

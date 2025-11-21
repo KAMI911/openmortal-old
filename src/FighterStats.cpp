@@ -70,11 +70,11 @@ void DrawMultiLineText( const char* text, _sge_TTFont* font, int x, int y,
 
 
 
-int CFighterStatsDemo::mg_iLastFighter = -1;
-FighterEnum CFighterStatsDemo::mg_aenFighterOrder[LASTFIGHTER-1];
+int FighterStatsDemo::mg_iLastFighter = -1;
+FighterEnum FighterStatsDemo::mg_aenFighterOrder[LASTFIGHTER-1];
 
 
-CFighterStatsDemo::CFighterStatsDemo( FighterEnum a_iFighter )
+FighterStatsDemo::FighterStatsDemo( FighterEnum a_iFighter )
 {
 	m_iTimeLeft = 500;
 	m_poStaff = NULL;
@@ -124,7 +124,7 @@ CFighterStatsDemo::CFighterStatsDemo( FighterEnum a_iFighter )
 	{
 		std::string sStaffFilename = DATADIR;
 		sStaffFilename += "/characters/staff.dat";
-		m_poStaff = new CRlePack( sStaffFilename.c_str(), 255 );
+		m_poStaff = new RlePack( sStaffFilename.c_str(), 255 );
 	}
 
 	g_oBackend.PerlEvalF("GetFighterStats(%d);", m_enFighter );
@@ -176,32 +176,32 @@ CFighterStatsDemo::CFighterStatsDemo( FighterEnum a_iFighter )
 	oFlyingRect.y = y+DESCMARGIN;
 	oFlyingRect.w = gamescreen->w - oFlyingRect.x - 20;
 	oFlyingRect.h = gamescreen->h - oFlyingRect.y - 10;
-	m_poFlyingChars = new CFlyingChars( creditsFont, oFlyingRect );
-	m_poFlyingChars->AddText( m_sStory.c_str(), CFlyingChars::FC_AlignJustify, false );
+	m_poFlyingChars = new FlyingChars( creditsFont, oFlyingRect );
+	m_poFlyingChars->AddText( m_sStory.c_str(), FlyingChars::FC_AlignJustify, false );
 
 	if ( g_oPlayerSelect.IsFighterAvailable( m_enFighter ) )
 	{
 		m_sKeys = SvPV_nolen(get_sv("Keys", TRUE ));
-		m_poFlyingChars->AddText( "\n\nKEYS\n", CFlyingChars::FC_AlignCenter, true );
-		m_poFlyingChars->AddText( m_sKeys.c_str(), CFlyingChars::FC_AlignCenter, true );
+		m_poFlyingChars->AddText( "\n\nKEYS\n", FlyingChars::FC_AlignCenter, true );
+		m_poFlyingChars->AddText( m_sKeys.c_str(), FlyingChars::FC_AlignCenter, true );
 	}
 	else
 	{
 		m_sKeys = Translate("Unfortunately this fighter is not yet playable.");
-		m_poFlyingChars->AddText( m_sKeys.c_str(), CFlyingChars::FC_AlignLeft, true );
+		m_poFlyingChars->AddText( m_sKeys.c_str(), FlyingChars::FC_AlignLeft, true );
 	}
 }
 
 
 
-CFighterStatsDemo::~CFighterStatsDemo()
+FighterStatsDemo::~FighterStatsDemo()
 {
 	delete m_poStaff;
 }
 
 
 
-int CFighterStatsDemo::Advance( int a_iNumFrames, bool a_bFlip )
+int FighterStatsDemo::Advance( int a_iNumFrames, bool a_bFlip )
 {
 	if ( a_iNumFrames > 5 ) a_iNumFrames = 5;
 	
@@ -225,7 +225,22 @@ int CFighterStatsDemo::Advance( int a_iNumFrames, bool a_bFlip )
 		int p1x = SvIV(get_sv("p1x", TRUE));
 		int p1y = SvIV(get_sv("p1y", TRUE));
 		int p1f = SvIV(get_sv("p1f", TRUE));
-		if (p1f) g_oPlayerSelect.GetPlayerInfo(0).m_poPack->Draw( omABS(p1f)-1, p1x, p1y, p1f<0 );
+		if (p1f) g_oPlayerSelect.GetPlayerInfo(0).m_poPack->Draw( ABS(p1f)-1, p1x, p1y, p1f<0 );
+	}
+	else
+	{
+		static FighterEnum f[14] = {
+			UPI, ZOLI, SURBA, ULMAR, MISI, BENCE,
+			DESCANT, KINGA, GRIZLI, SIRPI, MACI, DANI, CUMI,
+			AMBRUS };
+		for ( int i=0; i<14; ++i )
+		{
+			if ( m_enFighter == f[i] )
+			{
+				//m_poStaff->draw( i, 10, 120 );
+				break;
+			}
+		}
 	}
 	
 	if ( SState::IN_DEMO != g_oState.m_enGameMode )

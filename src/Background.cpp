@@ -33,7 +33,7 @@ D = (BW - 640) / 1280
 
 
 
-CBackground::CBackground()
+Background::Background()
 {
 	m_bOK = false;
 	m_iNumber = 0;
@@ -41,17 +41,17 @@ CBackground::CBackground()
 }
 
 
-CBackground::~CBackground()
+Background::~Background()
 {
 	Clear();
 }
 
 
-void CBackground::Clear()
+void Background::Clear()
 {
-	for( CLayerIterator it=m_aLayers.begin(); it!=m_aLayers.end(); ++it )
+	for( LayerIterator it=m_aLayers.begin(); it!=m_aLayers.end(); ++it )
 	{
-		SBackgroundLayer& roLayer = *it;
+		BackgroundLayer& roLayer = *it;
 		if ( roLayer.m_poSurface )
 		{
 			SDL_FreeSurface( roLayer.m_poSurface );
@@ -66,7 +66,7 @@ void CBackground::Clear()
 }
 
 
-void CBackground::Load( int a_iBackgroundNumber )
+void Background::Load( int a_iBackgroundNumber )
 {
 	char acFilename[FILENAME_MAX+1];
 
@@ -85,7 +85,7 @@ void CBackground::Load( int a_iBackgroundNumber )
 			return;
 		}
 		
-		SBackgroundLayer oLayer;
+		BackgroundLayer oLayer;
 		oLayer.m_poSurface = poImage;
 		oLayer.m_iXOffset = 0;
 		oLayer.m_iYOffset = 0;
@@ -105,7 +105,7 @@ void CBackground::Load( int a_iBackgroundNumber )
 
 	for ( int i=0; i<iNumLayers; ++i )
 	{
-		SBackgroundLayer oLayer;
+		BackgroundLayer oLayer;
 		std::string sFilename;
 		oInput >> sFilename >> oLayer.m_iXOffset >> oLayer.m_iYOffset >> oLayer.m_dDistance;
 		
@@ -129,15 +129,15 @@ The background object will assume ownership of the given structure, including
 the surface within.
 */
 
-void CBackground::AddExtraLayer( const SBackgroundLayer& a_roLayer )
+void Background::AddExtraLayer( const BackgroundLayer& a_roLayer )
 {
 	m_aLayers.push_back( a_roLayer );
 }
 
 
-void CBackground::DeleteExtraLayers()
+void Background::DeleteExtraLayers()
 {
-	while ( (int)m_aLayers.size() > m_iFirstExtraLayer )
+	while ( m_aLayers.size() > m_iFirstExtraLayer )
 	{
 		SDL_FreeSurface( m_aLayers.back().m_poSurface );
 		m_aLayers.pop_back();
@@ -145,17 +145,17 @@ void CBackground::DeleteExtraLayers()
 }
 
 
-bool CBackground::IsOK()
+bool Background::IsOK()
 {
 	return m_bOK;
 }
 
 
-void CBackground::Draw( int a_iXPosition, int a_iYPosition, int a_iYOffset )
+void Background::Draw( int a_iXPosition, int a_iYPosition, int a_iYOffset )
 {
-	for ( CLayerIterator it = m_aLayers.begin(); it != m_aLayers.end(); ++it )
+	for ( LayerIterator it = m_aLayers.begin(); it != m_aLayers.end(); ++it )
 	{
-		SBackgroundLayer& roLayer = *it;
+		BackgroundLayer& roLayer = *it;
 		sge_Blit( roLayer.m_poSurface, gamescreen,
 			0, 0,	// source position
 			roLayer.m_iXOffset - (int)( ((double)a_iXPosition) * roLayer.m_dDistance ),

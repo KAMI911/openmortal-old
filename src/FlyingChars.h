@@ -24,22 +24,22 @@
 \ingroup Media
 */
 
-class CFlyingChars
+struct FlyingLetter
 {
+	int m_iX, m_iY;
+	int m_iSX, m_iSY;
+	int m_iDX, m_iDY;
+	int m_iDelay;
+	int m_iTime;
+	unsigned char m_cLetter;
+};
 
-	struct SFlyingLetter
-	{
-		int m_iX, m_iY;
-		int m_iSX, m_iSY;
-		int m_iDX, m_iDY;
-		int m_iDelay;
-		int m_iTime;
-		unsigned char m_cLetter;
-	};
 
+class FlyingChars
+{
 public:
 
-	enum TextAlignmentEnum {
+	enum TextAlignment {
 		FC_AlignLeft,
 		FC_AlignRight,
 		FC_AlignCenter,
@@ -47,10 +47,10 @@ public:
 	};
 
 public:
-	CFlyingChars( sge_bmpFont* a_poFont, const SDL_Rect& a_roRect, int a_iFontDisplacement = 0 );
-	~CFlyingChars();
+	FlyingChars( sge_bmpFont* a_poFont, const SDL_Rect& a_roRect, int a_iFontDisplacement = 0 );
+	~FlyingChars();
 	
-	void AddText( const char* a_pcText, TextAlignmentEnum a_enAlignment, bool bOneByOne );
+	void AddText( const char* a_pcText, TextAlignment a_enAlignment, bool bOneByOne );
 	
 	void Advance( int a_iNumFrames );
 	void Draw();
@@ -64,29 +64,29 @@ protected:
 
 protected:
 
-	struct SEnqueuedText
+	struct EnqueuedText
 	{
 		const char*				m_pcText;
-		TextAlignmentEnum		m_enAlignment;
+		TextAlignment			m_enAlignment;
 	};
-	std::list<SEnqueuedText>	m_oEnqueuedTexts;
+	std::list<EnqueuedText>		m_oEnqueuedTexts;
 	bool						m_bDone;
 
 	bool						m_bScrolling;
 	double						m_dScrollupRate;
 	double						m_dScrollup;
 
-	typedef std::vector<SFlyingLetter>	CFlyingLetterList;
-	typedef CFlyingLetterList::iterator	CFlyingLetterIterator;
+	typedef std::vector<FlyingLetter>	FlyingLetterList;
+	typedef FlyingLetterList::iterator	FlyingLetterIterator;
 
 	sge_bmpFont*				m_poFont;
 	int							m_iFontDisplacement;
-	CFlyingLetterList			m_oLetters;
+	FlyingLetterList			m_oLetters;
 	int							m_iTimeToNextLine;
 
 	SDL_Rect					m_oRect;	
 	const unsigned char*		m_pcText;
-	TextAlignmentEnum			m_enAlignment;
+	TextAlignment				m_enAlignment;
 	int							m_iTextOffset;
 	int							m_iLastLineY;
 	int							m_iDelay;

@@ -35,7 +35,7 @@
 extern PerlInterpreter*	my_perl;
 
 
-int CGame::mg_iBackgroundNumber = 1;
+int Game::mg_iBackgroundNumber = 1;
 
 /*
 
@@ -169,7 +169,7 @@ void CKeyQueue::DequeueKeys( int a_iToTime )
                      GAME PUBLIC METHODS
 ***************************************************************************/
 
-CGame::CGame( bool a_bIsReplay, bool a_bWide, bool a_bDebug)
+Game::Game( bool a_bIsReplay, bool a_bWide, bool a_bDebug)
 {
 	m_bIsReplay = a_bIsReplay;
 	m_bWide = a_bWide;
@@ -181,7 +181,7 @@ CGame::CGame( bool a_bIsReplay, bool a_bWide, bool a_bDebug)
 		mg_iBackgroundNumber = g_poNetwork->GetGameParams().iBackgroundNumber;
 	}
 	
-	m_poBackground = new CBackground();
+	m_poBackground = new Background();
 	m_poBackground->Load(mg_iBackgroundNumber++);
 	if ( !m_poBackground->IsOK() )
 	{
@@ -208,7 +208,7 @@ CGame::CGame( bool a_bIsReplay, bool a_bWide, bool a_bDebug)
 }
 
 
-CGame::~CGame()
+Game::~Game()
 {
 	delete m_poBackground;
 	m_poBackground = NULL;
@@ -223,7 +223,7 @@ CGame::~CGame()
 \retval 1 if player 2 has won.
 \retval -1 if the game was a draw.
 */
-int CGame::Run()
+int Game::Run()
 {
 	while (1)
 	{
@@ -260,7 +260,7 @@ int CGame::Run()
 
 /** Returns the replay string of the last round.
 */
-std::string& CGame::GetReplay()
+std::string& Game::GetReplay()
 {
 	return m_sReplayString;
 }
@@ -273,7 +273,7 @@ std::string& CGame::GetReplay()
 
 
 
-void CGame::DrawHitPointDisplay( int a_iPlayer )
+void Game::DrawHitPointDisplay( int a_iPlayer )
 {
 	int iX = m_aiHitPointDisplayX[a_iPlayer];
 	int iY = m_aiHitPointDisplayY[a_iPlayer];
@@ -331,35 +331,90 @@ Input variables:
 \li g_oBackend.m_aoPlayers[x].m_iHitPoints
 \li g_oPlayerSelect.GetFighterName
 */
-void CGame::DrawHitPointDisplays()
+void Game::DrawHitPointDisplays()
 {
 	for ( int i=0; i<g_oState.m_iNumPlayers; ++i )
 	{
 		DrawHitPointDisplay(i);
 	}
+/*
+	int hp1 = g_oBackend.m_aoPlayers[0].m_iHitPoints;// * 100 / g_oState.m_iHitPoints;
+	int hp2 = g_oBackend.m_aoPlayers[1].m_iHitPoints;// * 100 / g_oState.m_iHitPoints;
+	SDL_Rect src, dst;
+
+	src.y = 154;
+	src.h = 20;
+	dst.y = 15 + m_iYOffset;
+	
+	// Player 1, green part.
+	dst.x = 40;
+	src.x = 0;
+	src.w = hp1*2;
+	SDL_BlitSurface( m_poDoodads, &src, gamescreen, &dst );
+
+	// Player 1, red part.
+	dst.x += hp1*2;
+	src.x = (100 + hp1)*2;
+	src.w = (100-hp1)*2;
+	SDL_BlitSurface( m_poDoodads, &src, gamescreen, &dst );
+
+	// Player 2, red part.
+	dst.x = 400;
+	src.x = 200;
+	src.w = (100-hp2)*2;
+	SDL_BlitSurface( m_poDoodads, &src, gamescreen, &dst );
+	
+	// Player 2, green part.
+	dst.x = 400 + (100-hp2)*2;
+	src.x = (100-hp2)*2;
+	src.w = hp2*2;
+	SDL_BlitSurface( m_poDoodads, &src, gamescreen, &dst );
+	
+	// "Won" icon for Player 1
+	src.x = 0; src.y = 276; src.w = 32; src.h = 32;
+	if ( m_aiRoundsWonByPlayer[0] > 0 )
+	{
+		dst.x = 4; dst.y = 11 + m_iYOffset;
+		SDL_BlitSurface( m_poDoodads, &src, gamescreen, &dst );
+	}
+	if ( m_aiRoundsWonByPlayer[1] > 0 )
+	{
+		dst.x = 604; dst.y = 11 + m_iYOffset;
+		SDL_BlitSurface( m_poDoodads, &src, gamescreen, &dst );
+	}
+
+	int iTextX = 230 - g_oPlayerSelect.GetFighterNameWidth(0);
+	if ( iTextX < 5 ) iTextX = 5;
+	sge_BF_textout( gamescreen, fastFont, g_oPlayerSelect.GetFighterName(0),
+		iTextX, 38 + m_iYOffset );
+	iTextX = g_oPlayerSelect.GetFighterNameWidth(1);
+	iTextX = iTextX < (635-410) ? 410 : 635-iTextX;
+	sge_BF_textout( gamescreen, fastFont, g_oPlayerSelect.GetFighterName(1),
+		iTextX, 38 + m_iYOffset );
+*/
 }
 
 
 
 /** Draws the background, using the m_poBackground object.
 */
-void CGame::DrawBackground()
+void Game::DrawBackground()
 {
 	m_poBackground->Draw( g_oBackend.m_iBgX, g_oBackend.m_iBgY, m_iYOffset );
 }
 
 
-void CGame::AddBodyToBackground( int a_iPlayer )
+void Game::AddBodyToBackground( int a_iPlayer )
 {
-	CBackend::SPlayer& roPlayer = g_oBackend.m_aoPlayers[a_iPlayer];
-	CBackground::SBackgroundLayer oLayer;
+	Backend::SPlayer& roPlayer = g_oBackend.m_aoPlayers[a_iPlayer];
+	BackgroundLayer oLayer;
 
-	CRlePack* poPack = g_oPlayerSelect.GetPlayerInfo(a_iPlayer).m_poPack;
+	RlePack* poPack = g_oPlayerSelect.GetPlayerInfo(a_iPlayer).m_poPack;
 
 	oLayer.m_iXOffset = roPlayer.m_iX + g_oBackend.m_iBgX;
 	oLayer.m_iYOffset = roPlayer.m_iY;
 	oLayer.m_dDistance = 1.0;
-	oLayer.m_poSurface = poPack->CreateSurface( omABS(roPlayer.m_iFrame)-1, roPlayer.m_iFrame<0 );
+	oLayer.m_poSurface = poPack->CreateSurface( ABS(roPlayer.m_iFrame)-1, roPlayer.m_iFrame<0 );
 
 	m_poBackground->AddExtraLayer( oLayer );
 }
@@ -367,10 +422,10 @@ void CGame::AddBodyToBackground( int a_iPlayer )
 
 /** In debug mode, this method is used to draw the frame of the fighters.
 
-\param a_pcName The name of the polygon (in the perl namespace)
+\param a_sName The name of the polygon (in the perl namespace)
 \param a_iColor The game color to draw the polygon with.
 */
-void CGame::DrawPoly( const char* a_pcName, int a_iColor )
+void Game::DrawPoly( const char* a_pcName, int a_iColor )
 {
 	AV *poList;
 	int n;
@@ -406,11 +461,11 @@ void CGame::DrawPoly( const char* a_pcName, int a_iColor )
 
 /** Draws every doodad that is currently defined in the backend.
 */
-void CGame::DrawDoodads()
+void Game::DrawDoodads()
 {
 	for ( int i=0; i<g_oBackend.m_iNumDoodads; ++i )
 	{
-		CBackend::SDoodad& roDoodad = g_oBackend.m_aoDoodads[i];
+		Backend::SDoodad& roDoodad = g_oBackend.m_aoDoodads[i];
 		if ( 0 == roDoodad.m_iType )
 		{
 			// Handle text doodads
@@ -472,11 +527,11 @@ void CGame::DrawDoodads()
 
 Input:
 \li m_enGamePhase
-\li g_oBackend.m_iRoundLength
+\li g_oBackend.m_iGameTime
 \li m_iNumberOfRounds
 \li oFpsCounter
 */
-void CGame::Draw()
+void Game::Draw()
 {
 	#define GROUNDZERO (440 + m_iYOffset)
 
@@ -504,14 +559,14 @@ void CGame::Draw()
 
 	for ( i=0; i<g_oState.m_iNumPlayers; ++i )
 	{
-		CBackend::SPlayer& roPlayer = g_oBackend.m_aoPlayers[i];
+		Backend::SPlayer& roPlayer = g_oBackend.m_aoPlayers[i];
 		int iFrame = roPlayer.m_iFrame;
 		if ( iFrame == 0 )
 			continue;
 		
-		CRlePack* poPack = g_oPlayerSelect.GetPlayerInfo(i).m_poPack;
-		int w = poPack->GetWidth( omABS(iFrame)-1 );
-		int h = poPack->GetHeight( omABS(iFrame)-1 );
+		RlePack* poPack = g_oPlayerSelect.GetPlayerInfo(i).m_poPack;
+		int w = poPack->GetWidth( ABS(iFrame)-1 );
+		int h = poPack->GetHeight( ABS(iFrame)-1 );
 		
 		h = GROUNDZERO - ( h + roPlayer.m_iY );	// Distance of feet from ground
 		if ( h < 0 ) h = 0;
@@ -534,13 +589,13 @@ void CGame::Draw()
 
 	for ( i=0; i<g_oState.m_iNumPlayers; ++i )
 	{
-		CBackend::SPlayer& roPlayer = g_oBackend.m_aoPlayers[i];
+		Backend::SPlayer& roPlayer = g_oBackend.m_aoPlayers[i];
 		int iFrame = roPlayer.m_iFrame;
 		if ( iFrame == 0 )
 			continue;
 
-		CRlePack* poPack = g_oPlayerSelect.GetPlayerInfo(i).m_poPack;
-		poPack->Draw( omABS(iFrame)-1, roPlayer.m_iX, roPlayer.m_iY + m_iYOffset, iFrame<0 );
+		RlePack* poPack = g_oPlayerSelect.GetPlayerInfo(i).m_poPack;
+		poPack->Draw( ABS(iFrame)-1, roPlayer.m_iX, roPlayer.m_iY + m_iYOffset, iFrame<0 );
 	}
 	
 	if ( m_bDebug )
@@ -602,13 +657,13 @@ void CGame::Draw()
 
 
 
-bool CGame::IsTeamMode()
+bool Game::IsTeamMode()
 {
 	return SState::Team_ONE_VS_ONE != g_oState.m_enTeamMode;
 }
 
 
-bool CGame::IsNetworkGame()
+bool Game::IsNetworkGame()
 {
 	return SState::IN_NETWORK == g_oState.m_enGameMode;
 }
@@ -616,7 +671,7 @@ bool CGame::IsNetworkGame()
 
 /** Returns true if we control our own data, or false if the network supplies
 us with game data. */
-bool CGame::IsMaster()
+bool Game::IsMaster()
 {
 	return !IsNetworkGame() || g_poNetwork->IsMaster();
 }
@@ -634,7 +689,7 @@ GameTime remain unchanged; these are up for DoOneRound and friends
 to modify.
 */
 
-void CGame::Advance( int a_iNumFrames )
+void Game::Advance( int a_iNumFrames )
 {
 	if ( m_bIsReplay )
 	{
@@ -652,6 +707,7 @@ void CGame::Advance( int a_iNumFrames )
 	}
 
 	static std::string sFrameDesc;
+	int i;
 	
 	if ( IsNetworkGame() )
 	{
@@ -712,7 +768,7 @@ players. It is only called when keypresses are actually relevant for the
 backend (not during instant replay, etc).
 */
 
-void CGame::HandleKey( int a_iPlayer, int a_iKey, bool a_bDown )
+void Game::HandleKey( int a_iPlayer, int a_iKey, bool a_bDown )
 {
 	int iCurrentTick = g_oBackend.m_iGameTick + m_iEnqueueDelay;
 	
@@ -735,7 +791,7 @@ Esc brings up the menu.
 Returns 1 on quit event (e.g. if the current game or replay should be aborted), 0 otherwise.
 */
 
-int CGame::ProcessEvents()
+int Game::ProcessEvents()
 {
 	SMortalEvent oEvent;
 	
@@ -787,13 +843,13 @@ int CGame::ProcessEvents()
 }
 
 
-void CGame::HandleKO()
+void Game::HandleKO()
 {
 }
 
 
 
-void CGame::HurryUp()
+void Game::HurryUp()
 {
 	Audio->PlaySample( "GAME_HURRYUP" );
 	DrawGradientText( "HURRY UP!", titleFont, 200, gamescreen );
@@ -802,7 +858,7 @@ void CGame::HurryUp()
 }
 
 
-void CGame::TimeUp()
+void Game::TimeUp()
 {
 	DrawGradientText( "TIME IS UP!", titleFont, 200, gamescreen );
 	SDL_Delay( 1000 );
@@ -814,7 +870,7 @@ at the end of a game round. This means doing phases Ph_REWIND and Ph_SLOWFORWARD
 
 Rewind will go back in time 200 ticks before the parameter a_iKoAt.
 */
-void CGame::InstantReplay( int a_iKoAt )
+void Game::InstantReplay( int a_iKoAt )
 {
 	int iCurrentFrame = m_aReplayOffsets.size() - 200;
 	int iThisTick, iLastTick, iGameSpeed;
@@ -890,7 +946,7 @@ Ph_KO. If a KO happened, it will invoke InstantReplay. At the end of
 the round m_aiRoundsWonByPlayer[x] will be incremented depending on the
 outcome. m_iNumberOfRounds will also increase by 1.
 */
-void CGame::DoOneRound()
+void Game::DoOneRound()
 {
 	m_enGamePhase = Ph_START;
 	m_poBackground->DeleteExtraLayers();
@@ -973,7 +1029,7 @@ void CGame::DoOneRound()
 			if ( dGameTime <= 0 )
 			{
 				m_enGamePhase = Ph_NORMAL;
-				dGameTime = (IsMaster() ? g_oState.m_iRoundLength : g_poNetwork->GetGameParams().iRoundLength) * 1000;
+				dGameTime = (IsMaster() ? g_oState.m_iGameTime : g_poNetwork->GetGameParams().iGameTime) * 1000;
 			}
 		}
 		else if ( Ph_NORMAL == m_enGamePhase )	// Check for the end of the NORMAL phase
@@ -1093,7 +1149,7 @@ void CGame::DoOneRound()
 
 
 
-void CGame::DoReplay( const char* a_pcReplayFile )
+void Game::DoReplay( const char* a_pcReplayFile )
 {
 	std::ifstream oInput( a_pcReplayFile );
 	int iPlayer1, iPlayer2;
@@ -1157,7 +1213,8 @@ void CGame::DoReplay( const char* a_pcReplayFile )
 
 // TODO move the backgroundnumber to SState
 
-int CGame::GetBackgroundNumber()		//static
+
+int Game::GetBackgroundNumber()		//static
 {
 	return mg_iBackgroundNumber;
 }
@@ -1179,7 +1236,7 @@ int DoGame( char* a_pcReplayFile, bool a_bIsReplay, bool a_bDebug )
 {
 	bool bWide = g_oState.m_iNumPlayers > 2;
 //	CVideoModeChange oVideoMode( bWide );
-	CGame oGame( a_bIsReplay, bWide, a_bDebug );
+	Game oGame( a_bIsReplay, bWide, a_bDebug );
 	
 	if ( a_bIsReplay )
 	{
@@ -1207,5 +1264,5 @@ int DoGame( char* a_pcReplayFile, bool a_bIsReplay, bool a_bDebug )
 
 int GetBackgroundNumber()
 {
-	return CGame::GetBackgroundNumber();
+	return Game::GetBackgroundNumber();
 }

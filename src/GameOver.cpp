@@ -28,7 +28,7 @@ void DrawPlayer( int i )
 	if ( 0 != iFrame )
 	{
 		g_oPlayerSelect.GetPlayerInfo(i).m_poPack->Draw( 
-			omABS(iFrame)-1,
+			ABS(iFrame)-1,
 			g_oBackend.m_aoPlayers[i].m_iX,
 			g_oBackend.m_aoPlayers[i].m_iY - 15,
 			iFrame<0 );

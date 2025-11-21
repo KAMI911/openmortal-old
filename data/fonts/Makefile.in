@@ -177,7 +177,6 @@ ECHO_T = @ECHO_T@
 ETAGS = @ETAGS@
 EXEEXT = @EXEEXT@
 FT2_CFLAGS = @FT2_CFLAGS@
-FT2_CONFIG = @FT2_CONFIG@
 FT2_LIBS = @FT2_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -200,6 +199,9 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PERL = @PERL@
+PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 SDL_CFLAGS = @SDL_CFLAGS@
 SDL_CONFIG = @SDL_CONFIG@
 SDL_LIBS = @SDL_LIBS@
@@ -268,7 +270,9 @@ top_srcdir = @top_srcdir@
 fontsdatadir = $(pkgdatadir)/fonts
 fontsdata_DATA = \
 aardvark.ttf bradybun.ttf deadgrit.ttf thin.ttf \
-brandybun3.png glossyfont.png CreditsFont2.png
+brandybun3.png glossyfont.png CreditsFont2.png \
+fangfont.png gooddogc.ttf impactfont2.png \
+manslem.ttf
 
 EXTRA_DIST = $(fontsdata_DATA)
 all: all-am

@@ -177,7 +177,6 @@ ECHO_T = @ECHO_T@
 ETAGS = @ETAGS@
 EXEEXT = @EXEEXT@
 FT2_CFLAGS = @FT2_CFLAGS@
-FT2_CONFIG = @FT2_CONFIG@
 FT2_LIBS = @FT2_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -200,6 +199,9 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PERL = @PERL@
+PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 SDL_CFLAGS = @SDL_CFLAGS@
 SDL_CONFIG = @SDL_CONFIG@
 SDL_LIBS = @SDL_LIBS@
@@ -283,7 +285,9 @@ level11.jpg         level4_rock.mask.png    Mortal.jpg \
 level1.jpg          level4_saturn.jpg       Story1.jpg \
 level2.jpg          level4_saturn.mask.png  Story2.jpg \
 level3_city.png     level5.jpg              eu.jpg\
-level3.desc         level6.jpg
+level3.desc         level6.jpg              level12.desc \
+level12_layer_3.gif level12_layer_4.gif     level12_layer_5.gif \
+level12_path_after.gif level12_path.png     level12_sky.png
 
 EXTRA_DIST = $(gfxdata_DATA)
 all: all-am

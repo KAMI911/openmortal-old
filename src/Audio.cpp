@@ -17,26 +17,26 @@
 #include <fstream>
 
   
-typedef std::map<std::string,Mix_Chunk*>	CSampleMap;
-typedef std::map<std::string,Mix_Music*>	CMusicMap;
-typedef CSampleMap::iterator				CSampleMapIterator;
-typedef CMusicMap::iterator					CMusicMapIterator;
+typedef std::map<std::string,Mix_Chunk*>	SampleMap;
+typedef std::map<std::string,Mix_Music*>	MusicMap;
+typedef SampleMap::iterator			SampleMapIterator;
+typedef MusicMap::iterator			MusicMapIterator;
 
 
-COpenMortalAudio* Audio = NULL;
+MszAudio* Audio = NULL;
 
 
 /**
 \ingroup Media
 */
 
-class COpenMortalAudioPriv
+class MszAudioPriv
 {
 public:
 	bool		m_bAudioOk;
 	int			m_iNumChannels;
-	CSampleMap	m_oSamples;
-	CMusicMap	m_oMusics;
+	SampleMap	m_oSamples;
+	MusicMap	m_oMusics;
 	
 	std::string	m_sSoundDir;
 };
@@ -47,10 +47,10 @@ public:
 #define CHECKOK if ( ! m_poPriv->m_bAudioOk ) return;
 
 
-COpenMortalAudio::COpenMortalAudio()
+MszAudio::MszAudio()
 {
 	Audio = this;
-	m_poPriv = new COpenMortalAudioPriv;
+	m_poPriv = new MszAudioPriv;
 	m_poPriv->m_bAudioOk = false;
 	m_poPriv->m_iNumChannels = 0;
 	m_poPriv->m_sSoundDir = DATADIR;
@@ -82,14 +82,14 @@ COpenMortalAudio::COpenMortalAudio()
 }
 
 
-COpenMortalAudio::~COpenMortalAudio()
+MszAudio::~MszAudio()
 {
 	delete m_poPriv;
 	m_poPriv = NULL;
 }
 
 
-void COpenMortalAudio::LoadSampleMap()
+void MszAudio::LoadSampleMap()
 {
 	CHECKOK;
 	
@@ -146,7 +146,7 @@ void COpenMortalAudio::LoadSampleMap()
 }
 
 
-void COpenMortalAudio::LoadSample( const char* a_pcFilename, const char* a_pcSampleName )
+void MszAudio::LoadSample( const char* a_pcFilename, const char* a_pcSampleName )
 {
 	CHECKOK;
 
@@ -172,9 +172,9 @@ void COpenMortalAudio::LoadSample( const char* a_pcFilename, const char* a_pcSam
 
 
 
-void COpenMortalAudio::UnloadSample( const char* a_pcSampleName )
+void MszAudio::UnloadSample( const char* a_pcSampleName )
 {
-	CSampleMapIterator it = m_poPriv->m_oSamples.find( a_pcSampleName );
+	SampleMapIterator it = m_poPriv->m_oSamples.find( a_pcSampleName );
 	if ( m_poPriv->m_oSamples.end() == it )
 	{
 		debug( "UnloadSample: sample %s not found", a_pcSampleName );
@@ -186,10 +186,10 @@ void COpenMortalAudio::UnloadSample( const char* a_pcSampleName )
 }
 
 
-void COpenMortalAudio::PlaySample( const char* a_pcSampleName )
+void MszAudio::PlaySample( const char* a_pcSampleName )
 {
 	Mix_Chunk* poSample;
-	CSampleMapIterator it = m_poPriv->m_oSamples.find(a_pcSampleName);
+	SampleMapIterator it = m_poPriv->m_oSamples.find(a_pcSampleName);
 	if ( m_poPriv->m_oSamples.end() == it )
 	{
 		// Try to load the sample..
@@ -218,7 +218,7 @@ void COpenMortalAudio::PlaySample( const char* a_pcSampleName )
 }
 
 
-void COpenMortalAudio::PlayFile( const char* a_pcFileName )
+void MszAudio::PlayFile( const char* a_pcFileName )
 {
 	Mix_Chunk *poSample;
 	poSample=Mix_LoadWAV("sample.wav");
@@ -235,7 +235,7 @@ void COpenMortalAudio::PlayFile( const char* a_pcFileName )
 }
 
 
-void COpenMortalAudio::LoadMusic( const char* a_pcFilename, const char* a_pcMusicName )
+void MszAudio::LoadMusic( const char* a_pcFilename, const char* a_pcMusicName )
 {
 	CHECKOK;
 
@@ -262,9 +262,9 @@ void COpenMortalAudio::LoadMusic( const char* a_pcFilename, const char* a_pcMusi
 }
 
 
-void COpenMortalAudio::UnloadMusic( const char* a_pcMusicName )
+void MszAudio::UnloadMusic( const char* a_pcMusicName )
 {
-	CMusicMapIterator it = m_poPriv->m_oMusics.find( a_pcMusicName );
+	MusicMapIterator it = m_poPriv->m_oMusics.find( a_pcMusicName );
 	if ( m_poPriv->m_oMusics.end() == it )
 	{
 		debug( "UnloadMusic: music %s not found", a_pcMusicName );
@@ -276,9 +276,9 @@ void COpenMortalAudio::UnloadMusic( const char* a_pcMusicName )
 }
 
 
-void COpenMortalAudio::PlayMusic( const char* a_pcMusicName )
+void MszAudio::PlayMusic( const char* a_pcMusicName )
 {
-	CMusicMapIterator it = m_poPriv->m_oMusics.find( a_pcMusicName );
+	MusicMapIterator it = m_poPriv->m_oMusics.find( a_pcMusicName );
 	if ( m_poPriv->m_oMusics.end() == it )
 	{
 		debug( "PlayMusic: music %s not found", a_pcMusicName );
@@ -291,27 +291,27 @@ void COpenMortalAudio::PlayMusic( const char* a_pcMusicName )
 }
 
 
-void COpenMortalAudio::FadeMusic( int a_iMilliSec )
+void MszAudio::FadeMusic( int a_iMilliSec )
 {
 	Mix_FadeOutMusic( a_iMilliSec );
 }
 
 
-void COpenMortalAudio::SetMusicVolume( int a_iVolume )
+void MszAudio::SetMusicVolume( int a_iVolume )
 {
 	Mix_VolumeMusic( a_iVolume * 128 / 100 );
 }
 
 
-void COpenMortalAudio::StopMusic()
+void MszAudio::StopMusic()
 {
 	Mix_HaltMusic();
 }
 
 
-bool COpenMortalAudio::IsMusicPlaying()
+bool MszAudio::IsMusicPlaying()
 {
-	return Mix_PlayingMusic() != 0;
+	return Mix_PlayingMusic();
 }
 
 

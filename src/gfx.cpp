@@ -7,6 +7,8 @@
  ***************************************************************************/
 
 #include <string.h>
+#include <malloc.h>
+
 
 #include "SDL.h"
 #include "SDL_video.h"
@@ -39,7 +41,7 @@ void sge_TTF_SizeText( _sge_TTFont*font, const char* text, int* x, int* y )
 
 	/* Copy the UTF-8 text to a UNICODE text buffer */
 	unicode_len = strlen(text);
-	unicode_text = new Uint16[unicode_len+1]; // (Uint16 *)malloc( (unicode_len+1) * sizeof (Uint16) );
+	unicode_text = (Uint16 *)malloc( (unicode_len+1) * sizeof (Uint16) );
 	if ( unicode_text == NULL )
 	{
 		SDL_SetError("SGE - Out of memory");
@@ -52,7 +54,7 @@ void sge_TTF_SizeText( _sge_TTFont*font, const char* text, int* x, int* y )
 	SDL_Rect r = sge_TTF_TextSizeUNI(font, unicode_text);
 
 	/* Free the text buffer and return */
-	delete[] unicode_text; //free(unicode_text);
+	free(unicode_text);
 #else
 	SDL_Rect r = sge_TTF_TextSize( font, text );
 #endif
@@ -76,7 +78,7 @@ int DrawTextMSZ( const char* string, _sge_TTFont* font, int x, int y, int flags,
 	{
 		char *str2 = strdup( string );
 		char onechar[2];
-		char *c1, *c2;
+		char *c1, *c2, *c3;
 		int w = 0;
 		int i, j;
 		bool notend;
@@ -92,7 +94,7 @@ int DrawTextMSZ( const char* string, _sge_TTFont* font, int x, int y, int flags,
 			{
 				c2 = c1;								// c1: start of this run
 				while (*c2 && (*c2!='~')) c2++;			// c2: end of this run
-				notend = *c2 != 0;
+				notend = *c2;
 				*c2 = 0;
 
 				sge_TTF_SizeText( font, c1, &i, &j);
@@ -114,7 +116,7 @@ int DrawTextMSZ( const char* string, _sge_TTFont* font, int x, int y, int flags,
 		{
 			c2 = c1;
 			while (*c2 && (*c2!='~')) c2++;			// c2: end of this run
-			notend = *c2 != 0;
+			notend = *c2;
 			*c2 = 0;
 
 			sge_TTF_SizeText( font, c1, &i, &j);
@@ -176,7 +178,7 @@ int DrawTextMSZ( const char* string, _sge_TTFont* font, int x, int y, int flags,
 
 void DrawGradientText( const char* text, _sge_TTFont* font, int y, SDL_Surface* target, bool a_bTranslate )
 {
-	int i;
+	int i, j;
 
 	if ( a_bTranslate )
 	{

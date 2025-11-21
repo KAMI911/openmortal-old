@@ -22,7 +22,7 @@
 void MortalNetworkResetMessages( bool a_bClear );
 void MortalNetworkMessage( const char* format, ... );
 bool MortalNetworkCheckKey();
-const char* GetRoundLengthString( int a_iValue );
+const char* GetGameTimeString( int a_iValue );
 const char* GetGameSpeedString( int a_iValue );
 const char* GetHitPointsString( int a_iValue );
 
@@ -233,7 +233,7 @@ bool CMortalNetworkImpl::Start( const char* a_pcServerName )
 	m_iHurryupCode = 0;
 	m_iIncomingBufferSize = 0;
 	m_aiAvailableRemoteFighters.clear();
-	m_oGameParams.iRoundLength = m_oGameParams.iGameSpeed = m_oGameParams.iHitPoints = m_oGameParams.iBackgroundNumber = 0;
+	m_oGameParams.iGameTime = m_oGameParams.iGameSpeed = m_oGameParams.iHitPoints = m_oGameParams.iBackgroundNumber = 0;
 	m_sRemoteUserName = "HIM";
 	
 	m_poSocketSet = SDLNet_AllocSocketSet( 1 );
@@ -628,11 +628,11 @@ bool CMortalNetworkImpl::IsRemoteSideReady()
 
 
 
-void CMortalNetworkImpl::SendGameParams( int a_iGameSpeed, int a_iRoundLength, int a_iHitPoints, int a_iBackgroundNumber )
+void CMortalNetworkImpl::SendGameParams( int a_iGameSpeed, int a_iGameTime, int a_iHitPoints, int a_iBackgroundNumber )
 {
 	CHECKCONNECTION;
 	if ( (int)m_oGameParams.iGameSpeed == a_iGameSpeed
-		&& (int)m_oGameParams.iRoundLength == a_iRoundLength
+		&& (int)m_oGameParams.iGameTime == a_iGameTime
 		&& (int)m_oGameParams.iHitPoints == a_iHitPoints
 		&& (int)m_oGameParams.iBackgroundNumber == a_iBackgroundNumber )
 	{
@@ -641,13 +641,13 @@ void CMortalNetworkImpl::SendGameParams( int a_iGameSpeed, int a_iRoundLength, i
 	}
 	
 	m_oGameParams.iGameSpeed = a_iGameSpeed;
-	m_oGameParams.iRoundLength = a_iRoundLength;
+	m_oGameParams.iGameTime = a_iGameTime;
 	m_oGameParams.iHitPoints = a_iHitPoints;
 	m_oGameParams.iBackgroundNumber = a_iBackgroundNumber;
 
 	SGameParams oPackage;
 	oPackage.iGameSpeed = SDL_SwapBE32( a_iGameSpeed );
-	oPackage.iRoundLength = SDL_SwapBE32( a_iRoundLength );
+	oPackage.iGameTime = SDL_SwapBE32( a_iGameTime );
 	oPackage.iHitPoints = SDL_SwapBE32( a_iHitPoints );
 	oPackage.iBackgroundNumber = SDL_SwapBE32( a_iBackgroundNumber );
 	SendRawData( 'P', &oPackage, sizeof(SGameParams) );
@@ -663,10 +663,10 @@ void CMortalNetworkImpl::ReceiveGameParams( void* a_pData, int a_iLength )
 		m_oGameParams.iGameSpeed = SDL_SwapBE32( poPackage->iGameSpeed );
 		m_asMsgs.push_back( std::string("*** ") + GetGameSpeedString( m_oGameParams.iGameSpeed ) );
 	}
-	if ( m_oGameParams.iRoundLength != SDL_SwapBE32( poPackage->iRoundLength ) )
+	if ( m_oGameParams.iGameTime != SDL_SwapBE32( poPackage->iGameTime ) )
 	{
-		m_oGameParams.iRoundLength = SDL_SwapBE32( poPackage->iRoundLength );
-		m_asMsgs.push_back( std::string("*** ") + GetRoundLengthString( m_oGameParams.iRoundLength) );
+		m_oGameParams.iGameTime = SDL_SwapBE32( poPackage->iGameTime );
+		m_asMsgs.push_back( std::string("*** ") + GetGameTimeString( m_oGameParams.iGameTime) );
 	}
 	if ( m_oGameParams.iHitPoints != SDL_SwapBE32( poPackage->iHitPoints ) )
 	{
@@ -821,7 +821,7 @@ bool CMortalNetworkImpl::GetKeystroke( int& a_riOutTime, int& a_riOutKey, bool& 
 	}
 	a_riOutTime = m_aiKeyTimes.front();
 	a_riOutKey = m_aiKeystrokes.front();
-	a_rbOutPressed = m_abKeystrokes.front() > 0;
+	a_rbOutPressed = m_abKeystrokes.front();
 	m_aiKeyTimes.pop_front();
 	m_aiKeystrokes.pop_front();
 	m_abKeystrokes.pop_front();

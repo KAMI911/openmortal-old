@@ -146,8 +146,8 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-am__installdirs = "$(DESTDIR)$(characterdatadir)"
-DATA = $(characterdata_DATA)
+am__installdirs = "$(DESTDIR)$(charactersdatadir)"
+DATA = $(charactersdata_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 am__DIST_COMMON = $(srcdir)/Makefile.in $(top_srcdir)/mkinstalldirs
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -177,7 +177,6 @@ ECHO_T = @ECHO_T@
 ETAGS = @ETAGS@
 EXEEXT = @EXEEXT@
 FT2_CFLAGS = @FT2_CFLAGS@
-FT2_CONFIG = @FT2_CONFIG@
 FT2_LIBS = @FT2_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -200,6 +199,9 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PERL = @PERL@
+PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 SDL_CFLAGS = @SDL_CFLAGS@
 SDL_CONFIG = @SDL_CONFIG@
 SDL_LIBS = @SDL_LIBS@
@@ -265,15 +267,33 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-characterdatadir = $(pkgdatadir)/characters
-characterdata_DATA = \
-    *.png \
-    *.jpg \
-    *.txt \
-    *.pl \
-    *.dat
+charactersdatadir = $(pkgdatadir)/characters
+charactersdata_DATA = \
+Agent.dat        Cumi.pl           Jacint.dat.txt   Macy.jpg          \
+Agent.dat.txt    Dani.dat          Jacint.icon.png  Macy.pl           \
+Agent.full.png   Dani.dat.txt      Jacint.pl        Misi.full.png     \
+Agent.icon.png   Dani.full.png     Jozsi.dat        Misi.icon.png     \
+Agent.jpg        Dani.icon.png     Jozsi.dat.txt    Misi.jpg          Ulmar.dat \
+Agent.pl         Dani.jpg          Jozsi.icon.png   Mrsmith.dat       Ulmar.dat.txt \
+Ambrus.dat       Dani.pl           Jozsi.pl         Mrsmith.dat.txt   Ulmar.full.png \
+Ambrus.dat.txt   Descant.dat       Judy.dat         Mrsmith.icon.png  Ulmar.icon.png \
+Ambrus.full.png  Descant.dat.txt   Judy.dat.txt     Mrsmith.pl        Ulmar.jpg \
+Ambrus.icon.png  Descant.full.png  Judy.full.png    Sirpi.dat         Ulmar.pl \
+Ambrus.jpg       Descant.icon.png  Judy.icon.png    Sirpi.dat.txt     UPi.dat \
+Ambrus.pl        Descant.jpg       Judy.jpg         Sirpi.full.png    UPi.dat.txt \
+Bence.dat        Descant.pl        Judy.pl          Sirpi.icon.png    UPi.full.png \
+Bence.dat.txt    Elf.full.png      Kinga.dat        Sirpi.jpg         UPi.icon.png \
+Bence.full.png   Elf.icon.png      Kinga.dat.txt    Sirpi.pl          UPi.jpg \
+Bence.icon.png   Elf.jpg           Kinga.full.png   Sleepy.dat        UPi.pl \
+Bence.jpg        Grizli.dat        Kinga.icon.png   Sleepy.dat.txt    Zoli.dat \
+Bence.pl         Grizli.dat.txt    Kinga.jpg        Sleepy.icon.png   Zoli.dat.txt \
+Cumi.dat         Grizli.full.png   Kinga.pl         Sleepy.pl         Zoli.full.png \
+Cumi.dat.txt     Grizli.icon.png   Macy.dat         staff.dat         Zoli.icon.png \
+Cumi.full.png    Grizli.jpg        Macy.dat.txt     Surba.full.png    Zoli.jpg \
+Cumi.icon.png    Grizli.pl         Macy.full.png    Surba.icon.png    Zoli.pl \
+Cumi.jpg         Jacint.dat        Macy.icon.png    Surba.jpg
 
-EXTRA_DIST = $(characterdata_DATA)
+EXTRA_DIST = $(charactersdata_DATA)
 all: all-am
 
 .SUFFIXES:
@@ -306,27 +326,27 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-install-characterdataDATA: $(characterdata_DATA)
+install-charactersdataDATA: $(charactersdata_DATA)
 	@$(NORMAL_INSTALL)
-	@list='$(characterdata_DATA)'; test -n "$(characterdatadir)" || list=; \
+	@list='$(charactersdata_DATA)'; test -n "$(charactersdatadir)" || list=; \
 	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(characterdatadir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(characterdatadir)" || exit 1; \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(charactersdatadir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(charactersdatadir)" || exit 1; \
 	fi; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  echo "$$d$$p"; \
 	done | $(am__base_list) | \
 	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(characterdatadir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(characterdatadir)" || exit $$?; \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(charactersdatadir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(charactersdatadir)" || exit $$?; \
 	done
 
-uninstall-characterdataDATA:
+uninstall-charactersdataDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(characterdata_DATA)'; test -n "$(characterdatadir)" || list=; \
+	@list='$(charactersdata_DATA)'; test -n "$(charactersdatadir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(characterdatadir)'; $(am__uninstall_files_from_dir)
+	dir='$(DESTDIR)$(charactersdatadir)'; $(am__uninstall_files_from_dir)
 tags TAGS:
 
 ctags CTAGS:
@@ -370,7 +390,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(characterdatadir)"; do \
+	for dir in "$(DESTDIR)$(charactersdatadir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -423,7 +443,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-characterdataDATA
+install-data-am: install-charactersdataDATA
 
 install-dvi: install-dvi-am
 
@@ -467,21 +487,21 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-characterdataDATA
+uninstall-am: uninstall-charactersdataDATA
 
 .MAKE: install-am install-strip
 
 .PHONY: all all-am check check-am clean clean-generic cscopelist-am \
 	ctags-am distclean distclean-generic distdir dvi dvi-am html \
 	html-am info info-am install install-am \
-	install-characterdataDATA install-data install-data-am \
+	install-charactersdataDATA install-data install-data-am \
 	install-dvi install-dvi-am install-exec install-exec-am \
 	install-html install-html-am install-info install-info-am \
 	install-man install-pdf install-pdf-am install-ps \
 	install-ps-am install-strip installcheck installcheck-am \
 	installdirs maintainer-clean maintainer-clean-generic \
 	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am tags-am \
-	uninstall uninstall-am uninstall-characterdataDATA
+	uninstall uninstall-am uninstall-charactersdataDATA
 
 .PRECIOUS: Makefile
 

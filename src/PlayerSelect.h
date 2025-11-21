@@ -26,7 +26,7 @@ This module runs the fighter selection part of the game.
 #include <string>
 #include <vector>
 
-class CRlePack;
+class RlePack;
 struct SDL_Surface;
 class CTextArea;
 class CReadline;
@@ -44,11 +44,11 @@ CRlePack.
 \ingroup PlayerSelect
 */
 
-struct SPlayerInfo
+struct PlayerInfo
 {
 	FighterEnum		m_enFighter;
 	TintEnum		m_enTint;
-	CRlePack*		m_poPack;
+	RlePack*		m_poPack;
 	std::string		m_sFighterName;
 
 	std::vector<FighterEnum> m_aenTeam;
@@ -56,9 +56,8 @@ struct SPlayerInfo
 
 
 
-/** This class implements services that allows players to select their fighters.
-
-It also stores info about which fighter is available, and
+/** This class implements services that allows players to select their
+fighters. It also stores info about which fighter is available, and
 allows other parts of the program to programmatically assign a fighter
 to a player, and set fighter tints (this is used by e.g. the "frozen"
 effect.) 
@@ -69,13 +68,13 @@ This is the model part model-view-controller architecture of the player selectio
 \ingroup PlayerSelect
 */
 
-class CPlayerSelect
+class PlayerSelect
 {
 public:
-	CPlayerSelect();
+	PlayerSelect();
 	
-	const SPlayerInfo& GetPlayerInfo( int a_iPlayer );
-	SPlayerInfo& EditPlayerInfo( int a_iPlayer );
+	const PlayerInfo& GetPlayerInfo( int a_iPlayer );
+	PlayerInfo& EditPlayerInfo( int a_iPlayer );
 	const char* GetFighterName( int a_iPlayer );
 	int GetFighterNameWidth( int a_iPlayer );
 	
@@ -89,14 +88,20 @@ public:
 
 protected:
 
-	static CRlePack* LoadFighter( FighterEnum m_enFighter );
+//	void HandleKey( int a_iPlayer, int a_iKey );
+//	void HandleNetwork();
+//	void DrawRect( int a_iPos, int a_iColor );
+//	void CheckPlayer( SDL_Surface* a_poBackground, int a_iRow, int a_iCol, int a_iColor );
+	static RlePack* LoadFighter( FighterEnum m_enFighter );
+//	bool IsNetworkGame();
+//	FighterEnum GetFighterCell( int a_iIndex );
 
 protected:
-	SPlayerInfo	m_aoPlayers[MAXPLAYERS];
+	PlayerInfo	m_aoPlayers[MAXPLAYERS];
 	int			m_aiFighterNameWidth[MAXPLAYERS];
 };
 
 
-extern CPlayerSelect g_oPlayerSelect;
+extern PlayerSelect g_oPlayerSelect;
 
 #endif // PLAYERSELECT_H

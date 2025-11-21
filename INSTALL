@@ -8,6 +8,10 @@ So, here's this configure script, right? Yes. Depending on which
 version you downloaded it installs the "base" system with all the
 characters, or just some characters.
 
+First command to run is:
+
+    autoreconf -i
+
 If you got the master package, you can choose to disable some of
 the characters with parameters to configure:
 
@@ -29,6 +33,10 @@ After configure does it's magic, you go
    make install
    openmortal
 
+Developer packages for Debian, Ubuntu, Linux Mint and its derivates:
+
+apt install -y libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype-dev
+
 What to do in case something goes wrong during installation:
 
    1. Curse me.
@@ -37,6 +45,3 @@ What to do in case something goes wrong during installation:
    3. Check OpenMortal Bugs tracker on the website.
    4. File new bug report if no solution is found.
 
-Developer packages for Debian, Ubuntu, Linux Mint and its derivates:
-
-apt install -y libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype-dev

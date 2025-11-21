@@ -66,8 +66,7 @@ struct SState
 	int		m_iTeamSize;		// The size of each team.
 	int		m_bTeamMultiselect;	// Can the same player be selected twice?
 	
-	// TODO Rename this to m_iRoundLength
-	int		m_iRoundLength;		// Length of rounds in seconds.
+	int		m_iGameTime;		// Time of rounds in seconds.
 	int		m_iHitPoints;		// The initial number of hit points.
 	int		m_iGameSpeed;		// The speed of the game (fps = 1000/GameSpeed)
 	
