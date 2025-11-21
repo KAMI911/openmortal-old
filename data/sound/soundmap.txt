@@ -1,0 +1,53 @@
+#
+# Frontend sounds (not related to Game)
+#
+
+
+# Menu sounds
+
+MENU_START					ups.wav
+MENU_END					top.wav
+MENU_ITEM_SELECTION			beepdrop.wav
+MENU_ITEM_VALUE_CHANGES		laser.wav
+MENU_ITEM_INVOKED			apert.wav
+MENU_SUBMENU_END			drips.wav
+
+# Game cycle
+
+GAME_OVER_COUNTDOWN			buzzer_2.wav
+# need to be replaced.
+GAME_OVER_SPLAT				splat2.voc
+
+GAME_NEW					autostart.wav
+# need to be replaced.
+GAME_HURRYUP				aroooga.voc
+GAME_HURRYUP_ENDS			endcountdown_sound.wav
+
+PLAYER_SELECTED				curve.wav
+PLAYER_SELECTION_CHANGES	movemenu.wav
+NETWORK_MESSAGE				beepdoub.wav
+
+#
+# Backend sounds (from the scripts)
+#
+
+PLAYER_JUMPS				swoosh.wav
+PLAYER_LANDS				hit_ground.wav
+# must replace
+PLAYER_FALLS				splat.wav
+
+ATTACK_MISSES				shu.wav
+# must replace
+ATTACK_BLOCKED				thump.wav
+# must replace
+PLAYER_KO					bowling.voc
+UPPERCUT_HITS				evilpsychola.wav
+# must replace
+GROINKICK_HITS				woman_screams.voc
+# must replace
+ATTACK_HITS					thump3.voc
+
+COMBO						honk.wav
+MAX_COMBO					ups.wav
+ 
+JACINT						cow.wav
