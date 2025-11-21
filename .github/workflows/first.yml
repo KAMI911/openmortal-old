@@ -13,7 +13,7 @@ jobs:
       steps:
       - uses: actions/checkout@v2
       - name: install cppunit
-        run: sudo apt install -y build-essential autoconf automake libtool pkg-config dh-autoreconf debhelper devscripts fakeroot build-essential libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
+        run: sudo apt update && sudo apt install -y build-essential autoconf automake libtool pkg-config dh-autoreconf debhelper devscripts fakeroot build-essential libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
       - name: autoreconf
         run: autoreconf -i
       - name: configure
