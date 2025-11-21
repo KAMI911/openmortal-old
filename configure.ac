@@ -25,6 +25,7 @@ AM_CONFIG_HEADER(config.h)
 AC_C_CONST
 AC_PROG_CXX
 
+PKG_PROG_PKG_CONFIG
 
 dnl
 dnl Switches
@@ -122,11 +123,8 @@ AC_CHECK_LIB(SDL_net,
 
 dnl Check for Freetype 2 library
 
-FT2_VERSION=2.1.0
-AC_CHECK_FT2(
-	$FT2_VERSION,
-	:,
-	AC_MSG_ERROR([*** FreeType 2 version $FT2_VERSION not found!])
+PKG_CHECK_MODULES(FT2, freetype2,,
+	AC_MSG_ERROR([*** FreeType2 not found!])
 )
 CXXFLAGS="$CXXFLAGS $FT2_CFLAGS"
 LIBS="$LIBS $FT2_LIBS"
