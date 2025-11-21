@@ -1,0 +1,85 @@
+name: OpenMortal multi-platform build & release
+
+
+on:
+push:
+tags:
+- 'v*.*.*'
+workflow_dispatch:
+
+
+env:
+PACKAGE_NAME: openmortal
+PACKAGE_VERSION: ${{ github.ref_name }}
+
+
+jobs:
+build-debs:
+runs-on: ubuntu-latest
+strategy:
+matrix:
+distro:
+- debian:11
+- debian:12
+- debian:13
+- ubuntu:20.04
+- ubuntu:22.04
+- ubuntu:24.04
+- ubuntu:25.04
+- ubuntu:25.10
+steps:
+- uses: actions/checkout@v4
+
+
+- name: Build in container
+run: |
+docker run --rm -v "${{ github.workspace }}":/src -w /src --user $(id -u):$(id -g) ${{ matrix.distro }} /bin/bash -lc '
+set -e
+apt-get update
+apt-get install -y build-essential autoconf automake libtool pkg-config dh-autoreconf debhelper devscripts fakeroot build-essential libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
+cd /src
+dpkg-buildpackage -us -uc -b || true
+mkdir -p /src/artifacts
+mv /src/*.deb /src/artifacts/ 2>/dev/null || true
+'
+
+
+- name: Upload DEBs
+uses: actions/upload-artifact@v4
+with:
+name: debs-${{ matrix.distro }}
+path: artifacts/
+
+
+build-rpms:
+runs-on: ubuntu-latest
+strategy:
+matrix:
+distro:
+- fedora:38
+- fedora:39
+- fedora:40
+- almalinux:9
+steps:
+- uses: actions/checkout@v4
+- name: Build RPM using mock inside docker
+run: |
+docker run --rm -v "${{ github.workspace }}":/src -w /src --user $(id -u):$(id -g) quay.io/fedora/fedora:rawhide /bin/bash -lc '
+set -e
+dnf install -y rpm-build gcc make autoconf automake libtool pkgconfig perl-devel SDL-devel SDL_image-devel SDL_mixer-devel SDL_net-devel freetype-devel
+cd /src
+mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+tar czf rpmbuild/SOURCES/openmortal-1.0.tar.gz --exclude=.git --exclude=rpmbuild .
+cp rpm/openmortal.spec rpmbuild/SPECS/
+rpmbuild -ba rpmbuild/SPECS/openmortal.spec || true
+mkdir -p /src/artifacts
+find rpmbuild -name "*.rpm" -exec cp {} /src/artifacts/ \;
+'
+- name: Upload RPMs
+uses: actions/upload-artifact@v4
+with:
+name: rpms-${{ matrix.distro }}
+path: artifacts/
+
+
+name
