@@ -2,11 +2,11 @@ name: OpenMortal multi-platform build & release
 
 on:
   push:
+    branches: [ upgrade ]
     tags:
       - "v*.*.*"
-      branches: [ upgrade ]
   pull_request:
-      branches: [ upgrade ]
+    branches: [ upgrade ]
   workflow_dispatch:
 
 jobs:
