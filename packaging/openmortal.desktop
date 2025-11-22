@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=OpenMortal
+Name[hu]=OpenMortal
+Comment=Open Mortal is a parody of the popular coin-op fighting game Mortal Kombat.
+Comment[hu]=Az Open Mortal a népszerű pénzbedobós verekedős játék, a Mortal Kombat paródiája.
+Exec=/usr/bin/openmortal %F
+Icon=/usr/share/icons/hicolor/32x32/apps/openmortal.png
+Terminal=false
+Categories=Game;ActionGame;
+StartupNotify=true
