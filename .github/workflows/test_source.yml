@@ -1,0 +1,19 @@
+name: Test OpenMortal source code
+on:
+  push:
+      branches: [ "*" ]
+  pull_request:
+      branches: [ "*" ]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+      runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@v2
+      - name: install build packages and developer libraries
+        run: sudo apt update && sudo apt upgrade -y &&
+             sudo apt install -y cppcheck &&
+             sudo apt install -y libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
+      - name: cppcheck
+        run: cppcheck src/ --file-filter=src/*
