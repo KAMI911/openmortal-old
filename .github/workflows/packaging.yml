@@ -1,0 +1,55 @@
+name: OpenMortal multi-platform build & release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+      branches: [ upgrade ]
+  pull_request:
+      branches: [ upgrade ]
+  workflow_dispatch:
+
+jobs:
+  appimage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt update && sudo apt upgrade -y &&
+          sudo apt-get install -y wget fuse libfuse2 &&
+          sudo apt install -y build-essential autoconf automake libtool pkg-config dh-autoreconf debhelper devscripts fakeroot build-essential &&
+          sudo apt install -y libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
+
+      - name: Build from source
+        run: |
+          autoreconf -i
+          ./configure --prefix=/usr
+          make -j$(nproc)
+          mkdir -p AppDir/usr/bin
+          install -m755 src/openmortal AppDir/usr/bin/openmortal
+          mkdir -p AppDir/usr/share/icons/hicolor/32x32/apps
+          install -m644 data/gfx/icon.png AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
+          install -m644 data/* AppDir/usr/share/openmortal/
+          install -m644 packaging/openmortal.desktop AppDir/openmortal.desktop
+
+      - name: Download linuxdeploy and appimagetool
+        run: |
+          wget -qO /tmp/linuxdeploy-x86_64.AppImage "https://github.com/linuxdeploy/linuxdeploy/releases/latest/download/linuxdeploy-x86_64.AppImage"
+          chmod +x /tmp/linuxdeploy-x86_64.AppImage
+          wget -qO /tmp/appimagetool.AppImage "https://github.com/AppImage/AppImageKit/releases/latest/download/appimagetool-x86_64.AppImage"
+          chmod +x /tmp/appimagetool.AppImage
+
+      - name: Create AppImage
+        run: |
+          /tmp/linuxdeploy-x86_64.AppImage --appdir AppDir --desktop-file=AppDir/openmortal.desktop --icon-file=AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
+          /tmp/appimagetool.AppImage AppDir
+
+      - name: Upload AppImage
+        uses: actions/upload-artifact@v4
+        with:
+          name: appimage
+          path: *.AppImage
+
+
