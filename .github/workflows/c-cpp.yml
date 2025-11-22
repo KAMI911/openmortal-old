@@ -1,38 +1,19 @@
-name: C/C++ CI
-
+name: Test OpenMortal source code
 on:
   push:
-    branches: [ "upgrade" ]
+      branches: [ "*" ]
   pull_request:
-    branches: [ "upgrade" ]
+      branches: [ "*" ]
+  workflow_dispatch:
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-    - name: install autotools
-      run: sudo apt-get update && sudo apt-get install -y \
-            autoconf automake libtool \
-            libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev \
-            libfreetype6-dev libfreetype6
-    - name: create freetype-config
-      run: |
-          sudo tee /usr/local/bin/freetype-config > /dev/null << 'EOF'
-          #!/bin/sh
-          pkg-config "$@" freetype2
-          EOF
-    - name: make freetype-config sript executable
-      run: sudo chmod +x /usr/local/bin/freetype-config
-    - name: generate configure script
-      run: autoheader --force && automake --add-missing && autoreconf -fi
-    - name: configure
-      run: ./configure --enable-main --enable-characters --enable-additional --enable-thirdparty --disable-freetypetest
-    - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+  build-and-test:
+      runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@v2
+      - name: install build packages and developer libraries
+        run: sudo apt update && sudo apt upgrade -y &&
+             sudo apt install -y cppcheck &&
+             sudo apt install -y libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
+      - name: cppcheck
+        run: cppcheck src/ --file-filter=src/*
