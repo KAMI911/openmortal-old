@@ -9,6 +9,9 @@ on:
     branches: [ upgrade ]
   workflow_dispatch:
 
+env:
+  APPIMAGE_EXTRACT_AND_RUN: 1
+
 jobs:
   appimage:
     runs-on: ubuntu-latest
@@ -54,7 +57,7 @@ jobs:
       - name: Create AppImage
         run: |
           /tmp/linuxdeploy-x86_64.AppImage --appdir ../AppDir --desktop-file=../AppDir/openmortal.desktop --icon-file=../AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
-          /tmp/appimagetool.AppImage -appimage-extract-and-run ../AppDir
+          /tmp/appimagetool.AppImage ../AppDir
 
       - name: Upload AppImage
         uses: actions/upload-artifact@v4
