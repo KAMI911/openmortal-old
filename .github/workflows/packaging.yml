@@ -51,7 +51,7 @@ jobs:
 
       - name: Create AppImage
         run: |
-          /tmp/linuxdeploy-x86_64.AppImage --appdir AppDir --desktop-file=AppDir/openmortal.desktop --icon-file=AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
+          /tmp/linuxdeploy-x86_64.AppImage --appdir ../AppDir --desktop-file=AppDir/openmortal.desktop --icon-file=AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
           /tmp/appimagetool.AppImage AppDir
 
       - name: Upload AppImage
