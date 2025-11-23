@@ -39,13 +39,13 @@ jobs:
 
       - name: Prepare AppImage environment
         run: |   
-          mkdir -p AppDir/usr/bin
-          install -m755 src/openmortal AppDir/usr/bin/openmortal
-          mkdir -p AppDir/usr/share/icons/hicolor/32x32/apps
-          install -m644 data/gfx/icon.png AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
-          mkdir -p AppDir/usr/share/openmortal
-          install -m644 -d data/* AppDir/usr/share/openmortal/data/
-          install -m644 packaging/openmortal.AppImage.desktop AppDir/openmortal.desktop
+          mkdir -p ../AppDir/usr/bin
+          install -m755 src/openmortal ../AppDir/usr/bin/openmortal
+          mkdir -p ../AppDir/usr/share/icons/hicolor/32x32/apps
+          install -m644 data/gfx/icon.png ../AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
+          mkdir -p ../AppDir/usr/share/openmortal
+          install -m644 -d data ../AppDir/usr/share/openmortal
+          install -m644 packaging/openmortal.AppImage.desktop ../AppDir/openmortal.desktop
 
       - name: Download linuxdeploy and appimagetool
         run: |
@@ -56,8 +56,8 @@ jobs:
 
       - name: Create AppImage
         run: |
-          /tmp/linuxdeploy-x86_64.AppImage --appdir AppDir --desktop-file=AppDir/openmortal.desktop --icon-file=AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
-          /tmp/appimagetool.AppImage AppDir
+          /tmp/linuxdeploy-x86_64.AppImage --appdir ../AppDir --desktop-file=../AppDir/openmortal.desktop --icon-file=../AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
+          /tmp/appimagetool.AppImage ../AppDir
 
       - name: Upload AppImage
         uses: actions/upload-artifact@v4
