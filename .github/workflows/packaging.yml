@@ -36,6 +36,7 @@ jobs:
 
       - name: Prepare AppImage environment
         run: |   
+          modprobe fuse
           mkdir -p ../AppDir/usr/bin
           install -m755 src/openmortal ../AppDir/usr/bin/openmortal
           mkdir -p ../AppDir/usr/share/icons/hicolor/32x32/apps
