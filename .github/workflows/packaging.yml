@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: |
           apt update && apt upgrade -y &&
-          apt-get install -y wget fuse libfuse2 &&
+          apt-get install -y wget fuse libfuse2 modprobe &&
           apt install -y build-essential autoconf automake libtool pkg-config dh-autoreconf debhelper devscripts fakeroot build-essential &&
           apt install -y libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
 
