@@ -18,6 +18,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update && sudo apt upgrade -y &&
+          sudo apt purge snapd mysql-client-8.0 mysql-client-core-8.0 mysql-server mysql-server-8.0 mysql-server-core-8.0 &&
           sudo apt-get install -y wget fuse libfuse2 &&
           sudo apt install -y build-essential autoconf automake libtool pkg-config dh-autoreconf debhelper devscripts fakeroot build-essential &&
           sudo apt install -y libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
