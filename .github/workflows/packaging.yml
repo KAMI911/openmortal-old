@@ -27,13 +27,20 @@ jobs:
           autoreconf -i
           ./configure --prefix=/usr
           make -j$(nproc)
-          mkdir -p AppDir/usr/bin
-          install -m755 src/openmortal AppDir/usr/bin/openmortal
-          mkdir -p AppDir/usr/share/icons/hicolor/32x32/apps
-          install -m644 data/gfx/icon.png AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
-          mkdir -p AppDir/usr/share/openmortal
-          install -m644 -d data/* AppDir/usr/share/openmortal/
-          install -m644 packaging/openmortal.desktop AppDir/openmortal.desktop
+
+      - name: Create distibuteble archive
+        run: |
+          make dist dist-xz
+
+      - name: Prepare AppImage environment
+        run: |   
+          mkdir -p ../AppDir/usr/bin
+          install -m755 src/openmortal ../AppDir/usr/bin/openmortal
+          mkdir -p ../AppDir/usr/share/icons/hicolor/32x32/apps
+          install -m644 data/gfx/icon.png ../AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
+          mkdir -p ../AppDir/usr/share/openmortal
+          install -m644 -d data ../AppDir/usr/share/openmortal/
+          install -m644 packaging/openmortal.desktop ../AppDir/openmortal.desktop
 
       - name: Download linuxdeploy and appimagetool
         run: |
