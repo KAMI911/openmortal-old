@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: |
           apt update && apt upgrade -y &&
-          apt-get install -y wget fuse libfuse2t64 kmod &&
+          apt-get install -y wget
           apt install -y build-essential autoconf automake libtool pkg-config dh-autoreconf debhelper devscripts fakeroot build-essential &&
           apt install -y libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
 
@@ -36,7 +36,6 @@ jobs:
 
       - name: Prepare AppImage environment
         run: |   
-          modprobe fuse
           mkdir -p ../AppDir/usr/bin
           install -m755 src/openmortal ../AppDir/usr/bin/openmortal
           mkdir -p ../AppDir/usr/share/icons/hicolor/32x32/apps
@@ -55,7 +54,7 @@ jobs:
       - name: Create AppImage
         run: |
           /tmp/linuxdeploy-x86_64.AppImage --appdir ../AppDir --desktop-file=../AppDir/openmortal.desktop --icon-file=../AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
-          /tmp/appimagetool.AppImage ../AppDir
+          /tmp/appimagetool.AppImage -appimage-extract-and-run ../AppDir
 
       - name: Upload AppImage
         uses: actions/upload-artifact@v4
