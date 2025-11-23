@@ -46,7 +46,7 @@ jobs:
         run: |
           wget -qO /tmp/linuxdeploy-x86_64.AppImage "https://github.com/linuxdeploy/linuxdeploy/releases/latest/download/linuxdeploy-x86_64.AppImage"
           chmod +x /tmp/linuxdeploy-x86_64.AppImage
-          wget -qO /tmp/appimagetool.AppImage "https://github.com/AppImage/AppImageKit/releases/latest/download/appimagetool-x86_64.AppImage"
+          wget -qO /tmp/appimagetool.AppImage "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
           chmod +x /tmp/appimagetool.AppImage
 
       - name: Create AppImage
@@ -59,3 +59,8 @@ jobs:
         with:
           name: appimage
           path: ./*.AppImage
+      - name: Upload binary archives for x86-64
+        uses: actions/upload-artifact@v4
+        with:
+          name: binary x86-64
+          path: ./openmortal*.tar.*
