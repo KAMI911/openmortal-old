@@ -19,11 +19,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt purge -y snapd mysql-client-8.0 mysql-client-core-8.0 mysql-server mysql-server-8.0 mysql-server-core-8.0 &&
-          sudo apt update && sudo apt upgrade -y &&
-          sudo apt-get install -y wget fuse libfuse2 &&
-          sudo apt install -y build-essential autoconf automake libtool pkg-config dh-autoreconf debhelper devscripts fakeroot build-essential &&
-          sudo apt install -y libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
+          apt update && apt upgrade -y &&
+          apt-get install -y wget fuse libfuse2 &&
+          apt install -y build-essential autoconf automake libtool pkg-config dh-autoreconf debhelper devscripts fakeroot build-essential &&
+          apt install -y libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
 
       - name: Build from source
         run: |
@@ -54,7 +53,7 @@ jobs:
 
       - name: Create AppImage
         run: |
-          /tmp/linuxdeploy-x86_64.AppImage --appdir ../AppDir --desktop-file=../AppDir/openmortal.desktop --icon-file=AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
+          /tmp/linuxdeploy-x86_64.AppImage --appdir ../AppDir --desktop-file=../AppDir/openmortal.desktop --icon-file=../AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
           /tmp/appimagetool.AppImage ../AppDir
 
       - name: Upload AppImage
