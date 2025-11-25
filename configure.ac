@@ -139,12 +139,15 @@ LIBS="$LIBS $perl_embed_ldflags"
 dnl perform program name transformation
 AC_ARG_PROGRAM
 
-dnl add here all your Makefiles. These will be created by configure
-AC_OUTPUT(Makefile
+AC_CONFIG_FILES([
+Makefile
 src/Makefile
 data/Makefile
 data/characters/Makefile
-data/fonts/Makefile 
-data/gfx/Makefile 
-data/script/Makefile 
-data/sound/Makefile)
+data/fonts/Makefile
+data/gfx/Makefile
+data/script/Makefile
+data/sound/Makefile
+])
+
+AC_OUTPUT
