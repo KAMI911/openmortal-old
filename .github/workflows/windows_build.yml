@@ -7,6 +7,10 @@ on:
     branches: [ master, upgrade ]
   workflow_dispatch:
 
+env:
+  CXXFLAGS: -I/mingw64/include/freetype2 $CXXFLAGS
+  LDFLAGS: -L/mingw64/lib $LDFLAGS
+
 jobs:
   build:
     runs-on: windows-latest
@@ -42,7 +46,7 @@ jobs:
         run: |
           autoreconf -i -f
           ./configure --prefix=/mingw64 --host=x86_64-w64-mingw32
-          ls /mingw64/include/freetype2/ft2build.h
+          ls -a /mingw64/include/freetype2/ft2build.h
 
       - name: Build
         shell: msys2 {0}
