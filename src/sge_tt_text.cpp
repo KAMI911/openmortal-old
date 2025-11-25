@@ -5,7 +5,7 @@
 *	Started 990815
 *
 *	License: LGPL v2+ (see the file LICENSE)
-*	(c)1999-2001 Anders Lindström
+*	(c)1999-2001 Anders LindstrÃ¶m
 *
 *	Uses the excellent FreeType 2 library, available at:
 *	http://www.freetype.org/
@@ -1085,7 +1085,8 @@ SDL_Rect sge_tt_textoutf(SDL_Surface *Surface, sge_TTFont *font, Sint16 x, Sint1
 	va_list ap;
 	
 	#ifdef __WIN32__
-	va_start((va_list*)ap, format); //Stupid win32 crosscompiler
+	va_list ap;
+    va_start(ap, format);
 	#else
 	va_start(ap, format);
 	#endif
