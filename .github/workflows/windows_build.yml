@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
 
 env:
-  PKG_CONFIG_PATH: /mingw64/lib/pkgconfig:/mingw64/share/pkgconfig
-
+  CFLAGS: "-I/mingw64/include/freetype2 -I/mingw64/include/libpng16 -I/mingw64/include/harfbuzz -I/mingw64/include/glib-2.0 -I/mingw64/lib/glib-2.0/include"
+  LDFLAGS: "-L/mingw64/lib -lfreetype"
 jobs:
   build:
     runs-on: windows-latest
@@ -44,11 +44,12 @@ jobs:
         shell: msys2 {0}
         run: |
           autoreconf -i -f
-          ./configure --prefix=/mingw64 --host=x86_64-w64-mingw32 CFLAGS="$(pkg-config --cflags freetype2)" LDFLAGS="$(pkg-config --libs freetype2)"
+          ./configure --prefix=/mingw64 --host=x86_64-w64-mingw32
 
       - name: Check
         shell: msys2 {0}
         run: |
+          export
           ls -l /mingw64/include/freetype2/ft2build.h
           ls -l /mingw64/include/freetype2/
           pkg-config --cflags freetype2
