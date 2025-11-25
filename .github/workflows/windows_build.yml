@@ -25,6 +25,10 @@ jobs:
             automake
             autoconf
             libtool
+            mingw-w64-x86_64-perl
+            mingw-w64-x86_64-icu
+            mingw-w64-x86_64-libiconv
+            mingw-w64-x86_64-libintl
             mingw-w64-x86_64-toolchain
             mingw-w64-x86_64-make
             mingw-w64-x86_64-pkg-config
