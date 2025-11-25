@@ -29,7 +29,7 @@ jobs:
 
       - name: Build from source
         run: |
-          autoreconf -i
+          autoreconf -i -f
           ./configure --prefix=/usr
           make -j$(nproc)
 
