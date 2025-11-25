@@ -5,7 +5,7 @@
 *	Started 990815
 *
 *	License: LGPL v2+ (see the file LICENSE)
-*	(c)1999-2001 Anders Lindström
+*	(c)1999-2001 Anders LindstrÃ¶m
 *
 *	Uses the excellent FreeType 2 library, available at:
 *	http://www.freetype.org/
@@ -40,9 +40,9 @@
 
 #ifndef _SGE_NOTTF
 #include <ft2build.h>
-#include <freetype/freetype.h>
-#include <freetype/ftoutln.h>
-#include <freetype/ttnameid.h>
+#include FT_FREETYPE_H
+#include FT_OUTLINE_H
+#include FT_TRUETYPE_IDS_H
 
 /* The structure used to hold glyph information (cached) */
 struct glyph {
