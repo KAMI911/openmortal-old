@@ -50,7 +50,8 @@ jobs:
       - name: Check
         shell: msys2 {0}
         run: |
-          ls -a /mingw64/include/freetype2/ft2build.h
+          ls -l /mingw64/include/freetype2/ft2build.h
+          ls -l /mingw64/include/freetype2/
           pkg-config --cflags freetype2
           pkg-config --libs freetype2
           
