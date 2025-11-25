@@ -62,6 +62,8 @@ jobs:
         shell: msys2 {0}
         run: |
           make install DESTDIR=./win-dist
+          pwd
+          ls -l
           tar -C ./win-dist/mingw64 -cvf openmortal-win.tar .
 
       - name: Upload Windows binary gzip archives for x86-64
