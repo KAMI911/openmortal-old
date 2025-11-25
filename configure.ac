@@ -121,14 +121,13 @@ AC_CHECK_LIB(SDL_net,
 	AC_MSG_ERROR([*** SDL_net library not found!])
 )
 
-dnl Check for SDL
-SDL_VERSION=1.2.0
-AM_PATH_SDL($SDL_VERSION,
-	:,
-	AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
+dnl Check for Freetype 2 library
+
+PKG_CHECK_MODULES(FT2, freetype2,,
+	AC_MSG_ERROR([*** FreeType2 not found!])
 )
-CXXFLAGS="$CXXFLAGS $SDL_CFLAGS"
-LIBS="$LIBS $SDL_LIBS"
+CXXFLAGS="$CXXFLAGS $FT2_CFLAGS"
+LIBS="$LIBS $FT2_LIBS"
 
 dnl Perl-related stuff...
 
