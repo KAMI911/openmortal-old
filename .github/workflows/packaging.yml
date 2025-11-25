@@ -66,12 +66,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: openmortal_appimage_x86-64
-          path: ./*.AppImage
+          path: ../*.AppImage
       - name: Upload Linux source xz archives for x86-64
         uses: actions/upload-artifact@v4
         with:
           name: openmortal_linux_binary_x86-64.xz
-          path: ./openmortal-0.7.tar.xz
+          path: ../openmortal-0.7.tar.xz
       - name: Upload Linux source gzip archives for x86-64
         uses: actions/upload-artifact@v4
         with:
