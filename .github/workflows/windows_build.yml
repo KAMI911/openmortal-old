@@ -39,10 +39,11 @@ jobs:
       - name: Configure project
         shell: msys2 {0}
         run: |
+          export PKG_CONFIG_PATH=/mingw64/lib/pkgconfig
           autoreconf -i -f
-          ./configure --prefix=/mingw64 --host=x86_64-w64-mingw32  \
-            CFLAGS="-I/mingw64/include/freetype2 -I/mingw64/include/libpng16 -I/mingw64/include/harfbuzz -I/mingw64/include/glib-2.0 -I/mingw64/lib/glib-2.0/include" \
-            LDFLAGS="-L/mingw64/lib -lfreetype"
+          ./configure --prefix=/mingw64 --host=x86_64-w64-mingw32 \
+            CFLAGS="$(pkg-config --cflags freetype2 harfbuzz glib-2.0 SDL SDL_image SDL_mixer SDL_net libpng)" \
+            LDFLAGS="$(pkg-config --libs freetype2 harfbuzz glib-2.0 SDL SDL_image SDL_mixer SDL_net libpng)"
 
       - name: Check
         shell: msys2 {0}
