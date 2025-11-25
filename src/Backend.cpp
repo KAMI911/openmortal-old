@@ -157,7 +157,7 @@ bool Backend::Construct()
 	std::string sFileName = DATADIR;
 	sFileName += "/script";
 
-#ifndef _WINDOWS
+#ifndef _WIN32
 	chdir( sFileName.c_str() );
 #endif
 	
