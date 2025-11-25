@@ -45,6 +45,12 @@ jobs:
           pkg-config --cflags freetype2
           PKG_CONFIG_PATH=/mingw64/lib/pkgconfig ./configure --prefix=/mingw64 --host=x86_64-w64-mingw32
 
+      - name: Check
+        shell: msys2 {0}
+        run: |
+          ls -a /mingw64/include/freetype2/ft2build.h
+          pkg-config --cflags freetype2
+          
       - name: Build
         shell: msys2 {0}
         run: |
