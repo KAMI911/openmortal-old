@@ -33,7 +33,7 @@ jobs:
       - name: Configure project
         shell: msys2 {0}
         run: |
-          ./configure --prefix=/mingw64
+          ./configure --prefix=/mingw64 --host=x86_64-w64-mingw32
 
       - name: Build
         shell: msys2 {0}
