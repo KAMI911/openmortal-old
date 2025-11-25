@@ -62,10 +62,15 @@ jobs:
       - name: Upload AppImage
         uses: actions/upload-artifact@v4
         with:
-          name: appimage
+          name: openmortal_appimage_x86-64
           path: ./*.AppImage
-      - name: Upload binary archives for x86-64
+      - name: Upload Linux binary xz archives for x86-64
         uses: actions/upload-artifact@v4
         with:
-          name: binary x86-64
-          path: ./openmortal*.tar.*
+          name: openmortal_linux_binary_x86-64.xz
+          path: ./openmortal*.tar.xz
+      - name: Upload Linux binary gzip archives for x86-64
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal_linux_binary_x86-64.gz
+          path: ./openmortal*.tar.gz
