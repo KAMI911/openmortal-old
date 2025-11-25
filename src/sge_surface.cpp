@@ -5,7 +5,7 @@
 *	Started 990815 (split from sge_draw 010611)
 *
 *	License: LGPL v2+ (see the file LICENSE)
-*	(c)1999-2001 Anders Lindström
+*	(c)1999-2001 Anders LindstrÃ¶m
 */
 
 /*********************************************************************
@@ -145,7 +145,8 @@ void sge_SetError(const char *format, ...)
 	va_list ap;
 	
 	#ifdef __WIN32__
-	va_start((va_list*)ap, format); //Stupid w32 crosscompiler
+	va_list args;
+    va_start(args, format);
 	#else
 	va_start(ap, format);
 	#endif
