@@ -140,7 +140,8 @@ dnl perform program name transformation
 AC_ARG_PROGRAM
 
 dnl add here all your Makefiles. These will be created by configure
-AC_OUTPUT(Makefile src/Makefile
+AC_OUTPUT(Makefile
+src/Makefile
 data/Makefile
 data/characters/Makefile
 data/fonts/Makefile 
