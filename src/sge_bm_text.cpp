@@ -270,13 +270,7 @@ SDL_Rect sge_BF_textoutf(SDL_Surface *surface, sge_bmpFont *font, Sint16 x, Sint
 	char buf[256];
 
 	va_list ap;
-	
-	#ifdef __WIN32__
-	va_start((va_list*)ap, format); //Stupid w32 crosscompiler
-	#else
 	va_start(ap, format);
-	#endif
-	
 	vsprintf(buf, format, ap);
 	va_end(ap);
 

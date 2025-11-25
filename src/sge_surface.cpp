@@ -143,14 +143,7 @@ void sge_SetError(const char *format, ...)
 	char buf[256];
 
 	va_list ap;
-	
-	#ifdef __WIN32__
-	va_list args;
-    va_start(args, format);
-	#else
 	va_start(ap, format);
-	#endif
-	
 	vsprintf(buf, format, ap);
 	va_end(ap);
 

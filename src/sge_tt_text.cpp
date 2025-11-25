@@ -1083,7 +1083,7 @@ SDL_Rect sge_tt_textoutf(SDL_Surface *Surface, sge_TTFont *font, Sint16 x, Sint1
 	char buf[256];
 
 	va_list ap;
-    va_start(ap, format);	
+	va_start(ap, format);
 	vsprintf(buf, format, ap);
 	va_end(ap);
 
