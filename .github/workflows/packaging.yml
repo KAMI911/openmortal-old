@@ -36,12 +36,12 @@ jobs:
       - name: Create distibuteble archive
         run: |
           make dist dist-xz
-          make install DESTDIR=../openmortal-0.7_linux_x86-64
-          tar zcvf openmortal-0.7_linux_x86-64.tar.gz ../openmortal-0.7_linux_x86-64/*
+          make DESTDIR=../openmortal-0.7_linux_x86-64 install
+          tar zcvf -C ../openmortal-0.7_linux_x86-64 openmortal-0.7_linux_x86-64.tar.gz
 
       - name: Prepare AppImage environment
         run: |
-          make install DESTDIR=../AppDir
+          make DESTDIR=../AppDir install
           #mkdir -p ../AppDir/usr/bin
           #install -m755 src/openmortal ../AppDir/usr/bin/openmortal
           mkdir -p ../AppDir/usr/share/icons/hicolor/32x32/apps
