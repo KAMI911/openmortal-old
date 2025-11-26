@@ -16,12 +16,11 @@ env:
 jobs:
   linux-x86-64_build:
     runs-on: ubuntu-latest
-    container:
-      image: ubuntu:24.04
     env:
       OSNAME: linux-ubuntu-noble
       PLATFORM: x86-64
-
+    container:
+      image: ubuntu:24.04
     steps:
       - uses: actions/checkout@v4
 
