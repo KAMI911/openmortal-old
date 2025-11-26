@@ -11,12 +11,17 @@ on:
 
 env:
   APPIMAGE_EXTRACT_AND_RUN: 1
-
+  VERSION: 0.7.2
+  DIST_FOLDER: ../distribution/
 jobs:
-  appimage:
+  linux-x86-64_build:
     runs-on: ubuntu-latest
     container:
       image: ubuntu:24.04
+    env:
+      OSNAME: linux-ubuntu-noble
+      PLATFORM: x86-64
+
     steps:
       - uses: actions/checkout@v4
 
@@ -33,26 +38,30 @@ jobs:
           ./configure --prefix=/usr
           make -j$(nproc)
 
-      - name: Create distibuteble archive
+      - name: Create distributable archive
         run: |
           make dist
 
+      - name: make binary files
+        run: |
+          make DESTDIR=${{ DIST_FOLDER }}/linux-x86-64_build/usr install
+          ls -lR ${{ DIST_FOLDER }}/linux-x86-64_build/usr
+
       - name: Prepare AppImage environment
         run: |
-          make DESTDIR=../distribution/linux-x86-64_build/usr install
-          ls -lR ../distribution/linux-x86-64_build
-          mkdir -p ../distribution/AppDir/usr/bin
-          install -m755 ./src/openmortal ../distribution/AppDir/usr/bin/openmortal
-          mkdir -p ../distribution/AppDir/usr/share/icons/hicolor/32x32/apps
-          install -m644 ../distribution/linux-x86-64_build/usr/share/openmortal/data/gfx/icon.png ../distribution/AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
-          mkdir -p ../distribution/AppDir/usr/share/openmortal
-          cp -a data ../distribution/AppDir/usr/share/openmortal
-          install -m644 packaging/openmortal.AppImage.desktop ../distribution/AppDir/openmortal.desktop
-          mkdir -p ../distribution/linux-x86-64-package/usr/bin
-          install -m755 ./src/openmortal ../distribution/linux-x86-64-package/usr/bin/openmortal
-          mkdir -p ../distribution/linux-x86-64-package/usr/share/openmortal
-          cp -a ../distribution/linux-x86-64_build/usr/openmortal/ ../distribution/linux-x86-64-package/usr/share/openmortal/
-          tar zcvf -C ../distribution/linux-x86-64_build/ openmortal-0.7_linux_x86-64.tar.gz
+          ls -lR ${{ DIST_FOLDER }}/linux-x86-64_build/usr
+          mkdir -p ${{ DIST_FOLDER }}/AppDir/usr/bin
+          install -m755 ./src/openmortal ${{ DIST_FOLDER }}/AppDir/usr/bin/openmortal
+          mkdir -p ${{ DIST_FOLDER }}/AppDir/usr/share/icons/hicolor/32x32/apps
+          install -m644 ${{ DIST_FOLDER }}/linux-x86-64_build/usr/share/openmortal/data/gfx/icon.png ${{ DIST_FOLDER }}/AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
+          mkdir -p ${{ DIST_FOLDER }}/AppDir/usr/share/openmortal
+          cp -a data ${{ DIST_FOLDER }}/AppDir/usr/share/openmortal
+          install -m644 packaging/openmortal.AppImage.desktop ${{ DIST_FOLDER }}/AppDir/openmortal.desktop
+          mkdir -p ${{ DIST_FOLDER }}/linux-x86-64-package/usr/bin
+          install -m755 ./src/openmortal ${{ DIST_FOLDER }}/linux-x86-64-package/usr/bin/openmortal
+          mkdir -p ${{ DIST_FOLDER }}/linux-x86-64-package/usr/share/openmortal
+          cp -a ${{ DIST_FOLDER }}/linux-x86-64_build/usr/openmortal/ ${{ DIST_FOLDER }}/linux-x86-64-package/usr/share/openmortal/
+          tar zcvf -C ${{ DIST_FOLDER }}/linux-x86-64_build/ openmortal-0.7_linux_x86-64.tar.gz .
 
       - name: Download linuxdeploy and appimagetool
         run: |
@@ -63,8 +72,8 @@ jobs:
 
       - name: Create AppImage
         run: |
-          /tmp/linuxdeploy-x86_64.AppImage --appdir ../distribution/AppDir --desktop-file=../distribution/AppDir/openmortal.desktop --icon-file=../distribution/AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
-          /tmp/appimagetool.AppImage ../distribution/AppDir
+          /tmp/linuxdeploy-x86_64.AppImage --appdir ${{ DIST_FOLDER }}/AppDir --desktop-file=${{ DIST_FOLDER }}/AppDir/openmortal.desktop --icon-file=${{ DIST_FOLDER }}/AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
+          /tmp/appimagetool.AppImage ${{ DIST_FOLDER }}/AppDir
 
       - name: Upload AppImage
         uses: actions/upload-artifact@v4
