@@ -14,13 +14,13 @@ env:
   VERSION: 0.7.2
   DIST_FOLDER: ../distribution/
 jobs:
-  linux-${{ env.PLATFORM }}/_build:
+  linux-$PLATFORM/_build:
     runs-on: ubuntu-latest
     container:
       image: ubuntu:24.04
     env:
       OSNAME: linux-ubuntu-noble
-      PLATFORM: ${{ env.PLATFORM }}/
+      PLATFORM: $PLATFORM/
 
     steps:
       - uses: actions/checkout@v4
@@ -44,24 +44,24 @@ jobs:
 
       - name: make binary files
         run: |
-          make DESTDIR=${{ env.DIST_FOLDER }}//linux-${{ env.PLATFORM }}/_build/usr install
-          ls -lR ${{ env.DIST_FOLDER }}//linux-${{ env.PLATFORM }}/_build/usr
+          make DESTDIR=$DIST_FOLDER//linux-$PLATFORM/_build/usr install
+          ls -lR $DIST_FOLDER//linux-$PLATFORM/_build/usr
 
       - name: Prepare AppImage environment
         run: |
-          ls -lR ${{ env.DIST_FOLDER }}//linux-${{ env.PLATFORM }}/_build/usr
-          mkdir -p ${{ env.DIST_FOLDER }}//AppDir/usr/bin
-          install -m755 ./src/openmortal ${{ env.DIST_FOLDER }}//AppDir/usr/bin/openmortal
-          mkdir -p ${{ env.DIST_FOLDER }}//AppDir/usr/share/icons/hicolor/32x32/apps
-          install -m644 ${{ env.DIST_FOLDER }}//linux-${{ env.PLATFORM }}/_build/usr/share/openmortal/data/gfx/icon.png ${{ env.DIST_FOLDER }}//AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
-          mkdir -p ${{ env.DIST_FOLDER }}//AppDir/usr/share/openmortal
-          cp -a data ${{ env.DIST_FOLDER }}//AppDir/usr/share/openmortal
-          install -m644 packaging/openmortal.AppImage.desktop ${{ env.DIST_FOLDER }}//AppDir/openmortal.desktop
-          mkdir -p ${{ env.DIST_FOLDER }}//linux-${{ env.PLATFORM }}/-package/usr/bin
-          install -m755 ./src/openmortal ${{ env.DIST_FOLDER }}//linux-${{ env.PLATFORM }}/-package/usr/bin/openmortal
-          mkdir -p ${{ env.DIST_FOLDER }}//linux-${{ env.PLATFORM }}/-package/usr/share/openmortal
-          cp -a ${{ env.DIST_FOLDER }}//linux-${{ env.PLATFORM }}/_build/usr/openmortal/ ${{ env.DIST_FOLDER }}//linux-${{ env.PLATFORM }}/-package/usr/share/openmortal/
-          tar zcvf -C ${{ env.DIST_FOLDER }}//linux-${{ env.PLATFORM }}/-package/ openmortal-{{ env.VERSION }}_linux_${{ env.PLATFORM }}/.tar.gz .
+          ls -lR $DIST_FOLDER//linux-$PLATFORM/_build/usr
+          mkdir -p $DIST_FOLDER//AppDir/usr/bin
+          install -m755 ./src/openmortal $DIST_FOLDER//AppDir/usr/bin/openmortal
+          mkdir -p $DIST_FOLDER//AppDir/usr/share/icons/hicolor/32x32/apps
+          install -m644 $DIST_FOLDER//linux-$PLATFORM/_build/usr/share/openmortal/data/gfx/icon.png $DIST_FOLDER//AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
+          mkdir -p $DIST_FOLDER//AppDir/usr/share/openmortal
+          cp -a data $DIST_FOLDER//AppDir/usr/share/openmortal
+          install -m644 packaging/openmortal.AppImage.desktop $DIST_FOLDER//AppDir/openmortal.desktop
+          mkdir -p $DIST_FOLDER//linux-$PLATFORM/-package/usr/bin
+          install -m755 ./src/openmortal $DIST_FOLDER//linux-$PLATFORM/-package/usr/bin/openmortal
+          mkdir -p $DIST_FOLDER//linux-$PLATFORM/-package/usr/share/openmortal
+          cp -a $DIST_FOLDER//linux-$PLATFORM/_build/usr/openmortal/ $DIST_FOLDER//linux-$PLATFORM/-package/usr/share/openmortal/
+          tar zcvf -C $DIST_FOLDER//linux-$PLATFORM/-package/ openmortal-{{ env.VERSION }}_linux_$PLATFORM/.tar.gz .
 
       - name: Download linuxdeploy and appimagetool
         run: |
@@ -72,26 +72,26 @@ jobs:
 
       - name: Create AppImage
         run: |
-          /tmp/linuxdeploy-x86_64.AppImage --appdir ${{ env.DIST_FOLDER }}//AppDir --desktop-file=${{ env.DIST_FOLDER }}//AppDir/openmortal.desktop --icon-file=${{ env.DIST_FOLDER }}//AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
-          /tmp/appimagetool.AppImage ${{ env.DIST_FOLDER }}//AppDir
+          /tmp/linuxdeploy-x86_64.AppImage --appdir $DIST_FOLDER//AppDir --desktop-file=$DIST_FOLDER//AppDir/openmortal.desktop --icon-file=$DIST_FOLDER//AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
+          /tmp/appimagetool.AppImage $DIST_FOLDER//AppDir
 
       - name: Upload AppImage
         uses: actions/upload-artifact@v4
         with:
-          name: openmortal_appimage_${{ env.PLATFORM }}/
+          name: openmortal_appimage_$PLATFORM/
           path: ../*.AppImage
-      #- name: Upload Linux source xz archives for ${{ env.PLATFORM }}/
+      #- name: Upload Linux source xz archives for $PLATFORM/
       #  uses: actions/upload-artifact@v4
       #  with:
-      #    name: openmortal_linux_binary_${{ env.PLATFORM }}/.xz
+      #    name: openmortal_linux_binary_$PLATFORM/.xz
       #    path: ../openmortal-0.7.tar.xz
-      - name: Upload Linux source gzip archives for ${{ env.PLATFORM }}/
+      - name: Upload Linux source gzip archives for $PLATFORM/
         uses: actions/upload-artifact@v4
         with:
-          name: openmortal_linux_binary_${{ env.PLATFORM }}/.gz
+          name: openmortal_linux_binary_$PLATFORM/.gz
           path: ./openmortal-?.?.tar.gz
-      - name: Upload Linux binary gzip archives for ${{ env.PLATFORM }}/
+      - name: Upload Linux binary gzip archives for $PLATFORM/
         uses: actions/upload-artifact@v4
         with:
-          name: openmortal_linux_binary_${{ env.PLATFORM }}/.gz
-          path: openmortal-*_linux_${{ env.PLATFORM }}/.tar.gz
+          name: openmortal_linux_binary_$PLATFORM/.gz
+          path: openmortal-*_linux_$PLATFORM/.tar.gz
