@@ -63,7 +63,7 @@ jobs:
         run: |
           make DESTDIR=../distribution/windows-x86-64_build/usr install
           mkdir -p ../distribution/windows-x86-64-package/usr/bin
-          install -m755 ./src/openmortal.exe ../distribution/linux-x86-64-package/usr/bin/openmortal.exe
+          cp -a ./src/openmortal.exe ../distribution/linux-x86-64-package/usr/bin/openmortal.exe
           mkdir -p ../distribution/windows-x86-64-package/usr/share/openmortal
           cp -ar ../distribution/windows-x86-64_build/usr/mingw64/* ../distribution/windows-x86-64-package/usr/share/openmortal/
           ls -lR ../distribution/
