@@ -40,7 +40,7 @@ jobs:
       - name: Prepare AppImage environment
         run: |
           make DESTDIR=../distribution/linux-x86-64_build/usr install
-          ls -lR../distribution/linux-x86-64_build
+          ls -lR ../distribution/linux-x86-64_build
           mkdir -p ../distribution/AppDir/usr/bin
           install -m755 ./src/openmortal ../distribution/AppDir/usr/bin/openmortal
           mkdir -p ../distribution/AppDir/usr/share/icons/hicolor/32x32/apps
