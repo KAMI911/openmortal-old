@@ -35,20 +35,24 @@ jobs:
 
       - name: Create distibuteble archive
         run: |
-          make dist dist-xz
-          make DESTDIR=../openmortal-0.7_linux_x86-64 install
-          tar zcvf -C ../openmortal-0.7_linux_x86-64 openmortal-0.7_linux_x86-64.tar.gz
+          make dist
 
       - name: Prepare AppImage environment
         run: |
-          make DESTDIR=../AppDir install
-          #mkdir -p ../AppDir/usr/bin
-          #install -m755 src/openmortal ../AppDir/usr/bin/openmortal
-          mkdir -p ../AppDir/usr/share/icons/hicolor/32x32/apps
-          install -m644 data/gfx/icon.png ../AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
-          #mkdir -p ../AppDir/usr/share/openmortal
-          #cp -a data ../AppDir/usr/share/openmortal
-          install -m644 packaging/openmortal.AppImage.desktop ../AppDir/openmortal.desktop
+          make DESTDIR=../distribution/linux-x86-64_build/usr install
+          ls -lR../distribution/linux-x86-64_build
+          mkdir -p ../distribution/AppDir/usr/bin
+          install -m755 ./src/openmortal ../distribution/AppDir/usr/bin/openmortal
+          mkdir -p ../distribution/AppDir/usr/share/icons/hicolor/32x32/apps
+          install -m644 ../distribution/linux-x86-64_build/usr/share/openmortal/data/gfx/icon.png ../distribution/AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
+          mkdir -p ../distribution/AppDir/usr/share/openmortal
+          cp -a data ../distribution/AppDir/usr/share/openmortal
+          install -m644 packaging/openmortal.AppImage.desktop ../distribution/AppDir/openmortal.desktop
+          mkdir -p ../distribution/linux-x86-64-package/usr/bin
+          install -m755 ./src/openmortal ../distribution/linux-x86-64-package/usr/bin/openmortal
+          mkdir -p ../distribution/linux-x86-64-package/usr/share/openmortal
+          cp -a ../distribution/linux-x86-64_build/usr/openmortal/ ../distribution/linux-x86-64-package/usr/share/openmortal/
+          tar zcvf -C ../distribution/linux-x86-64_build/ openmortal-0.7_linux_x86-64.tar.gz
 
       - name: Download linuxdeploy and appimagetool
         run: |
@@ -59,19 +63,19 @@ jobs:
 
       - name: Create AppImage
         run: |
-          /tmp/linuxdeploy-x86_64.AppImage --appdir ../AppDir --desktop-file=../AppDir/openmortal.desktop --icon-file=../AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
-          /tmp/appimagetool.AppImage ../AppDir
+          /tmp/linuxdeploy-x86_64.AppImage --appdir ../distribution/AppDir --desktop-file=../distribution/AppDir/openmortal.desktop --icon-file=../distribution/AppDir/usr/share/icons/hicolor/32x32/apps/openmortal.png
+          /tmp/appimagetool.AppImage ../distribution/AppDir
 
       - name: Upload AppImage
         uses: actions/upload-artifact@v4
         with:
           name: openmortal_appimage_x86-64
           path: ../*.AppImage
-      - name: Upload Linux source xz archives for x86-64
-        uses: actions/upload-artifact@v4
-        with:
-          name: openmortal_linux_binary_x86-64.xz
-          path: ../openmortal-0.7.tar.xz
+      #- name: Upload Linux source xz archives for x86-64
+      #  uses: actions/upload-artifact@v4
+      #  with:
+      #    name: openmortal_linux_binary_x86-64.xz
+      #    path: ../openmortal-0.7.tar.xz
       - name: Upload Linux source gzip archives for x86-64
         uses: actions/upload-artifact@v4
         with:
