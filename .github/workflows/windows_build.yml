@@ -52,7 +52,7 @@ jobs:
           ls -l /mingw64/include/freetype2/
           pkg-config --cflags freetype2
           pkg-config --libs freetype2
-          
+
       - name: Build
         shell: msys2 {0}
         run: |
@@ -61,10 +61,18 @@ jobs:
       - name: Install (optional)
         shell: msys2 {0}
         run: |
-          make install DESTDIR=../win-dist
+          make DESTDIR=../distribution/windows-x86-64_build/usr install
           pwd
           ls -lR ../
           tar -C ./win-dist/mingw64 -cvf openmortal-win.tar.gz .
+
+          ls -lR ../distribution/windows-x86-64_build
+          mkdir -p ../distribution/windows-x86-64-package/usr/bin
+          install -m755 ./src/openmortal.exe ../distribution/linux-x86-64-package/usr/bin/openmortal.exe
+          mkdir -p ../distribution/windows-x86-64-package/usr/share/openmortal
+          cp -a ../distribution/windows-x86-64_build/usr/openmortal/ ../distribution/windows-x86-64-package/usr/share/openmortal/
+          tar zcvf -C ../distribution/windows-x86-64_build/ openmortal-0.7_windows_x86-64.tar.gz
+
 
       - name: Upload Windows binary gzip archives for x86-64
         uses: actions/upload-artifact@v4
