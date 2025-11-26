@@ -62,9 +62,7 @@ jobs:
         shell: msys2 {0}
         run: |
           make DESTDIR=../distribution/windows-x86-64_build/usr install
-          pwd
           ls -lR ../
-          tar -C ./win-dist/mingw64 -cvf openmortal-win.tar.gz .
 
           ls -lR ../distribution/windows-x86-64_build
           mkdir -p ../distribution/windows-x86-64-package/usr/bin
