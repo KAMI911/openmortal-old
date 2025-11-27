@@ -61,13 +61,13 @@ jobs:
       - name: Install (optional)
         shell: msys2 {0}
         run: |
-          make DESTDIR=../distribution/windows-x86-64_build/usr install
-          mkdir -p ../distribution/windows-x86-64-package/usr/bin
-          mkdir -p ../distribution/windows-x86-64-package/usr/share/openmortal
-          cp -a src/openmortal.exe ../distribution/linux-x86-64-package/usr/bin/openmortal.exe
-          cp -ar ../distribution/windows-x86-64_build/usr/mingw64/* ../distribution/windows-x86-64-package/usr/share/openmortal/
-          ls -lR ../distribution/
-          tar zcvf -C ../distribution/windows-x86-64-package openmortal-0.7_windows_x86-64.tar.gz .
+          make install DESTDIR=./distribution/windows-x86-64_build/usr
+          mkdir -p ./distribution/windows-x86-64-package/usr/bin
+          mkdir -p ./distribution/windows-x86-64-package/usr/share/openmortal
+          cp -a src/openmortal.exe ./distribution/linux-x86-64-package/usr/bin/openmortal.exe
+          cp -ar ./distribution/windows-x86-64_build/usr/mingw64/* ./distribution/windows-x86-64-package/usr/share/openmortal/
+          ls -lR ./distribution/
+          tar zcvf -C ./distribution/windows-x86-64-package openmortal-0.7_windows_x86-64.tar.gz .
 
 
       - name: Upload Windows binary gzip archives for x86-64
