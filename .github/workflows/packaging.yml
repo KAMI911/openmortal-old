@@ -12,7 +12,7 @@ on:
 env:
   APPIMAGE_EXTRACT_AND_RUN: 1
   VERSION: 0.7.2
-  DIST_FOLDER: ~/distribution
+  DIST_FOLDER: ./distribution
 jobs:
   linux-x86-64_build:
     runs-on: ubuntu-latest
@@ -51,7 +51,7 @@ jobs:
       - name: make binary files
         run: |
           make install DESTDIR=${{ env.PLATFORM_BUILD_PATH }}/usr
-          ls -lR ${{ env.PLATFORM_BUILD_PATH }}/usr
+          # ls -lR ${{ env.PLATFORM_BUILD_PATH }}/usr
 
       - name: Prepare AppImage environment
         run: |
