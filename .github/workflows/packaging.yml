@@ -21,12 +21,15 @@ jobs:
     env:
       OSNAME: linux-ubuntu-noble
       PLATFORM: x86-64
-      PLATFORM_BUILD_PATH: ${{ env.DIST_FOLDER }}/linux-${{ env.PLATFORM }}_build
-      PLATFORM_PACKAGE_PATH: ${{ env.DIST_FOLDER }}/linux-${{ env.PLATFORM }}_package
-      PLATFORM_APPIMAGE_PATH: ${{ env.DIST_FOLDER }}/AppDir
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Define paths
+        run: |
+          echo "PLATFORM_BUILD_PATH=${DIST_FOLDER}/linux-${PLATFORM}_build" >> $GITHUB_ENV
+          echo "PLATFORM_PACKAGE_PATH=${DIST_FOLDER}/linux-${PLATFORM}_package" >> $GITHUB_ENV
+          echo "PLATFORM_APPIMAGE_PATH=${DIST_FOLDER}/AppDir" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: |
