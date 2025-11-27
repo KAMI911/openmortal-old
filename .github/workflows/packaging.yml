@@ -50,7 +50,7 @@ jobs:
 
       - name: make binary files
         run: |
-          make DESTDIR=${{ env.PLATFORM_BUILD_PATH }}/usr install
+          make install DESTDIR=${{ env.PLATFORM_BUILD_PATH }}/usr
           ls -lR ${{ env.PLATFORM_BUILD_PATH }}/usr
 
       - name: Prepare AppImage environment
@@ -67,6 +67,8 @@ jobs:
           mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/share/openmortal
           cp -a ${{ env.PLATFORM_BUILD_PATH }}/usr/openmortal/ ${{ env.PLATFORM_PACKAGE_PATH }}/usr/share/openmortal/
           ls -lR ${{ env.PLATFORM_BUILD_PATH }}/usr
+          echo "-----------------------------------"
+          ls -lR ${{ env.PLATFORM_PACKAGE_PATH }}/usr
           tar zcvf -C ${{ env.PLATFORM_PACKAGE_PATH }}/ openmortal-$VERSION_linux_${{ env.PLATFORM }}.tar.gz .
 
       - name: Download linuxdeploy and appimagetool
