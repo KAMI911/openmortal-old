@@ -12,7 +12,7 @@ on:
 env:
   APPIMAGE_EXTRACT_AND_RUN: 1
   VERSION: 0.7.2
-  DIST_FOLDER: distribution/
+  DIST_FOLDER: distribution
 jobs:
   linux-x86-64_build:
     runs-on: ubuntu-latest
@@ -55,7 +55,6 @@ jobs:
 
       - name: Prepare AppImage environment
         run: |
-          ls -lR ${{ env.PLATFORM_BUILD_PATH }}/usr
           mkdir -p ${{ env.PLATFORM_APPIMAGE_PATH }}/usr/bin
           install -m755 ./src/openmortal ${{ env.PLATFORM_APPIMAGE_PATH }}/usr/bin/openmortal
           mkdir -p ${{ env.PLATFORM_APPIMAGE_PATH }}/usr/share/icons/hicolor/32x32/apps
@@ -67,6 +66,7 @@ jobs:
           install -m755 ./src/openmortal ${{ env.PLATFORM_PACKAGE_PATH }}/usr/bin/openmortal
           mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/share/openmortal
           cp -a ${{ env.PLATFORM_BUILD_PATH }}/usr/openmortal/ ${{ env.PLATFORM_PACKAGE_PATH }}/usr/share/openmortal/
+          ls -lR ${{ env.PLATFORM_BUILD_PATH }}/usr
           tar zcvf -C ${{ env.PLATFORM_PACKAGE_PATH }}/ openmortal-$VERSION_linux_${{ env.PLATFORM }}.tar.gz .
 
       - name: Download linuxdeploy and appimagetool
