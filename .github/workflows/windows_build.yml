@@ -9,7 +9,7 @@ on:
 
 env:
   VERSION: 0.7.2
-  DIST_FOLDER: $PWD/distribution
+  DIST_FOLDER: ${{ github.GITHUB_ACTION_PATH }}/distribution
 
 jobs:
   build:
@@ -21,8 +21,8 @@ jobs:
 
       - name: Define paths
         run: |
-          echo "PLATFORM_BUILD_PATH=$PWD/distribution/windows-${PLATFORM}_build" >> $GITHUB_ENV
-          echo "PLATFORM_PACKAGE_PATH=$PWD/distribution/windows-${PLATFORM}_package" >> $GITHUB_ENV
+          echo "PLATFORM_BUILD_PATH=${DIST_FOLDER}/windows-${PLATFORM}_build" >> $GITHUB_ENV
+          echo "PLATFORM_PACKAGE_PATH=${DIST_FOLDER}/windows-${PLATFORM}_package" >> $GITHUB_ENV
 
       - name: Set up MSYS2
         uses: msys2/setup-msys2@v2
@@ -58,7 +58,6 @@ jobs:
       - name: Check
         shell: msys2 {0}
         run: |
-          export
           ls -l /mingw64/include/freetype2/ft2build.h
           ls -l /mingw64/include/freetype2/
           pkg-config --cflags freetype2
@@ -72,7 +71,7 @@ jobs:
       - name: Install (optional)
         shell: msys2 {0}
         run: |
-          make DESTDIR="$PLATFORM_BUILD_PATH/" install
+          make DESTDIR="${PLATFORM_BUILD_PATH}/" install
           mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/bin
           mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/share/openmortal
           cp -a ${{ env.PLATFORM_BUILD_PATH }}/usr/share ${{ env.PLATFORM_PACKAGE_PATH }}/usr/
