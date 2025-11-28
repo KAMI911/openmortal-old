@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ master, upgrade ]
   workflow_dispatch:
+
+env:
+  VERSION: 0.7.2
+  DIST_FOLDER: $(pwd)/distribution
+
 jobs:
   build:
     runs-on: windows-latest
@@ -13,6 +18,11 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
+      - name: Define paths
+        run: |
+          echo "PLATFORM_BUILD_PATH=${DIST_FOLDER}/windows-${PLATFORM}_build" >> $GITHUB_ENV
+          echo "PLATFORM_PACKAGE_PATH=${DIST_FOLDER}/windows-${PLATFORM}_package" >> $GITHUB_ENV
 
       - name: Set up MSYS2
         uses: msys2/setup-msys2@v2
@@ -61,17 +71,17 @@ jobs:
       - name: Install (optional)
         shell: msys2 {0}
         run: |
-          make install
-          mkdir -p ./distribution/windows-x86-64_package/usr/bin
-          mkdir -p ./distribution/windows-x86-64_package/usr/share/openmortal
-          cp -a src/openmortal.exe ./distribution/linux-x86-64_package/usr/bin/openmortal.exe
-          cp -ar ./distribution/windows-x86-64_build/usr/mingw64/* ./distribution/windows-x86-64_package/usr/share/openmortal/
+          make DESTDIR="${{ env.PLATFORM_BUILD_PATH }}/" install
+          mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/bin
+          mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/share/openmortal
+          cp -a ${{ env.PLATFORM_BUILD_PATH }}/usr/share ${{ env.PLATFORM_PACKAGE_PATH }}/usr/
+          install -m755 ${{ env.PLATFORM_BUILD_PATH }}/usr/bin/openmortal.exe ${{ env.PLATFORM_PACKAGE_PATH }}/usr/bin/openmortal.exe
           ls -lR ./distribution/
-          tar zcvf -C ./distribution/windows-x86-64_package openmortal-0.7_windows_x86-64.tar.gz .
+          tar zcvf openmortal-${{ env.VERSION }}_windows_${{ env.PLATFORM }}.tar.gz -C ${{ env.PLATFORM_PACKAGE_PATH }} .
 
 
       - name: Upload Windows binary gzip archives for x86-64
         uses: actions/upload-artifact@v4
         with:
-          name: openmortal-0.7_windows_x86-64.tar.gz
-          path: openmortal-?.?_windows_x86-64.tar.gz
+          name: openmortal-${{ env.VERSION }}_windows_${{ env.PLATFORM }}.tar.gz
+          path: ./openmortal-${{ env.VERSION }}_windows_${{ env.PLATFORM }}.tar.gz
