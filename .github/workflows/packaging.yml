@@ -55,7 +55,7 @@ jobs:
 
       - name: Prepare AppImage environment
         run: |
-          ls -lR ~
+          ls -lR ./distribution/linux-x86-64_build/
           mkdir -p ${{ env.PLATFORM_APPIMAGE_PATH }}/usr/bin
           install -m755 ./src/openmortal ${{ env.PLATFORM_APPIMAGE_PATH }}/usr/bin/openmortal
           mkdir -p ${{ env.PLATFORM_APPIMAGE_PATH }}/usr/share/icons/hicolor/32x32/apps
