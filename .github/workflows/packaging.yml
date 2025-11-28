@@ -51,8 +51,8 @@ jobs:
       - name: make binary files
         run: |
           make install DESTDIR=${{ env.PLATFORM_BUILD_PATH }}
-          ls -lR ${{ env.PLATFORM_BUILD_PATH }}/
-
+          ls -lR ./
+  
       - name: Prepare AppImage environment
         run: |
           mkdir -p ${{ env.PLATFORM_APPIMAGE_PATH }}/usr/bin
