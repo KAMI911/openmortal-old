@@ -65,15 +65,13 @@ jobs:
           mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/share/openmortal
           cp -a ${{ env.PLATFORM_BUILD_PATH }}/usr/share ${{ env.PLATFORM_PACKAGE_PATH }}/usr/
           install -m755 ${{ env.PLATFORM_BUILD_PATH }}/usr/bin/openmortal ${{ env.PLATFORM_PACKAGE_PATH }}/usr/bin/openmortal
-          echo "-----------------------------------"
-          ls -lR ${{ env.PLATFORM_PACKAGE_PATH }}/usr/
           tar zcvf openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz -C ${{ env.PLATFORM_PACKAGE_PATH }} .
 
       - name: Download linuxdeploy and appimagetool
         run: |
-          wget -qO /tmp/linuxdeploy-x86_64.AppImage "https:/github.com/linuxdeploy/linuxdeploy/releases/latest/download/linuxdeploy-x86_64.AppImage"
+          wget -qO /tmp/linuxdeploy-x86_64.AppImage "https://github.com/linuxdeploy/linuxdeploy/releases/latest/download/linuxdeploy-x86_64.AppImage"
           chmod +x /tmp/linuxdeploy-x86_64.AppImage
-          wget -qO /tmp/appimagetool.AppImage "https:/github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
+          wget -qO /tmp/appimagetool.AppImage "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
           chmod +x /tmp/appimagetool.AppImage
 
       - name: Create AppImage
