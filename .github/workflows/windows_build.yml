@@ -72,14 +72,20 @@ jobs:
         shell: msys2 {0}
         run: |
           export
-          make DESTDIR="${PLATFORM_BUILD_PATH}/" install
-          mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/bin
-          mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/share/openmortal
-          cp -a ${{ env.PLATFORM_BUILD_PATH }}/usr/share ${{ env.PLATFORM_PACKAGE_PATH }}/usr/
-          install -m755 ${{ env.PLATFORM_BUILD_PATH }}/usr/bin/openmortal.exe ${{ env.PLATFORM_PACKAGE_PATH }}/usr/bin/openmortal.exe
-          ls -lR ./distribution/
-          tar zcvf openmortal-${{ env.VERSION }}_windows_${{ env.PLATFORM }}.tar.gz -C ${{ env.PLATFORM_PACKAGE_PATH }} .
-
+          #make DESTDIR="${PLATFORM_BUILD_PATH}/" install
+          #mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/bin
+          #mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/share/openmortal
+          #cp -a ${{ env.PLATFORM_BUILD_PATH }}/usr/share ${{ env.PLATFORM_PACKAGE_PATH }}/usr/
+          #install -m755 ${{ env.PLATFORM_BUILD_PATH }}/usr/bin/openmortal.exe ${{ env.PLATFORM_PACKAGE_PATH }}/usr/bin/openmortal.exe
+          #ls -lR ./distribution/
+          #tar zcvf openmortal-${{ env.VERSION }}_windows_${{ env.PLATFORM }}.tar.gz -C ${{ env.PLATFORM_PACKAGE_PATH }} .
+          make DESTDIR="/temp/distribution/windows-x86-64_build" install
+          mkdir -p /temp/distribution/windows-x86-64_build/usr/bin
+          mkdir -p /temp/distribution/windows-x86-64_build/usr/share/openmortal
+          cp -a /temp/distribution/windows-x86-64_build/usr/share /temp/distribution/windows-x86-64_package/usr/
+          install -m755 /temp/distribution/windows-x86-64_build/usr/bin/openmortal.exe /temp/distribution/windows-x86-64_package/usr/bin/openmortal.exe
+          ls -lR /temp/distribution/
+          tar zcvf openmortal-${{ env.VERSION }}_windows_${{ env.PLATFORM }}.tar.gz -C /temp/distribution/windows-x86-64_package .
 
       - name: Upload Windows binary gzip archives for x86-64
         uses: actions/upload-artifact@v4
