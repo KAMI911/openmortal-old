@@ -52,7 +52,7 @@ jobs:
           CFLAGS="-ID:/a/_temp/msys64/mingw64/include/freetype2 -ID:/a/_temp/msys64/mingw64/include/harfbuzz -ID:/a/_temp/msys64/mingw64/include/glib-2.0 -ID:/a/_temp/msys64/mingw64/lib/glib-2.0/include -ID:/a/_temp/msys64/mingw64/include/SDL -ID:/a/_temp/msys64/mingw64/include/SDL_image -ID:/a/_temp/msys64/mingw64/include/SDL_mixer -ID:/a/_temp/msys64/mingw64/include/SDL_net -ID:/a/_temp/msys64/mingw64/include/libpng16"
           LDFLAGS="-LD:/a/_temp/msys64/mingw64/lib -lfreetype -lSDL -lSDL_image -lSDL_mixer -lSDL_net -lharfbuzz -lpng16 -lglib-2.0"
           autoreconf -i -f
-          ./configure --prefix=/mingw64 --host=x86_64-w64-mingw32 CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS -static"
+          ./configure --prefix=/mingw64 --host=x86_64-w64-mingw32 CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS"
 
       - name: Check
         shell: msys2 {0}
@@ -83,7 +83,7 @@ jobs:
           mkdir -p /temp/distribution/windows-x86-64_package/mingw64/share/openmortal
           cp -a /temp/distribution/windows-x86-64_build/mingw64/share /temp/distribution/windows-x86-64_package/mingw64/
           install -m755 /temp/distribution/windows-x86-64_build/mingw64/bin/openmortal.exe /temp/distribution/windows-x86-64_package/mingw64/bin/openmortal.exe
-          ls -lR /temp/distribution/
+          ldd /temp/distribution/windows-x86-64_build/mingw64/bin/openmortal.exe
           tar zcvf openmortal-${{ env.VERSION }}_windows_${{ env.PLATFORM }}.tar.gz -C /temp/distribution/windows-x86-64_package .
 
       - name: Upload Windows binary gzip archives for x86-64
