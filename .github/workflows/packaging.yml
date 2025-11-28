@@ -50,12 +50,11 @@ jobs:
 
       - name: make binary files
         run: |
-          make install DESTDIR=${{ env.PLATFORM_BUILD_PATH }}/usr
-          # ls -lR ${{ env.PLATFORM_BUILD_PATH }}/usr
+          make install DESTDIR=${{ env.PLATFORM_BUILD_PATH }}
+          ls -lR ${{ env.PLATFORM_BUILD_PATH }}
 
       - name: Prepare AppImage environment
         run: |
-          ls -lR ./distribution/linux-x86-64_build/
           mkdir -p ${{ env.PLATFORM_APPIMAGE_PATH }}/usr/bin
           install -m755 ./src/openmortal ${{ env.PLATFORM_APPIMAGE_PATH }}/usr/bin/openmortal
           mkdir -p ${{ env.PLATFORM_APPIMAGE_PATH }}/usr/share/icons/hicolor/32x32/apps
