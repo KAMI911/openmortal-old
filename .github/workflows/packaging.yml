@@ -12,7 +12,7 @@ on:
 env:
   APPIMAGE_EXTRACT_AND_RUN: 1
   VERSION: 0.7.2
-  DIST_FOLDER: distribution
+  DIST_FOLDER: $(pwd)/distribution
 jobs:
   linux-x86-64_build:
     runs-on: ubuntu-latest
@@ -28,7 +28,7 @@ jobs:
       - name: Define paths
         run: |
           echo "PLATFORM_BUILD_PATH=${DIST_FOLDER}/linux-${PLATFORM}_build" >> $GITHUB_ENV
-          echo "PLATFORM_PACKAGE_PATH=${DIST_FOLDER}/linux-${PLATFORM}_package" >> $GITHUB_ENV
+          echo "PLATFORM_PACKAGE_PATH=$${DIST_FOLDER}/linux-${PLATFORM}_package" >> $GITHUB_ENV
           echo "PLATFORM_APPIMAGE_PATH=${DIST_FOLDER}/AppDir" >> $GITHUB_ENV
 
       - name: Install dependencies
