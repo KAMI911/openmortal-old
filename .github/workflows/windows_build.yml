@@ -80,10 +80,10 @@ jobs:
           #ls -lR ./distribution/
           #tar zcvf openmortal-${{ env.VERSION }}_windows_${{ env.PLATFORM }}.tar.gz -C ${{ env.PLATFORM_PACKAGE_PATH }} .
           make DESTDIR="/temp/distribution/windows-x86-64_build" install
-          mkdir -p /temp/distribution/windows-x86-64_build/usr/bin
-          mkdir -p /temp/distribution/windows-x86-64_build/usr/share/openmortal
-          cp -a /temp/distribution/windows-x86-64_build/usr/share /temp/distribution/windows-x86-64_package/usr/
-          install -m755 /temp/distribution/windows-x86-64_build/usr/bin/openmortal.exe /temp/distribution/windows-x86-64_package/usr/bin/openmortal.exe
+          mkdir -p /temp/distribution/windows-x86-64_package/mingw64/usr/bin
+          mkdir -p /temp/distribution/windows-x86-64_package/mingw64/usr/share/openmortal
+          cp -a /temp/distribution/windows-x86-64_build/mingw64/usr/share /temp/distribution/windows-x86-64_package/mingw64/usr/
+          install -m755 /temp/distribution/windows-x86-64_build/mingw64/usr/bin/openmortal.exe /temp/distribution/windows-x86-64_package/mingw64/usr/bin/openmortal.exe
           ls -lR /temp/distribution/
           tar zcvf openmortal-${{ env.VERSION }}_windows_${{ env.PLATFORM }}.tar.gz -C /temp/distribution/windows-x86-64_package .
 
