@@ -9,7 +9,7 @@ on:
 
 env:
   VERSION: 0.7.2
-  DIST_FOLDER: $(pwd)/distribution
+  DIST_FOLDER: $PWD/distribution
 
 jobs:
   build:
@@ -21,8 +21,8 @@ jobs:
 
       - name: Define paths
         run: |
-          echo "PLATFORM_BUILD_PATH=${DIST_FOLDER}/windows-${PLATFORM}_build" >> $GITHUB_ENV
-          echo "PLATFORM_PACKAGE_PATH=${DIST_FOLDER}/windows-${PLATFORM}_package" >> $GITHUB_ENV
+          echo "PLATFORM_BUILD_PATH=$PWD/distribution/windows-${PLATFORM}_build" >> $GITHUB_ENV
+          echo "PLATFORM_PACKAGE_PATH=$PWD/distribution/windows-${PLATFORM}_package" >> $GITHUB_ENV
 
       - name: Set up MSYS2
         uses: msys2/setup-msys2@v2
