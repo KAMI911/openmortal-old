@@ -72,8 +72,7 @@ jobs:
       - name: Install (optional)
         shell: msys2 {0}
         run: |
-          export DESTDIR="${{ env.PLATFORM_BUILD_PATH }}/"
-          make install
+          make DESTDIR="$PLATFORM_BUILD_PATH/" install
           mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/bin
           mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/share/openmortal
           cp -a ${{ env.PLATFORM_BUILD_PATH }}/usr/share ${{ env.PLATFORM_PACKAGE_PATH }}/usr/
