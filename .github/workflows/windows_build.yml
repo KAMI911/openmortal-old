@@ -35,6 +35,7 @@ jobs:
             autoconf
             libtool
             mingw-w64-x86_64-perl
+            mingw-w64-x86_64-perl-i18n-langinfo
             mingw-w64-x86_64-icu
             mingw-w64-x86_64-libiconv
             mingw-w64-x86_64-toolchain
