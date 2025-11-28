@@ -65,10 +65,9 @@ jobs:
           mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/share/openmortal
           install -d -m644 ${{ env.PLATFORM_BUILD_PATH }}/usr/share ${{ env.PLATFORM_PACKAGE_PATH }}/usr/
           install -m755 ${{ env.PLATFORM_BUILD_PATH }}/usr/bin/openmortal ${{ env.PLATFORM_PACKAGE_PATH }}/usr/bin/openmortal
-          ls -lR ${{ env.PLATFORM_BUILD_PATH }}/usr/
           echo "-----------------------------------"
           ls -lR ${{ env.PLATFORM_PACKAGE_PATH }}/usr/
-          tar zcvf -C ${{ env.PLATFORM_PACKAGE_PATH }}/ openmortal-$VERSION_linux_${{ env.PLATFORM }}.tar.gz .
+          tar zcvf -C ${{ env.PLATFORM_PACKAGE_PATH }}/ openmortal${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz .
 
       - name: Download linuxdeploy and appimagetool
         run: |
