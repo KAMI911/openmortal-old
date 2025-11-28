@@ -41,7 +41,7 @@ jobs:
       - name: Build from source
         run: |
           autoreconf -i -f
-          ./configure
+          ./configure --prefix=/usr
           make -j$(nproc)
 
       - name: Create distributable archive
