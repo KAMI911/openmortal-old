@@ -60,6 +60,8 @@ jobs:
           mkdir -p ${{ env.PLATFORM_APPIMAGE_PATH }}/usr/share/openmortal
           cp -a ${{ env.PLATFORM_BUILD_PATH }} ${{ env.PLATFORM_APPIMAGE_PATH }}
           install -m644 packaging/openmortal.AppImage.desktop ${{ env.PLATFORM_APPIMAGE_PATH }}/openmortal.desktop
+          ls -lR ${{ env.PLATFORM_BUILD_PATH }}/usr/
+          ls -lR ${{ env.PLATFORM_APPIMAGE_PATH }}/usr/
           install -m755 ${{ env.PLATFORM_BUILD_PATH }}/usr/bin/openmortal ${{ env.PLATFORM_APPIMAGE_PATH }}/usr/bin/openmortal
           #mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/bin
           #mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/share/openmortal
