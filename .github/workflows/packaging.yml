@@ -50,7 +50,8 @@ jobs:
 
       - name: make binary files
         run: |
-          make install DESTDIR=${{ env.PLATFORM_BUILD_PATH }}
+          export DESTDIR="${{ env.PLATFORM_BUILD_PATH }}/"
+          make install
           ls -lR ./
   
       - name: Prepare AppImage environment
