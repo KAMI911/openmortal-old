@@ -92,8 +92,8 @@ jobs:
       - name: Upload Linux source gzip archives for ${{ env.PLATFORM }}/
         uses: actions/upload-artifact@v4
         with:
-          name: openmortal-?.?.tar.gz
-          path: ./openmortal-?.?.tar.gz
+          name: openmortal-7.2.tar.gz
+          path: ./openmortal-7.2.tar.gz
       - name: Upload Linux binary gzip archives for ${{ env.PLATFORM }}/
         uses: actions/upload-artifact@v4
         with:
