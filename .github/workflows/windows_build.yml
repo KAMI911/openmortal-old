@@ -84,10 +84,10 @@ jobs:
           cp -a /temp/distribution/windows-x86-64_build/mingw64/share /temp/distribution/windows-x86-64_package/mingw64/
           install -m755 /temp/distribution/windows-x86-64_build/mingw64/bin/openmortal.exe /temp/distribution/windows-x86-64_package/mingw64/bin/openmortal.exe
           ntldd -R /temp/distribution/windows-x86-64_build/mingw64/bin/openmortal.exe | grep -v -i "system32" | grep -i -v "winsxs" | grep -v -i "not found" |  awk '{print $3}' | xargs -d '\n' -I{} cp -- "{}" /temp/distribution/windows-x86-64_package/mingw64/bin/
-          #tar zcvf openmortal-${VERSION}_windows_${{ env.PLATFORM }}.tar.gz -C /temp/distribution/windows-x86-64_package .
+          tar zcvf openmortal-${VERSION}_windows_${{ env.PLATFORM }}.tar.gz -C /temp/distribution/windows-x86-64_package .
 
       - name: Upload Windows binary gzip archives for x86-64
         uses: actions/upload-artifact@v4
         with:
-          name: openmortal-${{ env.VERSION }}_windows_${{ env.PLATFORM }}.zip
-          path: /temp/distribution/windows-x86-64_package/
+          name: openmortal-${{ env.VERSION }}_windows_${{ env.PLATFORM }}
+          path: ./*.tar.gz
