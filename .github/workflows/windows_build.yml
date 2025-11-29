@@ -45,6 +45,7 @@ jobs:
             mingw-w64-x86_64-SDL_mixer
             mingw-w64-x86_64-SDL_net
             mingw-w64-x86_64-freetype
+            mingw-w64-x86_64-ntldd
 
       - name: Configure project
         shell: msys2 {0}
