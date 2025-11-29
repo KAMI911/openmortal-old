@@ -59,15 +59,13 @@ jobs:
       - name: Check
         shell: msys2 {0}
         run: |
-          ls -l /mingw64/include/freetype2/ft2build.h
-          ls -l /mingw64/include/freetype2/
           pkg-config --cflags freetype2
           pkg-config --libs freetype2
 
       - name: Build
         shell: msys2 {0}
         run: |
-          make -j$(nproc)
+          make DESTDIR="${PLATFORM_BUILD_PATH}" install -j$(nproc)
 
       - name: Install (optional)
         shell: msys2 {0}
@@ -78,19 +76,16 @@ jobs:
           #cp -a ${{ env.PLATFORM_BUILD_PATH }}/usr/share ${{ env.PLATFORM_PACKAGE_PATH }}/usr/
           #install -m755 ${{ env.PLATFORM_BUILD_PATH }}/usr/bin/openmortal.exe ${{ env.PLATFORM_PACKAGE_PATH }}/usr/bin/openmortal.exe
           #ls -lR ./distribution/
-          #tar zcvf openmortal-${{ env.VERSION }}_windows_${{ env.PLATFORM }}.tar.gz -C ${{ env.PLATFORM_PACKAGE_PATH }} .
-          make DESTDIR="/temp/distribution/windows-x86-64_build" install
-          mkdir -p /temp/distribution/windows-x86-64_package/mingw64/bin
-          mkdir -p /temp/distribution/windows-x86-64_package/mingw64/share/openmortal
-          cp -a /temp/distribution/windows-x86-64_build/mingw64/share /temp/distribution/windows-x86-64_package/mingw64/
-          install -m755 /temp/distribution/windows-x86-64_build/mingw64/bin/openmortal.exe /temp/distribution/windows-x86-64_package/mingw64/bin/openmortal.exe
-          ldd /temp/distribution/windows-x86-64_build/mingw64/bin/openmortal.exe
-          ntldd -R /temp/distribution/windows-x86-64_build/mingw64/bin/openmortal.exe | grep -v -i "system32" | grep -i -v "winsxs" | grep -v -i "not found" |  awk '{print $3}' 
-          ntldd -R /temp/distribution/windows-x86-64_build/mingw64/bin/openmortal.exe | grep -v -i "system32" | grep -i -v "winsxs" | grep -v -i "not found" |  awk '{print $3}' | xargs -d '\n' -I{} cp -- "{}" /temp/distribution/windows-x86-64_package/mingw64/bin/
-          tar zcvf openmortal-${VERSION}_windows_${{ env.PLATFORM }}.tar.gz -C /temp/distribution/windows-x86-64_package .
+          #tar zcvf openmortal-${{ env.VERSION }}_windows_${PLATFORM}.tar.gz -C ${{ env.PLATFORM_PACKAGE_PATH }} .
+          mkdir -p ${PLATFORM_PACKAGE_PATH}/mingw64/bin
+          mkdir -p ${PLATFORM_PACKAGE_PATH}/mingw64/share/openmortal
+          cp -a ${PLATFORM_BUILD_PATH}/mingw64/share ${PLATFORM_PACKAGE_PATH}/mingw64/
+          install -m755 ${PLATFORM_BUILD_PATH}/mingw64//bin/openmortal.exe ${PLATFORM_PACKAGE_PATH}/mingw64/bin/openmortal.exe
+          ntldd -R ${PLATFORM_BUILD_PATH}/mingw64/bin/openmortal.exe | grep -v -i "system32" | grep -i -v "winsxs" | grep -v -i "not found" |  awk '{print $3}' | xargs -d '\n' -I{} cp -- "{}" ${PLATFORM_PACKAGE_PATH}/mingw64/bin/
+          # tar zcvf openmortal-${VERSION}_windows_${ PLATFORM }.tar.gz -C ${PLATFORM_PACKAGE_PATH}  .
 
-      - name: Upload Windows binary gzip archives for x86-64
+      - name: Upload Windows binary zip archives for x86-64
         uses: actions/upload-artifact@v4
         with:
-          name: openmortal-${{ env.VERSION }}_windows_${PLATFORM}.tar.gz
-          path: ./openmortal-${{ env.VERSION }}_windows_${PLATFORM}.tar.gz
+          name: openmortal-${{ env.VERSION }}_windows_${{ env.PLATFORM }}
+          path: .//temp/distribution/windows-x86-64_package/*
