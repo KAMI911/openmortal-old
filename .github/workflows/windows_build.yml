@@ -70,7 +70,7 @@ jobs:
       - name: Install (optional)
         shell: msys2 {0}
         run: |
-          export
+          ntldd -R my_program.exe
           #make DESTDIR="${PLATFORM_BUILD_PATH}/" install
           #mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/bin
           #mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/share/openmortal
@@ -84,6 +84,7 @@ jobs:
           cp -a /temp/distribution/windows-x86-64_build/mingw64/share /temp/distribution/windows-x86-64_package/mingw64/
           install -m755 /temp/distribution/windows-x86-64_build/mingw64/bin/openmortal.exe /temp/distribution/windows-x86-64_package/mingw64/bin/openmortal.exe
           ldd /temp/distribution/windows-x86-64_build/mingw64/bin/openmortal.exe
+          ntldd -R /temp/distribution/windows-x86-64_build/mingw64/bin/openmortal.exe
           tar zcvf openmortal-${{ env.VERSION }}_windows_${{ env.PLATFORM }}.tar.gz -C /temp/distribution/windows-x86-64_package .
 
       - name: Upload Windows binary gzip archives for x86-64
