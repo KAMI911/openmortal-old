@@ -1,4 +1,4 @@
-name: Windows Build (MSYS2 / MinGW64)
+name: Windows Build (MSYS2 / MinGW64 / MinGW)
 
 on:
   push:
@@ -10,84 +10,88 @@ on:
 env:
   VERSION: 0.7.2
   DIST_FOLDER: $TEMP/distribution
-  PLATFORM: x86-64
 
 jobs:
   build:
     runs-on: windows-latest
+    strategy:
+      matrix:
+        PLATFORM: [x86, x86-64]
+        MSYS_TARGET: [i686, x86_64]
 
+    name: Build ${{ matrix.PLATFORM }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
       - name: Define paths
         run: |
-          echo "PLATFORM_BUILD_PATH=${TEMP}/distribution/windows-${PLATFORM}_build" >> $GITHUB_ENV
-          echo "PLATFORM_PACKAGE_PATH=${TEMP}/distribution/windows-${PLATFORM}_package" >> $GITHUB_ENV
+          echo "PLATFORM_BUILD_PATH=${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_build" >> $GITHUB_ENV
+          echo "PLATFORM_PACKAGE_PATH=${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_package" >> $GITHUB_ENV
 
       - name: Set up MSYS2
         uses: msys2/setup-msys2@v2
         with:
-          msystem: MINGW64
+          msystem: MINGW${{ matrix.MSYS_TARGET }}
           update: true
           install: >-
             base-devel
             automake
             autoconf
             libtool
-            mingw-w64-x86_64-perl
-            mingw-w64-x86_64-icu
-            mingw-w64-x86_64-libiconv
-            mingw-w64-x86_64-toolchain
-            mingw-w64-x86_64-make
-            mingw-w64-x86_64-pkg-config
-            mingw-w64-x86_64-SDL
-            mingw-w64-x86_64-SDL_image
-            mingw-w64-x86_64-SDL_mixer
-            mingw-w64-x86_64-SDL_net
-            mingw-w64-x86_64-freetype
-            mingw-w64-x86_64-ntldd
+            mingw-w64-${{ matrix.MSYS_TARGET }}-perl
+            mingw-w64-${{ matrix.MSYS_TARGET }}-icu
+            mingw-w64-${{ matrix.MSYS_TARGET }}-libiconv
+            mingw-w64-${{ matrix.MSYS_TARGET }}-toolchain
+            mingw-w64-${{ matrix.MSYS_TARGET }}-make
+            mingw-w64-${{ matrix.MSYS_TARGET }}-pkg-config
+            mingw-w64-${{ matrix.MSYS_TARGET }}-SDL
+            mingw-w64-${{ matrix.MSYS_TARGET }}-SDL_image
+            mingw-w64-${{ matrix.MSYS_TARGET }}-SDL_mixer
+            mingw-w64-${{ matrix.MSYS_TARGET }}-SDL_net
+            mingw-w64-${{ matrix.MSYS_TARGET }}-freetype
+            mingw-w64-${{ matrix.MSYS_TARGET }}-ntldd
 
       - name: Configure project
         shell: msys2 {0}
         run: |
-          CFLAGS="-ID:/a/_temp/msys64/mingw64/include/freetype2 -ID:/a/_temp/msys64/mingw64/include/harfbuzz -ID:/a/_temp/msys64/mingw64/include/glib-2.0 -ID:/a/_temp/msys64/mingw64/lib/glib-2.0/include -ID:/a/_temp/msys64/mingw64/include/SDL -ID:/a/_temp/msys64/mingw64/include/SDL_image -ID:/a/_temp/msys64/mingw64/include/SDL_mixer -ID:/a/_temp/msys64/mingw64/include/SDL_net -ID:/a/_temp/msys64/mingw64/include/libpng16"
-          LDFLAGS="-LD:/a/_temp/msys64/mingw64/lib -lfreetype -lSDL -lSDL_image -lSDL_mixer -lSDL_net -lharfbuzz -lpng16 -lglib-2.0"
+          if [ "${{ matrix.PLATFORM }}" = "x86-64" ]; then
+            PREFIX=/mingw64
+            HOST=x86_64-w64-mingw32
+          else
+            PREFIX=/mingw32
+            HOST=i686-w64-mingw32
+          fi
+          CFLAGS="-I$TEMP/msys64/${PREFIX}/include/freetype2 -I$TEMP/msys64/${PREFIX}/include/harfbuzz -I$TEMP/msys64/${PREFIX}/include/glib-2.0 -I$TEMP/msys64/${PREFIX}/lib/glib-2.0/include -I$TEMP/msys64/${PREFIX}/include/SDL -I$TEMP/msys64/${PREFIX}/include/SDL_image -I$TEMP/msys64/${PREFIX}/include/SDL_mixer -I$TEMP/msys64/${PREFIX}/include/SDL_net -I$TEMP/msys64/${PREFIX}/include/libpng16"
+          LDFLAGS="-L$TEMP/msys64/${PREFIX}/lib -lfreetype -lSDL -lSDL_image -lSDL_mixer -lSDL_net -lharfbuzz -lpng16 -lglib-2.0"
           autoreconf -i -f
-          ./configure --prefix=/mingw64 --host=x86_64-w64-mingw32 CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS"
-
-      - name: Check
-        shell: msys2 {0}
-        run: |
-          ls -l /mingw64/include/freetype2/ft2build.h
-          ls -l /mingw64/include/freetype2/
-          pkg-config --cflags freetype2
-          pkg-config --libs freetype2
+          ./configure --prefix=$PREFIX --host=$HOST CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS"
 
       - name: Build
         shell: msys2 {0}
         run: |
-          make DESTDIR="/temp/distribution/windows-x86-64_build" install -j$(nproc)
+          make DESTDIR="${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_build" install -j$(nproc)
 
-      - name: Install (optional)
+      - name: Install and package
         shell: msys2 {0}
         run: |
-          #make DESTDIR="${PLATFORM_BUILD_PATH}/" install
-          #mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/bin
-          #mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/share/openmortal
-          #cp -a ${{ env.PLATFORM_BUILD_PATH }}/usr/share ${{ env.PLATFORM_PACKAGE_PATH }}/usr/
-          #install -m755 ${{ env.PLATFORM_BUILD_PATH }}/usr/bin/openmortal.exe ${{ env.PLATFORM_PACKAGE_PATH }}/usr/bin/openmortal.exe
-          #ls -lR ./distribution/
-          #tar zcvf openmortal-${{ env.VERSION }}_windows_${{ env.PLATFORM }}.tar.gz -C ${{ env.PLATFORM_PACKAGE_PATH }} .
-          mkdir -p /temp/distribution/windows-x86-64_package/mingw64/bin
-          mkdir -p /temp/distribution/windows-x86-64_package/mingw64/share/openmortal
-          cp -a /temp/distribution/windows-x86-64_build/mingw64/share /temp/distribution/windows-x86-64_package/mingw64/
-          install -m755 /temp/distribution/windows-x86-64_build/mingw64/bin/openmortal.exe /temp/distribution/windows-x86-64_package/mingw64/bin/openmortal.exe
-          ntldd -R /temp/distribution/windows-x86-64_build/mingw64/bin/openmortal.exe | grep -v -i "system32" | grep -i -v "winsxs" | grep -v -i "not found" |  awk '{print $3}' | xargs -d '\n' -I{} cp -- "{}" /temp/distribution/windows-x86-64_package/mingw64/bin/
-          tar zcvf openmortal-${VERSION}_windows_${{ env.PLATFORM }}.tar.gz -C /temp/distribution/windows-x86-64_package .
+          if [ "${{ matrix.PLATFORM }}" = "x86-64" ]; then
+            PREFIX=/mingw64
+          else
+            PREFIX=/mingw32
+          fi
+          mkdir -p ${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_package/${PREFIX}/bin
+          mkdir -p ${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_package/${PREFIX}/share/openmortal
+          cp -a ${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_build/${PREFIX}/share ${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_package/${PREFIX}/
+          install -m755 ${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_build/${PREFIX}/bin/openmortal.exe ${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_package/${PREFIX}/bin/openmortal.exe
+          ntldd -R ${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_build/${PREFIX}/bin/openmortal.exe | grep -v -i "system32" | grep -i -v "winsxs" | grep -v -i "not found" | awk '{print $3}' | xargs -d '\n' -I{} cp -- "{}" ${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_package/${PREFIX}/bin/
+          tar zcvf openmortal-${{ env.VERSION }}_windows_${{ matrix.PLATFORM }}.tar.gz -C ${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_package .
 
-      - name: Upload Windows binary gzip archives for x86-64
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          name: openmortal-${{ env.VERSION }}_windows_${{ matrix.PLATFORM }}
+          path: openmortal-${{ env.VERSION }}_windows_${{ matrix.PLATFORM }}.tar.gz
+
           name: openmortal-${{ env.VERSION }}_windows_${{ env.PLATFORM }}
           path: ./*.tar.gz
