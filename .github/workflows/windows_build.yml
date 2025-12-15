@@ -92,6 +92,3 @@ jobs:
         with:
           name: openmortal-${{ env.VERSION }}_windows_${{ matrix.PLATFORM }}
           path: openmortal-${{ env.VERSION }}_windows_${{ matrix.PLATFORM }}.tar.gz
-
-          name: openmortal-${{ env.VERSION }}_windows_${{ env.PLATFORM }}
-          path: ./*.tar.gz
