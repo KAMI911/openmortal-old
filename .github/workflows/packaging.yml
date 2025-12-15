@@ -100,7 +100,7 @@ jobs:
           name: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz
           path: ./openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz
 
-  linux-x86-64_build-debian-local:
+  linux-x86-64_build-debian:
     runs-on: ubuntu-latest
     container:
       image: ubuntu:24.04
@@ -125,6 +125,8 @@ jobs:
 
       - name: Build from source
         run: |
+          pwd
+          export
           dpkg-buildpackage -us -uc
 
       - name: Upload Linux debian binary packages
