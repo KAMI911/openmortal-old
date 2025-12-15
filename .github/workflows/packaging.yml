@@ -99,7 +99,46 @@ jobs:
         with:
           name: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz
           path: ./openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz
-  
+
+  linux-x86-64_build-debian-local:
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:24.04
+    env:
+      OSNAME: linux-ubuntu-noble
+      PLATFORM: x86-64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Define paths
+        run: |
+          echo "PLATFORM_BUILD_PATH=${DIST_FOLDER}/linux-${PLATFORM}_build" >> $GITHUB_ENV
+          echo "PLATFORM_PACKAGE_PATH=${DIST_FOLDER}/linux-${PLATFORM}_package" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: |
+          apt update && apt upgrade -y &&
+          apt-get install -y wget
+          apt install -y build-essential autoconf automake libtool pkg-config dh-autoreconf debhelper devscripts fakeroot build-essential &&
+          apt install -y libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
+
+      - name: Build from source
+        run: |
+          dpkg-buildpackage -us -uc
+
+      - name: Upload Linux debian binary packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal_debian_package
+          path: ./openmortal_*.deb
+
+      - name: Upload Linux debian data packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal_debian_package
+          path: ./openmortal-data*.deb
+
   linux-x86-64_build-local:
     runs-on: ubuntu-latest
     container:
