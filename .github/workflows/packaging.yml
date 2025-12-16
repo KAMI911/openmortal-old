@@ -133,14 +133,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: openmortal_debian_package
-          path: {{ env.RUNNER_WORKSPACE }}/openmortal_*.deb
-          
+          path: ${{ env.RUNNER_WORKSPACE }}/openmortal_*.deb
 
       - name: Upload Linux debian data packages
         uses: actions/upload-artifact@v4
         with:
-          name: openmortal_debian_package
-          path: {{ env.RUNNER_WORKSPACE }}/openmortal-data*.deb
+          name: openmortal_debian_data_package
+          path: ${{ env.RUNNER_WORKSPACE }}/openmortal-data*.deb
 
   linux-x86-64_build-local:
     runs-on: ubuntu-latest
