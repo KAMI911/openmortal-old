@@ -129,7 +129,7 @@ jobs:
           export
           dpkg-buildpackage -us -uc
           mkdir -p $GITHUB_WORKSPACE/build
-          cp -r ../*.deb $GITHUB_WORKSPACE/build/
+          cp -rv ../*.deb $GITHUB_WORKSPACE/build/
 
       - name: Upload Linux debian binary packages
         uses: actions/upload-artifact@v4
