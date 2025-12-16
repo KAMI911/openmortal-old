@@ -128,18 +128,14 @@ jobs:
           pwd
           export
           dpkg-buildpackage -us -uc
+          mkdir -p $GITHUB_WORKSPACE/build
+          cp -r ../*.deb $GITHUB_WORKSPACE/build/
 
       - name: Upload Linux debian binary packages
         uses: actions/upload-artifact@v4
         with:
           name: openmortal_debian_package
-          path: ${{ env.RUNNER_WORKSPACE }}/openmortal_*.deb
-
-      - name: Upload Linux debian data packages
-        uses: actions/upload-artifact@v4
-        with:
-          name: openmortal_debian_data_package
-          path: ${{ env.RUNNER_WORKSPACE }}/openmortal-data*.deb
+          path: build/openmortal{,-data}_*.deb
 
   linux-x86-64_build-local:
     runs-on: ubuntu-latest
