@@ -50,7 +50,7 @@ jobs:
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             PROJECT="home:${{ secrets.OBS_USER }}:openmortal"      # stable
           else
-            PROJECT="home:${{ secrets.OBS_USER }}:openmortal:testing" # testing
+            PROJECT="home:${{ secrets.OBS_USER }}:openmortal"
           fi
           osc checkout $PROJECT openmortal
 
