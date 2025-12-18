@@ -1,0 +1,64 @@
+name: OpenMortal CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  push:
+    tags:
+      - 'v*.*'
+  workflow_dispatch:
+
+jobs:
+  # Linux build és OBS deploy
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install osc
+        run: sudo apt update && sudo apt install -y osc gzip make gcc
+
+      - name: Configure osc
+        run: |
+          mkdir -p ~/.config/osc
+          cat > ~/.config/osc/oscrc <<EOF
+          [general]
+          apiurl = https://api.opensuse.org
+          [https://api.opensuse.org]
+          user = ${{ secrets.OBS_USER }}
+          pass = ${{ secrets.OBS_PASS }}
+          EOF
+
+      - name: Set version
+        run: |
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF##refs/tags/}
+          else
+            VERSION=$(git describe --tags --dirty --always || echo "1.0")
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Create source tarball
+        run: |
+          mkdir -p dist
+          git archive --prefix=openmortal-${VERSION}/ HEAD | gzip > dist/openmortal-${VERSION}.tar.gz
+
+      - name: Checkout OBS project
+        run: |
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            PROJECT="home:${{ secrets.OBS_USER }}:openmortal"      # stable
+          else
+            PROJECT="home:${{ secrets.OBS_USER }}:openmortal:testing" # testing
+          fi
+          osc checkout $PROJECT openmortal
+
+      - name: Upload tarball and commit
+        run: |
+          cp dist/openmortal-${VERSION}.tar.gz $PROJECT/openmortal/
+          cd $PROJECT/openmortal
+          sed -i "s/^Version:.*/Version:        ${VERSION}/" openmortal.spec
+          osc addremove
+          osc commit -m "CI build ${VERSION}"
