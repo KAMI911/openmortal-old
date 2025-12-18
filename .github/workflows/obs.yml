@@ -48,9 +48,9 @@ jobs:
       - name: Checkout OBS project
         run: |
           if [[ $GITHUB_REF == refs/tags/* ]]; then
-            PROJECT="home:${{ secrets.OBS_USER }}:openmortal"      # stable
+            PROJECT="home:kami:openmortal"      # stable
           else
-            PROJECT="home:${{ secrets.OBS_USER }}:openmortal"
+            PROJECT="home:kami:openmortal"
           fi
           osc checkout $PROJECT openmortal
 
