@@ -37,9 +37,12 @@ jobs:
            persist-credentials: false
 
        - name: Define paths
+         shell: msys2 {0}
+         env:
+           DIST_FOLDER: $TEMP/distribution
          run: |
-           echo "PLATFORM_BUILD_PATH=${DIST_FOLDER}/windows-${{ matrix.env }}_build" >> $GITHUB_ENV
-           echo "PLATFORM_PACKAGE_PATH=${DIST_FOLDER}/windows-${{ matrix.env }}_package" >> $GITHUB_ENV
+           echo "PLATFORM_BUILD_PATH=${DIST_FOLDER}/windows-${{ matrix.env }}_build" >> "$GITHUB_ENV"
+           echo "PLATFORM_PACKAGE_PATH=${DIST_FOLDER}/windows-${{ matrix.env }}_package" >> "$GITHUB_ENV"
 
        - name: '${{ matrix.icon }} Setup MSYS2'
          uses: msys2/setup-msys2@v2
