@@ -24,12 +24,12 @@ jobs:
           - { icon: '🟨', sys: ucrt64,     env: ucrt-x86_64,   runs-on: 'windows-latest' }
           - { icon: '🟧', sys: clang64,    env: clang-x86_64,  runs-on: 'windows-latest' }
           - { icon: '🟩', sys: clangarm64, env: clang-aarch64, runs-on: 'windows-11-arm' }
-      name: 🚧${{ matrix.icon }} ${{ matrix.sys }}
-      defaults:
-        run:
+    name: 🚧${{ matrix.icon }} ${{ matrix.sys }}
+    defaults:
+      run:
         shell: msys2 {0}
 
-      steps:
+    steps:
        - name: '🧰 Checkout'
          uses: actions/checkout@v4
          with:
