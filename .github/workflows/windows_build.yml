@@ -88,6 +88,8 @@ jobs:
          run: |
             mkdir -p ${DIST_FOLDER}/windows-${{ matrix.env }}_package/${PREFIX}/bin
             mkdir -p ${DIST_FOLDER}/windows-${{ matrix.env }}_package/${PREFIX}/share/openmortal
+            export
+            ls -la ${DIST_FOLDER} 
             cp -a ${DIST_FOLDER}/windows-${{ matrix.env }}_build/${PREFIX}/share ${DIST_FOLDER}/windows-${{ matrix.env }}_package/${PREFIX}/
             install -m755 ${DIST_FOLDER}/windows-${{ matrix.env }}_build/${PREFIX}/bin/openmortal.exe ${DIST_FOLDER}/windows-${{ matrix.env }}_package/${PREFIX}/bin/openmortal.exe
             ntldd -R ${DIST_FOLDER}/windows-${{ matrix.env }}_build/${PREFIX}/bin/openmortal.exe | grep -v -i "system32" | grep -i -v "winsxs" | grep -v -i "not found" | awk '{print $3}' | xargs -d '\n' -I{} cp -- "{}" ${DIST_FOLDER}/windows-${{ matrix.env }}_package/${PREFIX}/bin/
