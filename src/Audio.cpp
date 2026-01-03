@@ -104,9 +104,8 @@ void MszAudio::LoadSampleMap()
 	
 	std::string sLine;
 	
-	while ( !oInput.eof() )
+	while ( std::getline( oInput, sLine ) )
 	{
-		std::getline( oInput, sLine );
 		if ( sLine.size() == 0 ) continue;
 		
 		size_t iFirstChar = sLine.find_first_not_of( " \t\r\n" );

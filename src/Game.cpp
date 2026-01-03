@@ -1167,7 +1167,7 @@ void Game::DoReplay( const char* a_pcReplayFile )
 	iThisTick = SDL_GetTicks() / iGameSpeed;
 	iLastTick = iThisTick - 1;
 	
-	while ( !oInput.eof() )
+	while ( std::getline( oInput, sLine ) )
 	{
 		// 1. Wait for the next tick (on extremely fast machines..)
 		while (iThisTick == iLastTick)
