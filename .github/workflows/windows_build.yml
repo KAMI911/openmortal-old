@@ -9,8 +9,6 @@ on:
 
 env:
   VERSION: 0.7.2
-  DIST_FOLDER: ${{ env.TEMP }}/distribution
-
 
 jobs:
   build:
@@ -64,6 +62,7 @@ jobs:
          env:
            DIST_FOLDER: $TEMP/distribution
          run: |
+           echo "DIST_FOLDER=$TEMP/distribution" >> $GITHUB_ENV
            echo "PLATFORM_BUILD_PATH=${DIST_FOLDER}/windows-${{ matrix.env }}_build" >> "$GITHUB_ENV"
            echo "PLATFORM_PACKAGE_PATH=${DIST_FOLDER}/windows-${{ matrix.env }}_package" >> "$GITHUB_ENV"
 
