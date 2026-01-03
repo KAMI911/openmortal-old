@@ -29,20 +29,20 @@ jobs:
       run:
         shell: msys2 {0}
 
+- name: Setup MSYS2
+  uses: msys2/setup-msys2@v2
+  with:
+    msystem: MINGW64
+    update: true
+    install: >
+      base-devel
+
     steps:
        - name: '🧰 Checkout'
          uses: actions/checkout@v4
          with:
            fetch-depth: 0
            persist-credentials: false
-
-       - name: Define paths
-         shell: msys2 {0}
-         env:
-           DIST_FOLDER: $TEMP/distribution
-         run: |
-           echo "PLATFORM_BUILD_PATH=${DIST_FOLDER}/windows-${{ matrix.env }}_build" >> "$GITHUB_ENV"
-           echo "PLATFORM_PACKAGE_PATH=${DIST_FOLDER}/windows-${{ matrix.env }}_package" >> "$GITHUB_ENV"
 
        - name: '${{ matrix.icon }} Setup MSYS2'
          uses: msys2/setup-msys2@v2
@@ -66,6 +66,14 @@ jobs:
              mingw-w64-${{ matrix.env }}-SDL_net
              mingw-w64-${{ matrix.env }}-freetype
              mingw-w64-${{ matrix.env }}-ntldd
+
+       - name: Define paths
+         shell: msys2 {0}
+         env:
+           DIST_FOLDER: $TEMP/distribution
+         run: |
+           echo "PLATFORM_BUILD_PATH=${DIST_FOLDER}/windows-${{ matrix.env }}_build" >> "$GITHUB_ENV"
+           echo "PLATFORM_PACKAGE_PATH=${DIST_FOLDER}/windows-${{ matrix.env }}_package" >> "$GITHUB_ENV"
 
        - name: Configure project
          shell: msys2 {0}
