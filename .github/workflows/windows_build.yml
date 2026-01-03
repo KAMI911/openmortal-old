@@ -69,8 +69,9 @@ jobs:
 
        - name: Configure project
          shell: msys2 {0}
+         env:
+           PREFIX: /${{ matrix.sys }}
          run: |
-           PREFIX=/${{ matrix.sys }}
            CFLAGS="-I$TEMP/msys64/${PREFIX}/include/freetype2 -I$TEMP/msys64/${PREFIX}/include/harfbuzz -I$TEMP/msys64/${PREFIX}/include/glib-2.0 -I$TEMP/msys64/${PREFIX}/lib/glib-2.0/include -I$TEMP/msys64/${PREFIX}/include/SDL -I$TEMP/msys64/${PREFIX}/include/SDL_image -I$TEMP/msys64/${PREFIX}/include/SDL_mixer -I$TEMP/msys64/${PREFIX}/include/SDL_net -I$TEMP/msys64/${PREFIX}/include/libpng16"
            LDFLAGS="-L$TEMP/msys64/${PREFIX}/lib -lfreetype -lSDL -lSDL_image -lSDL_mixer -lSDL_net -lharfbuzz -lpng16 -lglib-2.0"
            autoreconf -i -f
@@ -82,6 +83,8 @@ jobs:
 
        - name: Install and package
          shell: msys2 {0}
+         env:
+           PREFIX: /${{ matrix.sys }}
          run: |
             mkdir -p ${DIST_FOLDER}/windows-${{ matrix.env }}_package/${PREFIX}/bin
             mkdir -p ${DIST_FOLDER}/windows-${{ matrix.env }}_package/${PREFIX}/share/openmortal
