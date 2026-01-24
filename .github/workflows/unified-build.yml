@@ -92,15 +92,21 @@ jobs:
           
           echo "Built packages:"
           ls -lh artifacts/
+
+      - name: Prepare artifact name
+        id: artifact
+        run: |
+          # Replace : with - for valid artifact name
+          ARTIFACT_NAME=$(echo "debs-${{ matrix.distro }}" | tr ':' '-')
+          echo "name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
       
       - name: Upload DEBs
         uses: actions/upload-artifact@v4
         with:
-          name: debs-${{ matrix.distro }}
+          name: ${{ steps.artifact.outputs.name }}
           path: artifacts/*.deb
           if-no-files-found: error
           retention-days: 30
-
   # ============================================================================
   # RPM alapú build-ek (Fedora, AlmaLinux, Rocky Linux)
   # ============================================================================
@@ -208,14 +214,22 @@ jobs:
           
           echo "Built packages:"
           ls -lh artifacts/
+
+      - name: Prepare artifact name
+        id: artifact
+        run: |
+          # Replace : with - for valid artifact name
+          ARTIFACT_NAME=$(echo "rpms-${{ matrix.distro }}" | tr ':' '-')
+          echo "name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
       
       - name: Upload RPMs
         uses: actions/upload-artifact@v4
         with:
-          name: rpms-${{ matrix.distro }}
+          name: ${{ steps.artifact.outputs.name }}
           path: artifacts/*.rpm
           if-no-files-found: error
           retention-days: 30
+      
 
   # ============================================================================
   # AppImage és tarballs
