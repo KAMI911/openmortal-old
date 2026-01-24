@@ -66,17 +66,16 @@ jobs:
              mingw-w64-${{ matrix.env }}-perl \
              mingw-w64-${{ matrix.env }}-SDL_mixer
 
-       - name: Build Perl from source (32-bit)
+       - name: Install Perl for 32-bit build
          if: matrix.build_deps == true
          shell: msys2 {0}
          run: |
-           cd /tmp
-           wget https://www.cpan.org/src/5.0/perl-${{ env.PERL_VERSION }}.tar.gz
-           tar xzf perl-${{ env.PERL_VERSION }}.tar.gz
-           cd perl-${{ env.PERL_VERSION }}
-           ./Configure -des -Dprefix=/${{ matrix.sys }} -Dusethreads
-           make -j$(nproc)
-           make install
+           # Use MSYS2 core Perl (architecture independent)
+           pacman --noconfirm -S perl
+           
+           # Verify Perl installation
+           perl --version
+           which perl
 
        - name: Build ICU from source (32-bit)
          if: matrix.build_deps == true
