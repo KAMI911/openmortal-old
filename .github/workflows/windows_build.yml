@@ -46,6 +46,7 @@ jobs:
              automake
              autoconf
              libtool
+             unzip
              mingw-w64-${{ matrix.env }}-toolchain
              mingw-w64-${{ matrix.env }}-make
              mingw-w64-${{ matrix.env }}-pkg-config
