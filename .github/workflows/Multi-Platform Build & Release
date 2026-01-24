@@ -1,0 +1,293 @@
+name: Multi-Platform Build & Release
+
+on:
+  push:
+    branches: [ upgrade, main, master ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ upgrade, main, master ]
+  workflow_dispatch:
+
+env:
+  SDL_VERSION: "1.2.15"
+  SDL_MIXER_VERSION: "1.2.12"
+  SDL_IMAGE_VERSION: "1.2.12"
+
+jobs:
+  # Linux Build (Ubuntu)
+  build-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [x86_64]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          autoconf automake libtool \
+          libsdl1.2-dev \
+          libsdl-mixer1.2-dev \
+          libsdl-image1.2-dev \
+          libsdl-net1.2-dev \
+          libfreetype6-dev \
+          perl
+    
+    - name: Configure
+      run: |
+        ./configure --prefix=/usr
+    
+    - name: Build
+      run: make -j$(nproc)
+    
+    - name: Create AppImage
+      run: |
+        make install DESTDIR=$PWD/AppDir
+        
+        # Download linuxdeploy
+        wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+        chmod +x linuxdeploy-x86_64.AppImage
+        
+        # Create AppImage
+        ./linuxdeploy-x86_64.AppImage \
+          --appdir AppDir \
+          --output appimage \
+          --desktop-file=packaging/openmortal.desktop \
+          --icon-file=data/gfx/icon.png
+        
+        # Rename for clarity
+        mv OpenMortal*.AppImage OpenMortal-${{ matrix.arch }}.AppImage
+    
+    - name: Create DEB package
+      run: |
+        # Build debian package
+        dpkg-buildpackage -us -uc -b
+        mv ../openmortal_*.deb OpenMortal-amd64.deb
+    
+    - name: Create tarball
+      run: |
+        make dist
+        mv openmortal-*.tar.gz OpenMortal-linux-${{ matrix.arch }}.tar.gz
+    
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: linux-${{ matrix.arch }}
+        path: |
+          OpenMortal*.AppImage
+          OpenMortal*.deb
+          OpenMortal*.tar.gz
+
+  # Windows Build (32-bit and 64-bit)
+  build-windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        arch: 
+          - { name: x64, msys: MINGW64, bits: 64 }
+          - { name: x86, msys: MINGW32, bits: 32 }
+    
+    defaults:
+      run:
+        shell: msys2 {0}
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup MSYS2
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: ${{ matrix.arch.msys }}
+        update: true
+        install: >-
+          base-devel
+          autoconf
+          automake
+          libtool
+          make
+          mingw-w64-${{ matrix.arch.name }}-toolchain
+          mingw-w64-${{ matrix.arch.name }}-SDL
+          mingw-w64-${{ matrix.arch.name }}-SDL_mixer
+          mingw-w64-${{ matrix.arch.name }}-SDL_image
+          mingw-w64-${{ matrix.arch.name }}-SDL_net
+          mingw-w64-${{ matrix.arch.name }}-freetype
+          mingw-w64-${{ matrix.arch.name }}-nsis
+          perl
+    
+    - name: Configure
+      run: |
+        ./configure \
+          --prefix=/mingw${{ matrix.arch.bits }} \
+          --build=${{ matrix.arch.name }}-w64-mingw32 \
+          CFLAGS="-O2 -march=i686" \
+          CXXFLAGS="-O2 -march=i686"
+    
+    - name: Build
+      run: |
+        make -j$(nproc)
+    
+    - name: Create Distribution Directory
+      run: |
+        mkdir -p dist/OpenMortal
+        cp src/openmortal.exe dist/OpenMortal/
+        
+        # Copy DLLs
+        ldd src/openmortal.exe | grep mingw | awk '{print $3}' | xargs -I{} cp {} dist/OpenMortal/
+        
+        # Copy data files
+        cp -r data dist/OpenMortal/
+        cp README COPYING AUTHORS dist/OpenMortal/
+    
+    - name: Create ZIP Archive
+      run: |
+        cd dist
+        7z a ../OpenMortal-win${{ matrix.arch.bits }}.zip OpenMortal
+    
+    - name: Create NSIS Installer
+      if: matrix.arch.bits == 64
+      run: |
+        # Create NSIS script
+        cat > installer.nsi << 'EOF'
+        !define PRODUCT_NAME "OpenMortal"
+        !define PRODUCT_VERSION "0.7"
+        !define PRODUCT_PUBLISHER "OpenMortal Team"
+        !define PRODUCT_WEB_SITE "https://github.com/KAMI911/openmortal-old"
+        
+        SetCompressor lzma
+        
+        Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
+        OutFile "OpenMortal-win${{ matrix.arch.bits }}-setup.exe"
+        InstallDir "$PROGRAMFILES64\OpenMortal"
+        
+        Page directory
+        Page instfiles
+        
+        Section "MainSection" SEC01
+          SetOutPath "$INSTDIR"
+          File /r "dist\OpenMortal\*.*"
+          CreateShortcut "$DESKTOP\OpenMortal.lnk" "$INSTDIR\openmortal.exe"
+          CreateDirectory "$SMPROGRAMS\OpenMortal"
+          CreateShortcut "$SMPROGRAMS\OpenMortal\OpenMortal.lnk" "$INSTDIR\openmortal.exe"
+        SectionEnd
+        EOF
+        
+        makensis installer.nsi
+    
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-${{ matrix.arch.name }}
+        path: |
+          OpenMortal-win${{ matrix.arch.bits }}.zip
+          OpenMortal-win${{ matrix.arch.bits }}-setup.exe
+
+  # macOS Build
+  build-macos:
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install Dependencies
+      run: |
+        brew install \
+          autoconf automake libtool \
+          sdl \
+          sdl_mixer \
+          sdl_image \
+          sdl_net \
+          freetype \
+          create-dmg
+    
+    - name: Configure
+      run: |
+        ./configure --prefix=/usr/local
+    
+    - name: Build
+      run: |
+        make -j$(sysctl -n hw.ncpu)
+    
+    - name: Create App Bundle
+      run: |
+        mkdir -p OpenMortal.app/Contents/{MacOS,Resources}
+        
+        # Copy executable
+        cp src/openmortal OpenMortal.app/Contents/MacOS/
+        
+        # Copy data
+        cp -r data OpenMortal.app/Contents/Resources/
+        
+        # Create Info.plist
+        cat > OpenMortal.app/Contents/Info.plist << EOF
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+          <key>CFBundleExecutable</key>
+          <string>openmortal</string>
+          <key>CFBundleIdentifier</key>
+          <string>org.openmortal.openmortal</string>
+          <key>CFBundleName</key>
+          <string>OpenMortal</string>
+          <key>CFBundleVersion</key>
+          <string>0.7</string>
+          <key>CFBundleShortVersionString</key>
+          <string>0.7</string>
+        </dict>
+        </plist>
+        EOF
+        
+        # Fix library paths
+        dylibbundler -od -b -x OpenMortal.app/Contents/MacOS/openmortal \
+          -d OpenMortal.app/Contents/Frameworks/ \
+          -p @executable_path/../Frameworks/
+    
+    - name: Create DMG
+      run: |
+        create-dmg \
+          --volname "OpenMortal" \
+          --window-pos 200 120 \
+          --window-size 600 400 \
+          --icon-size 100 \
+          --icon "OpenMortal.app" 175 120 \
+          --hide-extension "OpenMortal.app" \
+          --app-drop-link 425 120 \
+          "OpenMortal-macOS.dmg" \
+          "OpenMortal.app"
+    
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: macos
+        path: OpenMortal-macOS.dmg
+
+  # Create GitHub Release
+  release:
+    needs: [build-linux, build-windows, build-macos]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+    - name: Download All Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+    
+    - name: Display structure
+      run: ls -R artifacts
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          artifacts/**/*
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
