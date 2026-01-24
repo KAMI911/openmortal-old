@@ -109,8 +109,7 @@ jobs:
            mkdir -p /${{ matrix.sys }}/lib /${{ matrix.sys }}/include
            cp -r /tmp/icu-prebuilt/bin/*.dll /${{ matrix.sys }}/bin/ || true
            cp -r /tmp/icu-prebuilt/lib/*.lib /${{ matrix.sys }}/lib/ || true
-           cp -r /tmp/icu-prebuilt/include/* /${{ matrix.sys }}/include/ || truered \
-             --disable-renaming
+           cp -r /tmp/icu-prebuilt/include/* /${{ matrix.sys }}/include/ || true
            
            make -j$(nproc) || make
            make install
