@@ -21,7 +21,7 @@
 #include <fstream>
 #ifdef MACOSX
 //[segabor]
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
 #include <windows.h>
 #endif
 #include <CoreFoundation/CoreFoundation.h>
@@ -47,7 +47,7 @@ std::string GetConfigHeader()
 
 std::string GetConfigFilename()
 {
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
 	if ( NULL != g_oState.m_pcArgv0 )
 	{
 		return std::string(g_oState.m_pcArgv0) + ".ini";
@@ -84,7 +84,7 @@ SState::SState()
 	m_iHitPoints = 100;
 	m_iGameSpeed = 12;
 
-	#ifdef _WIN32
+	#if defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
 		#ifdef _DEBUG
 			m_bFullscreen = false;
 		#else
@@ -133,7 +133,7 @@ SState::SState()
 	// NOW MOVE ON TO THE TRICKIER ONES.
 
 	// 2.1. FIND THE LANGUAGE
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
 	LANGID iLangID = GetUserDefaultLangID() & 0x007f;
 	const char* pcLang;
 	switch ( iLangID )
@@ -186,7 +186,7 @@ SState::SState()
 #endif
 
 	// 2.2. FIND THE USER NAME
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
 	m_acNick[0] = 0;
 	DWORD iLen = 127;
 	BOOL iResult = GetUserName( m_acNick, &iLen );

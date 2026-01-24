@@ -150,8 +150,7 @@ protected:
 #include "MortalNetwork.h"
 
 
-#ifdef _WIN32
-
+#if defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
 #undef DATADIR                // GRRR.. windows keyword...
 #include <windows.h>
 #define DATADIR "../data"
@@ -181,7 +180,7 @@ SDL_Color Colors[] =
 
 void Complain( const char* a_pcError )
 {
-#ifdef _WIN32
+#if defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
 	::MessageBoxA( 0, a_pcError, "OpenMortal", MB_ICONEXCLAMATION );
 #else
 	fprintf( stderr, "%s", a_pcError );
