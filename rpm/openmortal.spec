@@ -11,15 +11,14 @@ BuildRequires:  gcc-c++
 BuildRequires:  make
 BuildRequires:  automake
 BuildRequires:  autoconf
-BuildRequires:  SDL-devel >= 1.2.0
+BuildRequires:  sdl12-compat-devel >= 1.2.0
 BuildRequires:  SDL_image-devel
 BuildRequires:  SDL_mixer-devel
 BuildRequires:  SDL_net-devel
 BuildRequires:  SDL_ttf-devel
 BuildRequires:  perl-interpreter
-BuildRequires:  desktop-file-utils
 
-Requires:       SDL >= 1.2.0
+Requires:       sdl12-compat >= 1.2.0
 Requires:       SDL_image
 Requires:       SDL_mixer
 Requires:       SDL_net
@@ -74,10 +73,10 @@ EOF
 if [ -f data/gfx/icon.png ]; then
     mkdir -p %{buildroot}%{_datadir}/pixmaps
     install -m 644 data/gfx/icon.png %{buildroot}%{_datadir}/pixmaps/%{name}.png
+elif [ -f data/gfx/openmortal.png ]; then
+    mkdir -p %{buildroot}%{_datadir}/pixmaps
+    install -m 644 data/gfx/openmortal.png %{buildroot}%{_datadir}/pixmaps/%{name}.png
 fi
-
-# Validate desktop file
-desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop || :
 
 %files
 %license COPYING
@@ -85,14 +84,17 @@ desktop-file-validate %{buildroot}%{_datadir}/applications/%{name}.desktop || :
 %{_bindir}/%{name}
 %{_datadir}/%{name}/
 %{_datadir}/applications/%{name}.desktop
+%if 0%{?fedora} || 0%{?rhel} >= 8
 %{_datadir}/pixmaps/%{name}.png
+%endif
 
 %changelog
 * Sun Jan 25 2026 Package Builder <builder@localhost> - 0.7.1-1
 - Initial RPM package for OpenMortal 0.7.1
 - Based on upgrade branch from GitHub
 - Added desktop integration
-- Configured SDL dependencies
+- Updated for Fedora 41 with sdl12-compat
+- Configured SDL dependencies for modern Fedora
 
 * Thu Jun 15 2006 Original Developer - 0.7.1-0
 - Added additional backgrounds from KAMI
