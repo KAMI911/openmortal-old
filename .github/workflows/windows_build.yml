@@ -83,37 +83,22 @@ jobs:
          run: |
            cd /tmp
            
-           # Try downloading pre-built ICU binaries first
-           wget https://github.com/unicode-org/icu/releases/download/release-73-2/icu4c-73_2-Win32-MSVC2019.zip || {
-             echo "Pre-built binary not available, building from source..."
-             
-             wget https://github.com/unicode-org/icu/releases/download/release-73-2/icu4c-73_2-src.tgz
-             tar xzf icu4c-73_2-src.tgz
-             cd icu/source
-             
-             # Workaround for GCC 15.x __float128 bug
-             export CXXFLAGS="-O2 -std=c++11 -D__NO_INLINE__ -fno-ext-numeric-literals"
-             export CFLAGS="-O2 -D__NO_INLINE__"
-             
-             ./configure --prefix=/${{ matrix.sys }} --host=i686-w64-mingw32 \
-               --disable-samples --disable-tests --enable-static --disable-shared \
-               --disable-renaming
-             
-             make -j$(nproc) || make
-             make install
-             exit 0
-           }
+           # Download ICU source and build it
+           wget https://github.com/unicode-org/icu/releases/download/release-73-2/icu4c-73_2-src.tgz
+           tar xzf icu4c-73_2-src.tgz
+           cd icu/source
            
-           # Install pre-built binaries if download succeeded
-           unzip -q icu4c-73_2-Win32-MSVC2019.zip -d /tmp/icu-prebuilt
-           mkdir -p /${{ matrix.sys }}/lib /${{ matrix.sys }}/include
-           cp -r /tmp/icu-prebuilt/bin/*.dll /${{ matrix.sys }}/bin/ || true
-           cp -r /tmp/icu-prebuilt/lib/*.lib /${{ matrix.sys }}/lib/ || true
-           cp -r /tmp/icu-prebuilt/include/* /${{ matrix.sys }}/include/ || true
+           # Workaround for GCC 15.x __float128 bug
+           export CXXFLAGS="-O2 -std=c++11 -D__NO_INLINE__ -fno-ext-numeric-literals"
+           export CFLAGS="-O2 -D__NO_INLINE__"
+           
+           ./configure --prefix=/mingw32 --host=i686-w64-mingw32 \
+             --disable-samples --disable-tests --enable-static --disable-shared \
+             --disable-renaming
            
            make -j$(nproc) || make
            make install
-
+        
        - name: Build SDL_mixer from source (32-bit)
          if: matrix.build_deps == true
          shell: msys2 {0}
