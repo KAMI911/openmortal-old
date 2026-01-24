@@ -1,85 +1,216 @@
 name: OpenMortal multi-platform build & release
 
-
 on:
-push:
-tags:
-- 'v*.*.*'
-workflow_dispatch:
-
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
 
 env:
-PACKAGE_NAME: openmortal
-PACKAGE_VERSION: ${{ github.ref_name }}
-
+  PACKAGE_NAME: openmortal
+  PACKAGE_VERSION: ${{ github.ref_name }}
 
 jobs:
-build-debs:
-runs-on: ubuntu-latest
-strategy:
-matrix:
-distro:
-- debian:11
-- debian:12
-- debian:13
-- ubuntu:20.04
-- ubuntu:22.04
-- ubuntu:24.04
-- ubuntu:25.04
-- ubuntu:25.10
-steps:
-- uses: actions/checkout@v4
+  build-debs:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - debian:11
+          - debian:12
+          - debian:13
+          - ubuntu:20.04
+          - ubuntu:22.04
+          - ubuntu:24.04
+          - ubuntu:25.04
+          - ubuntu:25.10
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up build environment
+        run: |
+          mkdir -p artifacts
+          chmod 777 artifacts
+      
+      - name: Build DEB package
+        run: |
+          docker run --rm \
+            -v "$PWD":/workspace \
+            -e DEBIAN_FRONTEND=noninteractive \
+            ${{ matrix.distro }} \
+            /bin/bash -c '
+              set -euo pipefail
+              
+              # Install build dependencies
+              apt-get update
+              apt-get install -y \
+                build-essential \
+                autoconf \
+                automake \
+                libtool \
+                pkg-config \
+                dh-autoreconf \
+                debhelper \
+                devscripts \
+                fakeroot \
+                libperl-dev \
+                libsdl1.2-dev \
+                libsdl-image1.2-dev \
+                libsdl-mixer1.2-dev \
+                libsdl-net1.2-dev \
+                libfreetype6-dev
+              
+              # Copy source to build directory
+              cp -r /workspace /build
+              cd /build
+              
+              # Build package
+              dpkg-buildpackage -us -uc -b
+              
+              # Copy artifacts back
+              find /build/.. -maxdepth 1 -name "*.deb" -exec cp {} /workspace/artifacts/ \;
+            '
+      
+      - name: Verify build output
+        run: |
+          if [ ! "$(ls -A artifacts/*.deb 2>/dev/null)" ]; then
+            echo "ERROR: No DEB packages were built!"
+            exit 1
+          fi
+          
+          echo "Built packages:"
+          ls -lh artifacts/
+      
+      - name: Upload DEBs
+        uses: actions/upload-artifact@v4
+        with:
+          name: debs-${{ matrix.distro }}
+          path: artifacts/*.deb
+          if-no-files-found: error
+          retention-days: 30
 
+  build-rpms:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - distro: fedora:38
+            pkg_manager: dnf
+          - distro: fedora:39
+            pkg_manager: dnf
+          - distro: fedora:40
+            pkg_manager: dnf
+          - distro: almalinux:9
+            pkg_manager: dnf
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up build environment
+        run: |
+          mkdir -p artifacts
+          chmod 777 artifacts
+      
+      - name: Build RPM package
+        run: |
+          docker run --rm \
+            -v "$PWD":/workspace \
+            ${{ matrix.distro }} \
+            /bin/bash -c '
+              set -euo pipefail
+              
+              # Install build dependencies
+              ${{ matrix.pkg_manager }} install -y \
+                rpm-build \
+                gcc \
+                make \
+                autoconf \
+                automake \
+                libtool \
+                pkgconfig \
+                perl-devel \
+                SDL-devel \
+                SDL_image-devel \
+                SDL_mixer-devel \
+                SDL_net-devel \
+                freetype-devel \
+                tar \
+                gzip
+              
+              # Copy source to build directory
+              cp -r /workspace /build
+              cd /build
+              
+              # Create RPM build structure
+              mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+              
+              # Create source tarball
+              tar czf rpmbuild/SOURCES/openmortal-1.0.tar.gz \
+                --exclude=.git \
+                --exclude=rpmbuild \
+                --exclude=artifacts \
+                .
+              
+              # Copy spec file
+              if [ ! -f rpm/openmortal.spec ]; then
+                echo "ERROR: rpm/openmortal.spec not found!"
+                exit 1
+              fi
+              cp rpm/openmortal.spec rpmbuild/SPECS/
+              
+              # Build RPM
+              rpmbuild -ba \
+                --define "_topdir $(pwd)/rpmbuild" \
+                rpmbuild/SPECS/openmortal.spec
+              
+              # Copy artifacts back
+              find rpmbuild -name "*.rpm" -exec cp {} /workspace/artifacts/ \;
+            '
+      
+      - name: Verify build output
+        run: |
+          if [ ! "$(ls -A artifacts/*.rpm 2>/dev/null)" ]; then
+            echo "ERROR: No RPM packages were built!"
+            exit 1
+          fi
+          
+          echo "Built packages:"
+          ls -lh artifacts/
+      
+      - name: Upload RPMs
+        uses: actions/upload-artifact@v4
+        with:
+          name: rpms-${{ matrix.distro }}
+          path: artifacts/*.rpm
+          if-no-files-found: error
+          retention-days: 30
 
-- name: Build in container
-run: |
-docker run --rm -v "${{ github.workspace }}":/src -w /src --user $(id -u):$(id -g) ${{ matrix.distro }} /bin/bash -lc '
-set -e
-apt-get update
-apt-get install -y build-essential autoconf automake libtool pkg-config dh-autoreconf debhelper devscripts fakeroot build-essential libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
-cd /src
-dpkg-buildpackage -us -uc -b || true
-mkdir -p /src/artifacts
-mv /src/*.deb /src/artifacts/ 2>/dev/null || true
-'
-
-
-- name: Upload DEBs
-uses: actions/upload-artifact@v4
-with:
-name: debs-${{ matrix.distro }}
-path: artifacts/
-
-
-build-rpms:
-runs-on: ubuntu-latest
-strategy:
-matrix:
-distro:
-- fedora:38
-- fedora:39
-- fedora:40
-- almalinux:9
-steps:
-- uses: actions/checkout@v4
-- name: Build RPM using mock inside docker
-run: |
-docker run --rm -v "${{ github.workspace }}":/src -w /src --user $(id -u):$(id -g) quay.io/fedora/fedora:rawhide /bin/bash -lc '
-set -e
-dnf install -y rpm-build gcc make autoconf automake libtool pkgconfig perl-devel SDL-devel SDL_image-devel SDL_mixer-devel SDL_net-devel freetype-devel
-cd /src
-mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-tar czf rpmbuild/SOURCES/openmortal-1.0.tar.gz --exclude=.git --exclude=rpmbuild .
-cp rpm/openmortal.spec rpmbuild/SPECS/
-rpmbuild -ba rpmbuild/SPECS/openmortal.spec || true
-mkdir -p /src/artifacts
-find rpmbuild -name "*.rpm" -exec cp {} /src/artifacts/ \;
-'
-- name: Upload RPMs
-uses: actions/upload-artifact@v4
-with:
-name: rpms-${{ matrix.distro }}
-path: artifacts/
-
-
-name
+  create-release:
+    needs: [build-debs, build-rpms]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-artifacts
+      
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: all-artifacts/**/*
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
