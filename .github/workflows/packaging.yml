@@ -134,13 +134,13 @@ jobs:
       - name: Upload Linux debian binary packages
         uses: actions/upload-artifact@v4
         with:
-          name: openmortal_debian_package
+          name: openmortal_debian_binary_${{ env.OSNAME }}_${{ env.PLATFORM }}
           path: build/openmortal_*.deb
 
       - name: Upload Linux debian data packages
         uses: actions/upload-artifact@v4
         with:
-          name: openmortal_debian_package
+          name: openmortal_debian_data_${{ env.OSNAME }}_${{ env.PLATFORM }}
           path: build/openmortal-data_*.deb
 
   linux-x86-64_build-local:
