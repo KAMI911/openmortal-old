@@ -89,7 +89,7 @@ jobs:
            cd icu/source
            
            # Workaround for GCC 15.x __float128 bug
-           export CXXFLAGS="-O2 -std=c++11 -D__NO_INLINE__ -fext-numeric-literals"
+           export CXXFLAGS="-O2 -std=c++11 -D__NO_INLINE__ -fext-numeric-literals -D_GLIBCXX_USE_FLOAT128=0"
            export CFLAGS="-O2 -D__NO_INLINE__"
            
            ./configure --prefix=/mingw32 --host=i686-w64-mingw32 \
