@@ -8,14 +8,23 @@ URL:            https://github.com/KAMI911/openmortal-old
 Source0:        https://github.com/KAMI911/openmortal-old/archive/refs/heads/upgrade.tar.gz#/%{name}-%{version}.tar.gz
 
 BuildRequires:  gcc
+BuildRequires:  gcc-c++
 BuildRequires:  make
 BuildRequires:  automake
 BuildRequires:  autoconf
 BuildRequires:  sdl12-compat-devel >= 1.2.0
+BuildRequires:  SDL_image-devel
+BuildRequires:  SDL_mixer-devel
+BuildRequires:  SDL_net-devel
+BuildRequires:  SDL_ttf-devel
 BuildRequires:  SDL-devel
 BuildRequires:  perl-interpreter
 
 Requires:       sdl12-compat >= 1.2.0
+Requires:       SDL_image
+Requires:       SDL_mixer
+Requires:       SDL_net
+Requires:       SDL_ttf
 Requires:       SDL
 
 %description
