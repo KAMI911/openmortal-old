@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  OBS_PROJECT: home:YOURUSER:openmortal
+  OBS_PROJECT: home:kami911:openmortal
   OBS_PACKAGE: openmortal
   VERSION: 0.7.2
 
