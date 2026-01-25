@@ -8,7 +8,6 @@ URL:            https://github.com/KAMI911/openmortal-old
 Source0:        https://github.com/KAMI911/openmortal-old/archive/refs/heads/upgrade.tar.gz#/%{name}-%{version}.tar.gz
 
 BuildRequires:  gcc
-BuildRequires:  gcc-c++
 BuildRequires:  make
 BuildRequires:  automake
 BuildRequires:  autoconf
