@@ -12,17 +12,11 @@ BuildRequires:  make
 BuildRequires:  automake
 BuildRequires:  autoconf
 BuildRequires:  sdl12-compat-devel >= 1.2.0
-BuildRequires:  SDL_image-devel
-BuildRequires:  SDL_mixer-devel
-BuildRequires:  SDL_net-devel
-BuildRequires:  SDL_ttf-devel
+BuildRequires:  SDL-devel
 BuildRequires:  perl-interpreter
 
 Requires:       sdl12-compat >= 1.2.0
-Requires:       SDL_image
-Requires:       SDL_mixer
-Requires:       SDL_net
-Requires:       SDL_ttf
+Requires:       SDL
 
 %description
 OpenMortal is a spoof of the original Mortal Kombat fighting game. The
