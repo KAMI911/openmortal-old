@@ -189,7 +189,8 @@ jobs:
                 --exclude=rpmbuild \
                 --exclude=artifacts \
                 .
-              
+
+              ls -la rpmbuild/SOURCES/
               # Copy spec file
               if [ ! -f rpm/openmortal.spec ]; then
                 echo "ERROR: rpm/openmortal.spec not found!"
