@@ -117,13 +117,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - distro: fedora:38
-            pkg_manager: dnf
-          - distro: fedora:39
-            pkg_manager: dnf
-          - distro: fedora:40
-            pkg_manager: dnf
           - distro: fedora:41
+            pkg_manager: dnf
+          - distro: fedora:42
+            pkg_manager: dnf
+          - distro: fedora:43
             pkg_manager: dnf
           - distro: almalinux:8
             pkg_manager: dnf
@@ -162,6 +160,7 @@ jobs:
               ${{ matrix.pkg_manager }} install -y \
                 rpm-build \
                 gcc \
+                gcc-c++ \
                 make \
                 autoconf \
                 automake \
@@ -172,6 +171,7 @@ jobs:
                 SDL_image-devel \
                 SDL_mixer-devel \
                 SDL_net-devel \
+                SDL_ttf-devel \
                 freetype-devel \
                 tar \
                 gzip
