@@ -2,7 +2,7 @@
 
 Name:           openmortal
 Version:        0.7.2
-Release:	%mkrel 28
+Release:        1%{?dist}
 
 Summary:        Parody fighting game based on Mortal Kombat
 License:        GPLv2
