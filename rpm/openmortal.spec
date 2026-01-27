@@ -10,10 +10,17 @@ URL:            https://github.com/KAMI911/openmortal-old
 Source0:        https://github.com/KAMI911/openmortal-old/archive/refs/heads/upgrade.tar.gz
 
 
-BuildRequires:	pkgconfig(SDL_image)
-BuildRequires:	pkgconfig(SDL_mixer)
-BuildRequires:	pkgconfig(SDL_net)
-BuildRequires:  pkgconfig(SDL_ttf)
+%if 0%{?rhel} >= 8
+BuildRequires:	compat-sdl12-devel
+%else
+BuildRequires:	SDL-devel
+%endif
+
+BuildRequires:	SDL_image-devel
+BuildRequires:	SDL_mixer-devel
+BuildRequires:	SDL_net-devel
+BuildRequires:	SDL_ttf-devel
+
 BuildRequires:	freetype2-devel
 BuildRequires:	libnsl-devel
 BuildRequires:	perl-devel
