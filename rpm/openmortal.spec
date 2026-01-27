@@ -1,31 +1,22 @@
+%global sum	Parody of Mortal Kombat
+
 Name:           openmortal
-Version:        0.7.1
-Release:        1%{?dist}
+Version:        0.7.2
+Release:	%mkrel 28
+
 Summary:        Parody fighting game based on Mortal Kombat
-
-License:        GPL-2.0-or-later
+License:        GPLv2
 URL:            https://github.com/KAMI911/openmortal-old
-Source0:        https://github.com/KAMI911/openmortal-old/archive/refs/heads/upgrade.tar.gz#/%{name}-%{version}.tar.gz
+Source0:        https://github.com/KAMI911/openmortal-old/archive/refs/heads/upgrade.tar.gz
 
-BuildRequires:  gcc
-BuildRequires:  gcc-c++
-BuildRequires:  make
-BuildRequires:  automake
-BuildRequires:  autoconf
-BuildRequires:  sdl12-compat-devel >= 1.2.0
-BuildRequires:  SDL_image-devel
-BuildRequires:  SDL_mixer-devel
-BuildRequires:  SDL_net-devel
-BuildRequires:  SDL_ttf-devel
-BuildRequires:  SDL-devel
-BuildRequires:  perl-interpreter
 
-Requires:       sdl12-compat >= 1.2.0
-Requires:       SDL_image
-Requires:       SDL_mixer
-Requires:       SDL_net
-Requires:       SDL_ttf
-Requires:       SDL
+BuildRequires:	pkgconfig(SDL_image)
+BuildRequires:	pkgconfig(SDL_mixer)
+BuildRequires:	pkgconfig(SDL_net)
+BuildRequires:  pkgconfig(SDL_ttf)
+BuildRequires:	freetype2-devel
+BuildRequires:	libnsl-devel
+BuildRequires:	perl-devel
 
 %description
 OpenMortal is a spoof of the original Mortal Kombat fighting game. The
