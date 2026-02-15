@@ -1,3 +1,12 @@
+2026-02-15 22:17  kami
+
+	* src/Demo.h, src/DrawRle.h, src/FighterEnum.h, src/FighterStats.cpp, src/FighterStats.h, src/FlyingChars.h, and 13 more files:
+	  Source: modernise codebase to build on current Linux and GCC.
+	  Fix implicit function declarations, missing includes, and signed/unsigned
+	  comparison warnings that prevent compilation on modern distributions.
+	  Remove extra qualifiers from CChallengeMenu constructor. Update
+	  sge_surface, sge_tt_text, and sge_bm_text for modern SDL 1.2 headers.
+
 2026-02-14 22:07  kami
 
 	* .gitignore:

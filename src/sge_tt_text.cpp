@@ -5,7 +5,7 @@
 *	Started 990815
 *
 *	License: LGPL v2+ (see the file LICENSE)
-*	(c)1999-2001 Anders Lindström
+*	(c)1999-2001 Anders LindstrÃ¶m
 *
 *	Uses the excellent FreeType 2 library, available at:
 *	http://www.freetype.org/
@@ -40,9 +40,9 @@
 
 #ifndef _SGE_NOTTF
 #include <ft2build.h>
-#include <freetype/freetype.h>
-#include <freetype/ftoutln.h>
-#include <freetype/ttnameid.h>
+#include FT_FREETYPE_H
+#include FT_OUTLINE_H
+#include FT_TRUETYPE_IDS_H
 
 /* The structure used to hold glyph information (cached) */
 struct glyph {
@@ -1083,13 +1083,7 @@ SDL_Rect sge_tt_textoutf(SDL_Surface *Surface, sge_TTFont *font, Sint16 x, Sint1
 	char buf[256];
 
 	va_list ap;
-	
-	#ifdef __WIN32__
-	va_start((va_list*)ap, format); //Stupid win32 crosscompiler
-	#else
 	va_start(ap, format);
-	#endif
-	
 	vsprintf(buf, format, ap);
 	va_end(ap);
 

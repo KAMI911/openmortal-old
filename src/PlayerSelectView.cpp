@@ -175,7 +175,7 @@ public:
 
 		m_dX		= m_oRect.x + m_oRect.w / 2;
 		m_dY		= m_oRect.y + m_oRect.h / 2;
-		m_dSize		= omMIN( m_oRect.w, m_oRect.h );
+		m_dSize		= MIN( m_oRect.w, m_oRect.h );
 
 		m_dSpeedX	= 0.0;
 		m_dSpeedY	= - m_dY / 15;
@@ -183,7 +183,7 @@ public:
 
 		m_dTargetX	= m_oDstRect.x + m_oDstRect.w / 2;
 		m_dTargetY	= m_oDstRect.y + m_oDstRect.h / 2;
-		m_dTargetSize = omMIN( m_oDstRect.w, m_oDstRect.h);
+		m_dTargetSize = MIN( m_oDstRect.w, m_oDstRect.h);
 
 		m_iTotalTime = 70 + m_dY / 7.5;
 		m_iTime		= m_iTotalTime;
@@ -372,7 +372,7 @@ CPlayerSelectView::CPlayerSelectView( bool a_bNetworkGame, bool a_bTeamMode )
 	m_bOver = false;
 	m_bNetworkGame = a_bNetworkGame;
 	m_bTeamMode = a_bTeamMode;
-	m_bTeamMultiselect = g_oState.m_bTeamMultiselect > 0;
+	m_bTeamMultiselect = g_oState.m_bTeamMultiselect;
 	m_poReadline = NULL;
 	m_poTextArea = NULL;
 	m_iTime = 0;
@@ -516,7 +516,7 @@ void CPlayerSelectView::Draw()
 	TViewElements::iterator it;
 
 	g_oBackend.ReadFromPerl();
-	m_bOver = g_oBackend.m_iGameOver > 0;
+	m_bOver = g_oBackend.m_iGameOver;
 
 	g_oChooser.DrawRectangles(m_iTime);
 	SDL_BlitSurface( m_poBackground, NULL, gamescreen, NULL );
@@ -530,13 +530,13 @@ void CPlayerSelectView::Draw()
 	{
 		if ( m_bTeamMode && 1==i && !m_bTeamMultiselect ) continue;
 
-		const SPlayerInfo& roPlayerInfo = g_oPlayerSelect.GetPlayerInfo( i );
+		const PlayerInfo& roPlayerInfo = g_oPlayerSelect.GetPlayerInfo( i );
 		int iPlayerNameWidth = g_oPlayerSelect.GetFighterNameWidth( i );
 
 		if ( g_oBackend.m_aoPlayers[i].m_iFrame )
 		{
 			roPlayerInfo.m_poPack->Draw(
-				omABS(g_oBackend.m_aoPlayers[i].m_iFrame)-1,
+				ABS(g_oBackend.m_aoPlayers[i].m_iFrame)-1,
 				g_oBackend.m_aoPlayers[i].m_iX, g_oBackend.m_aoPlayers[i].m_iY + m_iFighterYOffset,
 				g_oBackend.m_aoPlayers[i].m_iFrame < 0 );
 		}

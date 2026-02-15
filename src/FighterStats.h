@@ -21,18 +21,18 @@
 The fighter is either random, or the winner of the last game.
 */
 
-class CFighterStatsDemo: public CDemo
+class FighterStatsDemo: public Demo
 {
 public:
-	CFighterStatsDemo( FighterEnum a_iFighter = UNKNOWN );
-	virtual ~CFighterStatsDemo();
+	FighterStatsDemo( FighterEnum a_iFighter = UNKNOWN );
+	virtual ~FighterStatsDemo();
 
 	int Advance( int a_iNumFrames, bool a_bFlip );
 
 protected:
 	int				m_iTimeLeft;
 	FighterEnum		m_enFighter;
-	CRlePack*		m_poStaff;
+	RlePack*		m_poStaff;
 	std::string		m_sKeys;
 	std::string		m_sStory;
 

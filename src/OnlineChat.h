@@ -12,7 +12,7 @@
 /** 
 \class COnlineChat
 \ingroup Network
-The "mortal.net" chat protocol should be simple enough...
+The "mortal.net" chat protocoll should be simple enough...
 
 [LOGGING IN]
 

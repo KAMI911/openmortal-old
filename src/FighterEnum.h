@@ -41,16 +41,16 @@ enum FighterEnum {
 
 
 
-/** The TintEnum contains values that can be passed to CRlePack::SetTint.
+/** The TintEnum contains values that can be passed to RlePack::SetTint.
 
-The tint is some modification of the original palette of an CRlePack. This
+The tint is some modification of the original palette of an RlePack. This
 is used for two things: 
 
 \li In case both players choose the same fighter, player 2's fighter is
 tinted so they won't get confused.
 \li Some special effects (e.g. frozen) make the fighter tinted as well.
 
-The Tint of players is stored by PlayerSelect and applied by CRlePack::SetTint().
+The Tint of players is stored by PlayerSelect and applied by RlePack::SetTint().
 */
 
 enum TintEnum {

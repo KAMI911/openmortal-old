@@ -11,7 +11,7 @@
 
 #include "FighterEnum.h"
 
-struct CRlePack_P;
+struct RlePack_P;
 struct SDL_Surface;
 
 /** 
@@ -47,11 +47,11 @@ reused in any project with little changes.
 \sa TintEnum
 */
 
-class CRlePack
+class RlePack
 {
 public:
-	CRlePack( const char* a_pcFilename, int a_iNumColors );
-	~CRlePack();
+	RlePack( const char* a_pcFilename, int a_iNumColors );
+	~RlePack();
 
 	void		Clear();
 	int			LoadFile( const char* a_pcFilename, int a_iNumColors );	
@@ -66,7 +66,7 @@ public:
 	SDL_Surface* CreateSurface( int a_iIndex, bool a_bFlipped=false );
 	
 private:
-	CRlePack_P*	p;
+	RlePack_P*	p;
 };
 
 #endif
