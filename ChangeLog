@@ -1,3 +1,12 @@
+2026-02-16 18:08  kami
+
+	* src/State.cpp:
+	  Source: fix Windows compatibility (rename _WINDOWS to _WIN32).
+	  Replace non-standard _WINDOWS preprocessor guard with the canonical
+	  _WIN32 macro used by all MinGW/MSVC toolchains. Fix sge_surface and
+	  sge_tt_text for Windows builds. Remove Windows-specific va_list
+	  handling that caused build failures with MinGW64.
+
 2026-02-15 22:17  kami
 
 	* src/Demo.h, src/DrawRle.h, src/FighterEnum.h, src/FighterStats.cpp, src/FighterStats.h, src/FlyingChars.h, and 13 more files:
