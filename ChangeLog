@@ -1,3 +1,11 @@
+2026-02-17 17:43  kami
+
+	* configure.ac:
+	  Build: update configure.ac — add giflib detection, pkg-config support.
+	  Add AC_CHECK_LIB for giflib (DGifOpenFileName) required by the animated
+	  GIF loader. Use PKG_PROG_PKG_CONFIG. Fix AM_PATH_SDL invocation.
+	  Version set to 0.7.
+
 2026-02-16 18:08  kami
 
 	* src/State.cpp:
