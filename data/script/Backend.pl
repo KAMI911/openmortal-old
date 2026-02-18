@@ -38,6 +38,9 @@ MAIN CONSTANTS
 
 =cut
 
+use FindBin;
+use lib "$FindBin::Bin";
+
 sub InitMainConstants($$)
 {
 	my ($wide, $numplayers) = @_;

@@ -1,3 +1,11 @@
+2026-02-18 21:05  kami
+
+	* data/script/Backend.pl, data/script/DataHelper.pl:
+	  Data: update Backend.pl and DataHelper.pl game logic scripts.
+	  Refresh the embedded Perl game engine scripts: Backend.pl drives
+	  fighter moves, collision detection and AI; DataHelper.pl provides
+	  shared data-loading utilities used by the backend.
+
 2026-02-17 17:43  kami
 
 	* configure.ac:
