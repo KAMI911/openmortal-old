@@ -18,7 +18,10 @@ level11.jpg         level4_rock.mask.png    Mortal.jpg \
 level1.jpg          level4_saturn.jpg       Story1.jpg \
 level2.jpg          level4_saturn.mask.png  Story2.jpg \
 level3_city.png     level5.jpg              eu.jpg\
-level3.desc         level6.jpg
+level3.desc         level6.jpg              level12.desc \
+level12_layer_3.gif level12_layer_4.gif     level12_layer_5.gif \
+level12_path_after.gif level12_path.png     level12_sky.png
+
 
 
 EXTRA_DIST = $(gfxdata_DATA)

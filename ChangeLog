@@ -1,3 +1,13 @@
+2026-02-19 20:02  kami
+
+	* data/Makefile.am, data/characters/Makefile.am, data/fonts/Makefile.am, data/gfx/Makefile.am, data/sound/Makefile.am:
+	  Build: update data Makefile.am files — add level 12 GIF assets and music files.
+	  Add level12_layer_3/4/5.gif, level12_path.png, level12_sky.png to
+	  data/gfx/Makefile.am. Add music/ subdirectory with all 17 tracker
+	  modules (*.mod, *.s3m, *.xm) to data/sound/Makefile.am. Remove the
+	  two original hardcoded music files (ride.mod, 2nd_pm.s3m) from the
+	  sound root since they moved into music/.
+
 2026-02-18 21:05  kami
 
 	* data/script/Backend.pl, data/script/DataHelper.pl:
