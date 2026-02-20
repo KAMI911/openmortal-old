@@ -1,3 +1,12 @@
+2026-02-20 17:13  kami
+
+	* data/sound/2nd_pm.s3m, data/sound/apert.wav, data/sound/autostart.wav, data/sound/beepdoub.wav, data/sound/beepdrop.wav, data/sound/buzzer_2.wav, and 15 more files:
+	  Data: add missing sound effects; remove relocated music files.
+	  Add 18 missing WAV sound effect files (movemenu, laser, honk, swoosh,
+	  drips, etc.) and soundmap.txt that maps in-game events to sound files.
+	  Remove ride.mod and 2nd_pm.s3m from data/sound/ — they have been
+	  renamed and relocated to data/sound/music/ as part of the jukebox.
+
 2026-02-19 20:02  kami
 
 	* data/Makefile.am, data/characters/Makefile.am, data/fonts/Makefile.am, data/gfx/Makefile.am, data/sound/Makefile.am:
