@@ -1,0 +1,133 @@
+app-id: net.sourceforge.openmortal
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+sdk: org.freedesktop.Sdk
+
+command: openmortal
+
+# ── Sandbox permissions ───────────────────────────────────────────────────────
+finish-args:
+  - --share=ipc          # MIT-SHM for SDL
+  - --socket=x11         # X11 display (SDL 1.2 has no Wayland backend)
+  - --socket=pulseaudio  # Audio
+  - --device=all         # Joystick / gamepad access
+
+# ── Build options ─────────────────────────────────────────────────────────────
+build-options:
+  cflags: -O2
+  cxxflags: -O2
+
+# ── Modules ───────────────────────────────────────────────────────────────────
+# Build order: Perl → SDL 1.2 stack → OpenMortal
+# The Freedesktop runtime/SDK does not ship SDL 1.2 or libperl, so we bundle
+# everything needed.
+
+modules:
+
+  # ── Perl (required for embedded scripting in OpenMortal) ───────────────────
+  # OpenMortal embeds Perl via the C API (perl -MExtUtils::Embed).
+  # We build a shared Perl so that libperl.so can be bundled in the Flatpak.
+  - name: perl
+    buildsystem: simple
+    build-commands:
+      - >
+        ./Configure -des
+        -Dprefix=/app
+        -Dvendorprefix=/app
+        -Dman1dir=/app/share/man/man1
+        -Dman3dir=/app/share/man/man3
+        -Duseshrplib
+        -Dusethreads
+        -Doptimize='-O2'
+      - make -j${FLATPAK_BUILDER_N_JOBS}
+      - make install
+    sources:
+      - type: archive
+        url: https://www.cpan.org/src/5.0/perl-5.38.2.tar.gz
+        sha256: a0a31534451eb7b83c7d6594a497543a54d488bc90ca00f5e34762577f40655e
+    cleanup:
+      - /share/man
+      - /lib/perl5/*/pod
+      - /bin/perldoc
+      - /bin/perlthanks
+      - /bin/ptar*
+
+  # ── SDL 1.2 ───────────────────────────────────────────────────────────────
+  - name: sdl
+    buildsystem: autotools
+    config-opts:
+      - --disable-video-wayland   # SDL 1.2 has no Wayland backend
+      - --enable-video-x11
+      - --enable-alsa
+      - --enable-pulseaudio
+      - --enable-joystick
+    sources:
+      - type: git
+        url: https://github.com/libsdl-org/SDL-1.2.git
+        tag: release-1.2.15
+        commit: c4d8b72e2a70ddf96a5e08f0e5f38a5fb6709e8f
+    cleanup:
+      - /bin/sdl-config
+      - /share/aclocal
+
+  # ── SDL_image 1.2 ─────────────────────────────────────────────────────────
+  - name: sdl-image
+    buildsystem: autotools
+    sources:
+      - type: git
+        url: https://github.com/libsdl-org/SDL_image.git
+        tag: release-1.2.12
+        commit: 5d1e3e8fe2cca4e1edeefd3b42ed0e51e3e93c30
+    cleanup:
+      - /share/aclocal
+
+  # ── SDL_mixer 1.2 ─────────────────────────────────────────────────────────
+  - name: sdl-mixer
+    buildsystem: autotools
+    sources:
+      - type: git
+        url: https://github.com/libsdl-org/SDL_mixer.git
+        tag: release-1.2.12
+        commit: 97c502e02f7a45e37e5c0cb6c0dad5a4f7daef04
+    cleanup:
+      - /share/aclocal
+
+  # ── SDL_net 1.2 ───────────────────────────────────────────────────────────
+  - name: sdl-net
+    buildsystem: autotools
+    sources:
+      - type: git
+        url: https://github.com/libsdl-org/SDL_net.git
+        tag: release-1.2.8
+        commit: 0a90a8e1db8e4c05a41b05e2f9c7b9571db6a8eb
+    cleanup:
+      - /share/aclocal
+
+  # ── OpenMortal ────────────────────────────────────────────────────────────
+  - name: openmortal
+    buildsystem: autotools
+    config-opts:
+      - --prefix=/app
+    build-options:
+      # Perl embed flags must resolve to /app (where we installed Perl above)
+      env:
+        PERL: /app/bin/perl
+    sources:
+      - type: dir
+        path: ..
+
+    # Install the .desktop file and icons into the standard Flatpak locations
+    post-install:
+      - install -Dm644 packaging/openmortal.AppImage.desktop
+                       /app/share/applications/net.sourceforge.openmortal.desktop
+      - desktop-file-edit --set-key=Icon
+                          --set-value=net.sourceforge.openmortal
+                          /app/share/applications/net.sourceforge.openmortal.desktop
+      - install -Dm644 packaging/32x32/openmortal.png
+                       /app/share/icons/hicolor/32x32/apps/net.sourceforge.openmortal.png
+      - install -Dm644 packaging/64x64/openmortal.png
+                       /app/share/icons/hicolor/64x64/apps/net.sourceforge.openmortal.png
+      - install -Dm644 packaging/128x128/openmortal.png
+                       /app/share/icons/hicolor/128x128/apps/net.sourceforge.openmortal.png
+      - install -Dm644 packaging/1024x1024/openmortal.png
+                       /app/share/icons/hicolor/1024x1024/apps/net.sourceforge.openmortal.png

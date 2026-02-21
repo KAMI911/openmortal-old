@@ -119,9 +119,13 @@ jobs:
         shell: msys2 {0}
         run: |
           DIST="$(pwd)/distribution"
-          echo "DIST_FOLDER=${DIST}"                                          >> "$GITHUB_ENV"
-          echo "PLATFORM_BUILD_PATH=${DIST}/windows-${{ matrix.env }}_build"   >> "$GITHUB_ENV"
-          echo "PLATFORM_PACKAGE_PATH=${DIST}/windows-${{ matrix.env }}_package" >> "$GITHUB_ENV"
+          BUILD="${DIST}/windows-${{ matrix.env }}_build"
+          PKG="${DIST}/windows-${{ matrix.env }}_package"
+          echo "DIST_FOLDER=${DIST}"             >> "$GITHUB_ENV"
+          echo "PLATFORM_BUILD_PATH=${BUILD}"    >> "$GITHUB_ENV"
+          echo "PLATFORM_PACKAGE_PATH=${PKG}"    >> "$GITHUB_ENV"
+          # Windows-style paths for PowerShell / InnoSetup steps
+          echo "WIN_PLATFORM_PACKAGE_PATH=$(cygpath -w "${PKG}")" >> "$GITHUB_ENV"
 
       - name: Configure project
         shell: msys2 {0}
@@ -163,8 +167,44 @@ jobs:
           tar zcvf "openmortal-${{ env.VERSION }}_windows_${{ matrix.env }}.tar.gz" \
             -C "${PKG}" .
 
-      - name: Upload artifact
+      - name: Upload portable archive artifact
         uses: actions/upload-artifact@v4
         with:
           name: openmortal-${{ env.VERSION }}_windows_${{ matrix.env }}
           path: openmortal-${{ env.VERSION }}_windows_${{ matrix.env }}.tar.gz
+
+      # ── InnoSetup installer ──────────────────────────────────────────────────
+      - name: Install InnoSetup 6
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "C:\Program Files (x86)\Inno Setup 6\ISCC.exe")) {
+            choco install innosetup -y --no-progress
+          }
+
+      - name: Create .ico from PNG (ImageMagick)
+        shell: pwsh
+        run: |
+          # magick (ImageMagick 7) is pre-installed on windows-latest runners
+          magick "packaging\1024x1024\openmortal.png" `
+            -define icon:auto-resize="256,128,64,48,32,16" `
+            "packaging\openmortal.ico"
+
+      - name: Build InnoSetup installer
+        shell: pwsh
+        run: |
+          $iscc    = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          # Source dir is the staged package tree for this MSYS2 variant
+          $srcDir  = "${{ env.WIN_PLATFORM_PACKAGE_PATH }}\${{ matrix.sys }}"
+
+          New-Item -ItemType Directory -Force "packaging\installer" | Out-Null
+
+          & $iscc `
+            "/DSourceDir=$srcDir" `
+            "/DAppArch=${{ matrix.env }}" `
+            "packaging\openmortal.iss"
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-${{ env.VERSION }}_windows_${{ matrix.env }}_setup
+          path: packaging/installer/openmortal-${{ env.VERSION }}-windows-${{ matrix.env }}-setup.exe
