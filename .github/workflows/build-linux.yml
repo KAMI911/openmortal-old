@@ -1,0 +1,180 @@
+name: Linux Multi-Arch Build
+
+on:
+  push:
+    branches: [ master, upgrade ]
+  pull_request:
+    branches: [ master, upgrade ]
+  workflow_dispatch:
+
+env:
+  VERSION: 0.7.2
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Helper: common Debian/Ubuntu package list used in most jobs
+# ──────────────────────────────────────────────────────────────────────────────
+jobs:
+
+  # ── x86-64 (64-bit modern Linux) ───────────────────────────────────────────
+  linux-x86_64:
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:22.04
+    env:
+      DEBIAN_FRONTEND: noninteractive
+      PLATFORM: x86_64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y \
+            build-essential autoconf automake libtool pkg-config \
+            libperl-dev \
+            libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev \
+            libfreetype6-dev
+
+      - name: Build
+        run: |
+          autoreconf -i -f
+          ./configure --prefix=/usr
+          make -j$(nproc)
+          make DESTDIR="$(pwd)/dist" install
+
+      - name: Package
+        run: |
+          tar zcf "openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz" \
+            -C dist .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}
+          path: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz
+
+  # ── x86 / i386 (32-bit for older PCs) ─────────────────────────────────────
+  linux-i386:
+    runs-on: ubuntu-latest
+    container:
+      image: i386/ubuntu:22.04
+    env:
+      DEBIAN_FRONTEND: noninteractive
+      PLATFORM: i386
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y \
+            build-essential autoconf automake libtool pkg-config \
+            libperl-dev \
+            libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev \
+            libfreetype6-dev
+
+      - name: Build
+        run: |
+          autoreconf -i -f
+          ./configure --prefix=/usr
+          make -j$(nproc)
+          make DESTDIR="$(pwd)/dist" install
+
+      - name: Package
+        run: |
+          tar zcf "openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz" \
+            -C dist .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}
+          path: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz
+
+  # ── ARM64 / aarch64 (Raspberry Pi 4+, modern ARM servers) ─────────────────
+  linux-arm64:
+    runs-on: ubuntu-24.04-arm
+    container:
+      image: ubuntu:22.04
+    env:
+      DEBIAN_FRONTEND: noninteractive
+      PLATFORM: arm64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y \
+            build-essential autoconf automake libtool pkg-config \
+            libperl-dev \
+            libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev \
+            libfreetype6-dev
+
+      - name: Build
+        run: |
+          autoreconf -i -f
+          ./configure --prefix=/usr
+          make -j$(nproc)
+          make DESTDIR="$(pwd)/dist" install
+
+      - name: Package
+        run: |
+          tar zcf "openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz" \
+            -C dist .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}
+          path: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz
+
+  # ── ARMv7 / armhf (Raspberry Pi 2/3, older ARM boards) ────────────────────
+  linux-armhf:
+    runs-on: ubuntu-latest
+    env:
+      PLATFORM: armhf
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up QEMU (enables running arm32v7 containers)
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm
+
+      - name: Build inside ARM32 container (emulated)
+        # arm32v7/debian:12 runs transparently via binfmt_misc QEMU
+        run: |
+          docker run --rm \
+            -v "$PWD":/workspace \
+            -w /workspace \
+            -e DEBIAN_FRONTEND=noninteractive \
+            arm32v7/debian:12 \
+            /bin/bash -c '
+              set -e
+              apt-get update
+              apt-get install -y \
+                build-essential autoconf automake libtool pkg-config \
+                libperl-dev \
+                libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev \
+                libfreetype6-dev
+              autoreconf -i -f
+              ./configure --prefix=/usr
+              make -j$(nproc)
+              make DESTDIR=/workspace/dist install
+            '
+
+      - name: Package
+        run: |
+          tar zcf "openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz" \
+            -C dist .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}
+          path: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz

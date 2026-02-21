@@ -1,4 +1,4 @@
-name: Windows Build (MSYS2 / MinGW64 / MinGW)
+name: Windows Build (MSYS2 / MinGW)
 
 on:
   push:
@@ -19,137 +19,152 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { icon: '⬛', sys: mingw32,    env: i686,          runs-on: 'windows-latest', build_deps: true }
-          - { icon: '🟦', sys: mingw64,    env: x86_64,        runs-on: 'windows-latest', build_deps: false }
-          - { icon: '🟨', sys: ucrt64,     env: ucrt-x86_64,   runs-on: 'windows-latest', build_deps: false }
-          - { icon: '🟧', sys: clang64,    env: clang-x86_64,  runs-on: 'windows-latest', build_deps: false }
-          - { icon: '🟩', sys: clangarm64, env: clang-aarch64, runs-on: 'windows-11-arm', build_deps: false }
-    name: 🚧${{ matrix.icon }} ${{ matrix.sys }}
+          # 32-bit: Perl from MSYS2 core; ICU and SDL_mixer built from source
+          - { icon: '⬛', sys: mingw32,    env: i686,          runs-on: 'windows-latest', host: 'i686-w64-mingw32',   build_deps: true,  continue: false }
+          # 64-bit variants: full mingw-w64 packages available
+          - { icon: '🟦', sys: mingw64,    env: x86_64,        runs-on: 'windows-latest', host: 'x86_64-w64-mingw32', build_deps: false, continue: false }
+          - { icon: '🟨', sys: ucrt64,     env: ucrt-x86_64,   runs-on: 'windows-latest', host: 'x86_64-w64-mingw32', build_deps: false, continue: false }
+          - { icon: '🟧', sys: clang64,    env: clang-x86_64,  runs-on: 'windows-latest', host: 'x86_64-w64-mingw32', build_deps: false, continue: false }
+          # ARM64: requires GitHub Teams/Enterprise runner — optional
+          - { icon: '🟩', sys: clangarm64, env: clang-aarch64, runs-on: 'windows-11-arm',  host: 'aarch64-w64-mingw32', build_deps: false, continue: true }
+
+    name: ${{ matrix.icon }} ${{ matrix.sys }}
+    continue-on-error: ${{ matrix.continue }}
+
     defaults:
       run:
         shell: msys2 {0}
 
     steps:
-       - name: '🧰 Checkout'
-         uses: actions/checkout@v4
-         with:
-           fetch-depth: 0
-           persist-credentials: false
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
 
-       - name: '${{ matrix.icon }} Setup MSYS2'
-         uses: msys2/setup-msys2@v2
-         with:
-           msystem: ${{matrix.sys}}
-           update: true
-           install: >-
-             base-devel
-             automake
-             autoconf
-             libtool
-             unzip
-             mingw-w64-${{ matrix.env }}-toolchain
-             mingw-w64-${{ matrix.env }}-make
-             mingw-w64-${{ matrix.env }}-pkg-config
-             mingw-w64-${{ matrix.env }}-SDL
-             mingw-w64-${{ matrix.env }}-SDL_image
-             mingw-w64-${{ matrix.env }}-SDL_net
-             mingw-w64-${{ matrix.env }}-freetype
-             mingw-w64-${{ matrix.env }}-ntldd
-             mingw-w64-${{ matrix.env }}-libiconv
+      - name: Setup MSYS2 (${{ matrix.sys }}) — base packages
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{ matrix.sys }}
+          update: true
+          install: >-
+            base-devel
+            automake
+            autoconf
+            libtool
+            unzip
+            mingw-w64-${{ matrix.env }}-toolchain
+            mingw-w64-${{ matrix.env }}-make
+            mingw-w64-${{ matrix.env }}-pkg-config
+            mingw-w64-${{ matrix.env }}-SDL
+            mingw-w64-${{ matrix.env }}-SDL_image
+            mingw-w64-${{ matrix.env }}-SDL_net
+            mingw-w64-${{ matrix.env }}-freetype
+            mingw-w64-${{ matrix.env }}-ntldd
+            mingw-w64-${{ matrix.env }}-libiconv
 
-       - name: Install additional packages (64-bit platforms)
-         if: matrix.build_deps == false
-         shell: msys2 {0}
-         run: |
-           pacman --noconfirm -S --needed \
-             mingw-w64-${{ matrix.env }}-icu \
-             mingw-w64-${{ matrix.env }}-perl \
-             mingw-w64-${{ matrix.env }}-SDL_mixer
+      # ── 64-bit: install Perl, ICU, SDL_mixer from pre-built packages ────────
+      - name: Install additional packages (64-bit)
+        if: matrix.build_deps == false
+        shell: msys2 {0}
+        run: |
+          pacman --noconfirm -S --needed \
+            mingw-w64-${{ matrix.env }}-icu \
+            mingw-w64-${{ matrix.env }}-perl \
+            mingw-w64-${{ matrix.env }}-SDL_mixer
 
-       - name: Install Perl for 32-bit build
-         if: matrix.build_deps == true
-         shell: msys2 {0}
-         run: |
-           # Use MSYS2 core Perl (architecture independent)
-           pacman --noconfirm -S perl
-           
-           # Verify Perl installation
-           perl --version
-           which perl
+      # ── 32-bit: mingw-w64-i686-perl/icu packages are unavailable or broken ─
+      - name: Install Perl for 32-bit (MSYS2 core Perl)
+        if: matrix.build_deps == true
+        shell: msys2 {0}
+        run: |
+          pacman --noconfirm -S perl
+          perl --version
+          which perl
 
-       - name: Build ICU from source (32-bit)
-         if: matrix.build_deps == true
-         shell: msys2 {0}
-         run: |
-           cd /tmp
-           
-           # Download ICU source and build it
-           wget https://github.com/unicode-org/icu/releases/download/release-73-2/icu4c-73_2-src.tgz
-           tar xzf icu4c-73_2-src.tgz
-           cd icu/source
-           
-           # Workaround for GCC 15.x __float128 bug
-           export CXXFLAGS="-O2 -std=c++11 -D__NO_INLINE__ -fext-numeric-literals -D_GLIBCXX_USE_FLOAT128=0"
-           export CFLAGS="-O2 -D__NO_INLINE__"
-           
-           ./configure --prefix=/mingw32 --host=i686-w64-mingw32 \
-             --disable-samples --disable-tests --enable-static --disable-shared \
-             --disable-renaming
-           
-           make -j$(nproc) || make
-           make install
-        
-       - name: Build SDL_mixer from source (32-bit)
-         if: matrix.build_deps == true
-         shell: msys2 {0}
-         run: |
-           cd /tmp
-           wget https://www.libsdl.org/projects/SDL_mixer/release/SDL_mixer-${{ env.SDL_MIXER_VERSION }}.tar.gz
-           tar xzf SDL_mixer-${{ env.SDL_MIXER_VERSION }}.tar.gz
-           cd SDL_mixer-${{ env.SDL_MIXER_VERSION }}
-           ./configure --prefix=/${{ matrix.sys }} --host=i686-w64-mingw32
-           make -j$(nproc)
-           make install
+      - name: Build ICU from source (32-bit)
+        if: matrix.build_deps == true
+        shell: msys2 {0}
+        run: |
+          cd /tmp
+          wget https://github.com/unicode-org/icu/releases/download/release-73-2/icu4c-73_2-src.tgz
+          tar xzf icu4c-73_2-src.tgz
+          cd icu/source
+          # Workaround for GCC 15.x __float128 / GLIBCXX_USE_FLOAT128 bug
+          export CXXFLAGS="-O2 -std=c++11 -D__NO_INLINE__ -fext-numeric-literals -D_GLIBCXX_USE_FLOAT128=0"
+          export CFLAGS="-O2 -D__NO_INLINE__"
+          ./configure \
+            --prefix=/mingw32 \
+            --host=i686-w64-mingw32 \
+            --disable-samples --disable-tests \
+            --enable-static --disable-shared \
+            --disable-renaming
+          make -j$(nproc) || make
+          make install
 
-       - name: Define paths
-         shell: msys2 {0}
-         env:
-           DIST_FOLDER: $TEMP/distribution
-         run: |
-           echo "DIST_FOLDER=$TEMP/distribution" >> $GITHUB_ENV
-           echo "PLATFORM_BUILD_PATH=${DIST_FOLDER}/windows-${{ matrix.env }}_build" >> "$GITHUB_ENV"
-           echo "PLATFORM_PACKAGE_PATH=${DIST_FOLDER}/windows-${{ matrix.env }}_package" >> "$GITHUB_ENV"
+      - name: Build SDL_mixer from source (32-bit)
+        if: matrix.build_deps == true
+        shell: msys2 {0}
+        run: |
+          cd /tmp
+          wget https://www.libsdl.org/projects/SDL_mixer/release/SDL_mixer-${{ env.SDL_MIXER_VERSION }}.tar.gz
+          tar xzf SDL_mixer-${{ env.SDL_MIXER_VERSION }}.tar.gz
+          cd SDL_mixer-${{ env.SDL_MIXER_VERSION }}
+          ./configure --prefix=/${{ matrix.sys }} --host=i686-w64-mingw32
+          make -j$(nproc)
+          make install
 
-       - name: Configure project
-         shell: msys2 {0}
-         env:
-           PREFIX: /${{ matrix.sys }}
-         run: |
-           CFLAGS="-I$TEMP/msys64/${PREFIX}/include/freetype2 -I$TEMP/msys64/${PREFIX}/include/harfbuzz -I$TEMP/msys64/${PREFIX}/include/glib-2.0 -I$TEMP/msys64/${PREFIX}/lib/glib-2.0/include -I$TEMP/msys64/${PREFIX}/include/SDL -I$TEMP/msys64/${PREFIX}/include/SDL_image -I$TEMP/msys64/${PREFIX}/include/SDL_mixer -I$TEMP/msys64/${PREFIX}/include/SDL_net -I$TEMP/msys64/${PREFIX}/include/libpng16"
-           LDFLAGS="-L$TEMP/msys64/${PREFIX}/lib -lfreetype -lSDL -lSDL_image -lSDL_mixer -lSDL_net -lharfbuzz -lpng16 -lglib-2.0"
-           autoreconf -i -f
-           ./configure --prefix=$PREFIX --host=$HOST CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS"
+      # ── Paths, configure, build ─────────────────────────────────────────────
+      - name: Define paths
+        shell: msys2 {0}
+        run: |
+          DIST="$(pwd)/distribution"
+          echo "DIST_FOLDER=${DIST}"                                          >> "$GITHUB_ENV"
+          echo "PLATFORM_BUILD_PATH=${DIST}/windows-${{ matrix.env }}_build"   >> "$GITHUB_ENV"
+          echo "PLATFORM_PACKAGE_PATH=${DIST}/windows-${{ matrix.env }}_package" >> "$GITHUB_ENV"
 
-       - name: '🚧 Build TOOL'
-         run: |
-           make DESTDIR="${DIST_FOLDER}/windows-${{ matrix.env }}_build" install -j$(nproc)
+      - name: Configure project
+        shell: msys2 {0}
+        run: |
+          export SDL_CONFIG="/${{ matrix.sys }}/bin/sdl-config"
+          export PKG_CONFIG_PATH="/${{ matrix.sys }}/lib/pkgconfig"
+          autoreconf -i -f
+          ./configure \
+            --prefix=/${{ matrix.sys }} \
+            --host=${{ matrix.host }}
 
-       - name: Install and package
-         shell: msys2 {0}
-         env:
-           PREFIX: /${{ matrix.sys }}
-         run: |
-            mkdir -p ${DIST_FOLDER}/windows-${{ matrix.env }}_package/${PREFIX}/bin
-            mkdir -p ${DIST_FOLDER}/windows-${{ matrix.env }}_package/${PREFIX}/share/openmortal
-            export
-            ls -la ${DIST_FOLDER} 
-            cp -a ${DIST_FOLDER}/windows-${{ matrix.env }}_build/${PREFIX}/share ${DIST_FOLDER}/windows-${{ matrix.env }}_package/${PREFIX}/
-            install -m755 ${DIST_FOLDER}/windows-${{ matrix.env }}_build/${PREFIX}/bin/openmortal.exe ${DIST_FOLDER}/windows-${{ matrix.env }}_package/${PREFIX}/bin/openmortal.exe
-            ntldd -R ${DIST_FOLDER}/windows-${{ matrix.env }}_build/${PREFIX}/bin/openmortal.exe | grep -v -i "system32" | grep -i -v "winsxs" | grep -v -i "not found" | awk '{print $3}' | xargs -d '\n' -I{} cp -- "{}" ${DIST_FOLDER}/windows-${{ matrix.env }}_package/${PREFIX}/bin/
-            tar zcvf openmortal-${{ env.VERSION }}_windows_${{ matrix.env }}.tar.gz -C ${DIST_FOLDER}/windows-${{ matrix.env }}_package .
+      - name: Build
+        shell: msys2 {0}
+        run: |
+          make DESTDIR="${{ env.PLATFORM_BUILD_PATH }}" install -j$(nproc)
 
-       - name: Upload artifact
-         uses: actions/upload-artifact@v4
-         with:
-           name: openmortal-${{ env.VERSION }}_windows_${{ matrix.env }}
-           path: openmortal-${{ env.VERSION }}_windows_${{ matrix.env }}.tar.gz
+      - name: Collect DLLs and package
+        shell: msys2 {0}
+        run: |
+          PREFIX="/${{ matrix.sys }}"
+          BUILD="${{ env.PLATFORM_BUILD_PATH }}"
+          PKG="${{ env.PLATFORM_PACKAGE_PATH }}"
+
+          mkdir -p "${PKG}${PREFIX}/bin"
+          mkdir -p "${PKG}${PREFIX}/share/openmortal"
+
+          cp -a "${BUILD}${PREFIX}/share" "${PKG}${PREFIX}/"
+          install -m755 "${BUILD}${PREFIX}/bin/openmortal.exe" \
+                        "${PKG}${PREFIX}/bin/openmortal.exe"
+
+          # Bundle required DLLs (exclude Windows system DLLs)
+          ntldd -R "${BUILD}${PREFIX}/bin/openmortal.exe" \
+            | grep -v -i "system32" \
+            | grep -v -i "winsxs" \
+            | grep -v -i "not found" \
+            | awk '{print $3}' \
+            | xargs -d '\n' -I{} cp -- "{}" "${PKG}${PREFIX}/bin/"
+
+          tar zcvf "openmortal-${{ env.VERSION }}_windows_${{ matrix.env }}.tar.gz" \
+            -C "${PKG}" .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-${{ env.VERSION }}_windows_${{ matrix.env }}
+          path: openmortal-${{ env.VERSION }}_windows_${{ matrix.env }}.tar.gz
