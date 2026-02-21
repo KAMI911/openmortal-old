@@ -1,3 +1,17 @@
+2026-02-21 21:38  kami
+
+	* data/sound/music/00_cloud_traveller.mod, data/sound/music/00_ride.mod, data/sound/music/01_2nd_pm.s3m, data/sound/music/02_stardust_memories.mod, data/sound/music/03_iron_curtain.xm, data/sound/music/03_palle_theme2.mod, and 11 more files:
+	  Data: add organised music library in data/sound/music/.
+	  Add 17 tracker module files with numeric level prefix naming convention:
+	  00_* — menu/demo music (ride.mod, cloud_traveller.mod)
+	  01_* — level 1 (2nd_pm.s3m)
+	  02_* through 12_* — per-level tracks (stardust_memories, iron_curtain,
+	  palle_theme2, anthem, space_is_the_place, zpiff_knulfur, wild_impressions,
+	  cover_up, tabular_ravers, electric_love_affair, lk, maze_among_the_clouds,
+	  clockwork_city, x_fader_persuader).
+	  The Jukebox system uses this naming scheme to pick level-appropriate or
+	  random tracks at runtime.
+
 2026-02-20 17:13  kami
 
 	* data/sound/2nd_pm.s3m, data/sound/apert.wav, data/sound/autostart.wav, data/sound/beepdoub.wav, data/sound/beepdrop.wav, data/sound/buzzer_2.wav, and 15 more files:
