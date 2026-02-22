@@ -43,6 +43,15 @@ func SanitizeText(text string) string {
 	}, text)
 }
 
+// ValidStatus returns true if s is one of the allowed status values.
+func ValidStatus(s string) bool {
+	switch s {
+	case "chat", "away", "game", "queue":
+		return true
+	}
+	return false
+}
+
 // ClientMessage is a parsed message from a client.
 type ClientMessage struct {
 	Prefix  byte
@@ -50,7 +59,7 @@ type ClientMessage struct {
 }
 
 // ParseLine parses a raw line (without trailing newline) from the client.
-// Returns nil if the line is malformed.
+// Returns nil if the line is empty.
 func ParseLine(line []byte) *ClientMessage {
 	if len(line) < 1 {
 		return nil
