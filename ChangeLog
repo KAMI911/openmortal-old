@@ -1,3 +1,12 @@
+2026-02-22 21:12  kami
+
+	* data/gfx/level12.desc, data/gfx/level12_layer_3.gif, data/gfx/level12_layer_4.gif, data/gfx/level12_layer_5.gif, data/gfx/level12_path.png, data/gfx/level12_path_after.gif, data/gfx/level12_sky.png:
+	  Data: add level 12 animated GIF background layers and descriptor.
+	  Add three animated GIF layers (layer_3/4/5.gif), a path overlay GIF
+	  (path_after.gif), sky background (level12_sky.png), and path mask
+	  (level12_path.png). The level12.desc descriptor file lists all layers
+	  with x/y offsets and parallax distance factors used by Background::Load().
+
 2026-02-21 21:38  kami
 
 	* data/sound/music/00_cloud_traveller.mod, data/sound/music/00_ride.mod, data/sound/music/01_2nd_pm.s3m, data/sound/music/02_stardust_memories.mod, data/sound/music/03_iron_curtain.xm, data/sound/music/03_palle_theme2.mod, and 11 more files:
