@@ -1,0 +1,269 @@
+name: Retro Platform Builds (Experimental)
+# ─────────────────────────────────────────────────────────────────────────────
+# All jobs here are EXPERIMENTAL and continue-on-error.
+#
+# OpenMortal requires SDL 1.2, FreeType 2, and embedded Perl.
+# Pre-built dev packages for these libraries are not yet available for every
+# retro target; the builds below attempt compilation and produce artefacts
+# whenever all dependencies are found.
+#
+# Targets:
+#   • Classic AmigaOS 3.x (m68k) — via bebbo GCC cross-compiler
+#   • AmigaOS 4.x (PowerPC)      — via adtools PPC cross-compiler
+#   • AROS Research OS (i386)    — via AROS SDK in Docker
+#   • MorphOS (PowerPC)          — via MorphOS SDK (Docker)
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  push:
+    branches: [ master, upgrade ]
+  pull_request:
+    branches: [ master, upgrade ]
+  workflow_dispatch:
+
+env:
+  VERSION: 0.7.2
+
+jobs:
+  # ── AmigaOS 3.x / m68k ─────────────────────────────────────────────────────
+  amiga-m68k:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    name: AmigaOS 3.x (m68k)
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up bebbo GCC cross-compiler (m68k-amigaos)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget xz-utils autoconf automake libtool pkg-config
+
+          # bebbo's amiga-gcc releases supply a ready-made m68k-amigaos toolchain
+          BEBBO_TAG="2024-05-01"
+          TARBALL="gcc-amigaos-x86_64-linux-gnu.tar.xz"
+          wget -q "https://github.com/bebbo/amiga-gcc/releases/download/${BEBBO_TAG}/${TARBALL}" \
+               -O /tmp/amiga-gcc.tar.xz || \
+          # Fallback: fetch the latest release
+          wget -q "https://github.com/bebbo/amiga-gcc/releases/latest/download/${TARBALL}" \
+               -O /tmp/amiga-gcc.tar.xz
+
+          sudo tar -xf /tmp/amiga-gcc.tar.xz -C /opt
+          echo "/opt/amiga/bin" >> "$GITHUB_PATH"
+
+      - name: Verify cross-compiler
+        run: m68k-amigaos-gcc --version
+
+      - name: Install Amiga SDK headers/libs (SDL, FreeType for m68k)
+        # SDL and FreeType are available as pre-built AmigaOS libraries at:
+        # https://github.com/AmigaAbility/SDL-Amiga  (SDL 1.2 m68k port)
+        # If the download fails the build continues as best-effort.
+        run: |
+          mkdir -p /opt/amiga/m68k-amigaos/sys-include
+          mkdir -p /opt/amiga/m68k-amigaos/lib
+          # SDL 1.2 headers (AmigaOS m68k port — headers only for configure)
+          wget -q "https://github.com/AmigaAbility/SDL-Amiga/archive/refs/heads/master.tar.gz" \
+               -O /tmp/sdl-amiga.tar.gz || true
+          if [ -f /tmp/sdl-amiga.tar.gz ]; then
+            tar -xf /tmp/sdl-amiga.tar.gz -C /tmp
+            cp -r /tmp/SDL-Amiga-master/include/* /opt/amiga/m68k-amigaos/sys-include/ || true
+          fi
+
+      - name: Configure (cross-compile for m68k-amigaos)
+        run: |
+          autoreconf -i -f
+          ./configure \
+            --host=m68k-amigaos \
+            --prefix=/usr \
+            CC=m68k-amigaos-gcc \
+            CXX=m68k-amigaos-g++ \
+            AR=m68k-amigaos-ar \
+            RANLIB=m68k-amigaos-ranlib \
+            STRIP=m68k-amigaos-strip \
+            CXXFLAGS="-I/opt/amiga/m68k-amigaos/sys-include" \
+            LDFLAGS="-L/opt/amiga/m68k-amigaos/lib" || true
+
+      - name: Build
+        run: make -j$(nproc) || true
+
+      - name: Package (best-effort)
+        run: |
+          if find . -name "openmortal" -not -path "./.git/*" | grep -q .; then
+            mkdir -p dist/amiga-m68k
+            cp openmortal dist/amiga-m68k/ 2>/dev/null || \
+              cp src/openmortal dist/amiga-m68k/ 2>/dev/null || true
+            tar zcf "openmortal-${{ env.VERSION }}_amiga_m68k.tar.gz" -C dist/amiga-m68k .
+          else
+            echo "No binary produced — dependencies not fully resolved for m68k-amigaos" > build-status.txt
+            tar zcf "openmortal-${{ env.VERSION }}_amiga_m68k.tar.gz" build-status.txt
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-${{ env.VERSION }}_amiga_m68k
+          path: openmortal-${{ env.VERSION }}_amiga_m68k.tar.gz
+
+  # ── AmigaOS 4.x / PowerPC ──────────────────────────────────────────────────
+  amiga-os4-ppc:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    name: AmigaOS 4.x (PPC)
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install adtools PPC cross-compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget xz-utils autoconf automake libtool pkg-config
+
+          # adtools provides ppc-amigaos cross-compilation (AmigaOS 4.x)
+          ADTOOLS_URL="https://github.com/sba1/adtools/releases/latest/download"
+          wget -q "${ADTOOLS_URL}/adtools-linux.tar.bz2" \
+               -O /tmp/adtools.tar.bz2 || true
+          if [ -f /tmp/adtools.tar.bz2 ]; then
+            sudo tar -xf /tmp/adtools.tar.bz2 -C /opt
+            echo "/opt/adtools/bin" >> "$GITHUB_PATH"
+          fi
+
+      - name: Configure (cross-compile for ppc-amigaos)
+        run: |
+          autoreconf -i -f
+          ./configure \
+            --host=ppc-amigaos \
+            --prefix=/usr \
+            CC=ppc-amigaos-gcc \
+            CXX=ppc-amigaos-g++ \
+            AR=ppc-amigaos-ar \
+            RANLIB=ppc-amigaos-ranlib || true
+
+      - name: Build
+        run: make -j$(nproc) || true
+
+      - name: Package (best-effort)
+        run: |
+          if find . -name "openmortal" -not -path "./.git/*" | grep -q .; then
+            mkdir -p dist
+            cp openmortal dist/ 2>/dev/null || cp src/openmortal dist/ 2>/dev/null || true
+            tar zcf "openmortal-${{ env.VERSION }}_amiga_os4_ppc.tar.gz" -C dist .
+          else
+            echo "No binary — AmigaOS 4 toolchain or SDK not fully available" > build-status.txt
+            tar zcf "openmortal-${{ env.VERSION }}_amiga_os4_ppc.tar.gz" build-status.txt
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-${{ env.VERSION }}_amiga_os4_ppc
+          path: openmortal-${{ env.VERSION }}_amiga_os4_ppc.tar.gz
+
+  # ── AROS Research OS (i386) ────────────────────────────────────────────────
+  # AROS is an open-source Amiga-compatible OS that runs on x86 hardware.
+  # It has SDL 1.2 and FreeType ports.
+  aros-i386:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    name: AROS i386 (open-source Amiga OS)
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install AROS cross-SDK
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget xz-utils git autoconf automake libtool pkg-config
+
+          # AROS cross-compiler hosted on SourceForge / GitHub mirrors
+          # Using the AROS hosted toolchain (i386-aros target)
+          AROS_SDK_URL="https://github.com/aros-development-team/AROS/releases"
+          wget -q "${AROS_SDK_URL}/latest/download/AROS-SDK-linux-x86_64.tar.bz2" \
+               -O /tmp/aros-sdk.tar.bz2 || true
+          if [ -f /tmp/aros-sdk.tar.bz2 ]; then
+            sudo tar -xf /tmp/aros-sdk.tar.bz2 -C /opt
+            echo "/opt/AROS/bin" >> "$GITHUB_PATH"
+          fi
+
+          # Fallback: use the Wanderer/AROS hosted on Docker
+          docker pull walkero/aros-sdk:latest 2>/dev/null || true
+
+      - name: Configure for AROS i386
+        run: |
+          autoreconf -i -f
+          ./configure \
+            --host=i386-aros \
+            --prefix=/usr \
+            CC=i386-aros-gcc \
+            CXX=i386-aros-g++ || true
+
+      - name: Build
+        run: make -j$(nproc) || true
+
+      - name: Package (best-effort)
+        run: |
+          if find . -name "openmortal" -not -path "./.git/*" | grep -q .; then
+            mkdir -p dist
+            cp openmortal dist/ 2>/dev/null || cp src/openmortal dist/ 2>/dev/null || true
+            tar zcf "openmortal-${{ env.VERSION }}_aros_i386.tar.gz" -C dist .
+          else
+            echo "AROS SDK or SDL not available in CI — manual build required" > build-status.txt
+            tar zcf "openmortal-${{ env.VERSION }}_aros_i386.tar.gz" build-status.txt
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-${{ env.VERSION }}_aros_i386
+          path: openmortal-${{ env.VERSION }}_aros_i386.tar.gz
+
+  # ── MorphOS (PowerPC) ──────────────────────────────────────────────────────
+  morphos-ppc:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    name: MorphOS (PPC)
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install MorphOS cross-SDK
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget xz-utils autoconf automake libtool pkg-config
+
+          # MorphOS SDK is available from morphos-team.net
+          MOS_SDK_URL="https://www.morphos-team.net/files/sdk"
+          wget -q "${MOS_SDK_URL}/morphossdk.tar.xz" \
+               -O /tmp/morphos-sdk.tar.xz || true
+          if [ -f /tmp/morphos-sdk.tar.xz ]; then
+            sudo tar -xf /tmp/morphos-sdk.tar.xz -C /opt
+            echo "/opt/morphos-sdk/bin" >> "$GITHUB_PATH"
+          fi
+
+      - name: Configure for MorphOS PPC
+        run: |
+          autoreconf -i -f
+          ./configure \
+            --host=ppc-morphos \
+            --prefix=/usr \
+            CC=ppc-morphos-gcc \
+            CXX=ppc-morphos-g++ || true
+
+      - name: Build
+        run: make -j$(nproc) || true
+
+      - name: Package (best-effort)
+        run: |
+          if find . -name "openmortal" -not -path "./.git/*" | grep -q .; then
+            mkdir -p dist
+            cp openmortal dist/ 2>/dev/null || cp src/openmortal dist/ 2>/dev/null || true
+            tar zcf "openmortal-${{ env.VERSION }}_morphos_ppc.tar.gz" -C dist .
+          else
+            echo "MorphOS SDK or dependencies not available in CI — manual build required" > build-status.txt
+            tar zcf "openmortal-${{ env.VERSION }}_morphos_ppc.tar.gz" build-status.txt
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-${{ env.VERSION }}_morphos_ppc
+          path: openmortal-${{ env.VERSION }}_morphos_ppc.tar.gz

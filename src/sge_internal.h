@@ -140,7 +140,7 @@
 			#define DECLSPEC __declspec(export)
 		#endif
 	#else
-	#ifdef WIN32
+	#if defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
 		#define DECLSPEC __declspec(dllexport)
 	#else
 		#define DECLSPEC

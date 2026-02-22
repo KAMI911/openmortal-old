@@ -150,8 +150,7 @@ protected:
 #include "MortalNetwork.h"
 
 
-#ifdef _WINDOWS
-
+#if defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
 #undef DATADIR                // GRRR.. windows keyword...
 #include <windows.h>
 #define DATADIR "../data"
@@ -181,7 +180,7 @@ SDL_Color Colors[] =
 
 void Complain( const char* a_pcError )
 {
-#ifdef _WINDOWS
+#if defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
 	::MessageBoxA( 0, a_pcError, "OpenMortal", MB_ICONEXCLAMATION );
 #else
 	fprintf( stderr, "%s", a_pcError );
@@ -234,7 +233,7 @@ int init()
 	SDL_WM_SetCaption( "OpenMortal", "OpenMortal" );
 	std::string sPath = std::string(DATADIR) + "/gfx/icon.png";
 	SDL_WM_SetIcon(IMG_Load(sPath.c_str()), NULL);
-//@	SDL_ShowCursor( SDL_DISABLE );
+	SDL_ShowCursor( SDL_DISABLE );
 
 	int i;
 	for ( i=0; i<16; ++i ) 
@@ -340,8 +339,8 @@ int DrawMainScreen()
 	r.x = r.y = 0;
 	
 	std::string sStaffFilename = DATADIR;
-	sStaffFilename += "/characters/STAFF.DAT";
-	CRlePack pack( sStaffFilename.c_str(), 256 );
+	sStaffFilename += "/characters/staff.dat";
+	RlePack pack( sStaffFilename.c_str(), 256 );
 	pack.ApplyPalette();
 	SDL_BlitSurface( background, NULL, gamescreen, &r );
 	SDL_Flip( gamescreen );
@@ -513,7 +512,7 @@ void GameLoop()
 		if ( iGameResult >= 0 && !bNetworkGame )
 		{
 			GameOver( iGameResult );
-			CFighterStatsDemo oDemo( g_oPlayerSelect.GetPlayerInfo( iGameResult ).m_enFighter );
+			FighterStatsDemo oDemo( g_oPlayerSelect.GetPlayerInfo( iGameResult ).m_enFighter );
 			oDemo.Run();
 		}
 		
@@ -596,8 +595,28 @@ int main(int argc, char *argv[])
 		{
 			bDebug = true;
 		}
+/*
+		else if ( !strcmp(argv[i], "-fullscreen") )
+		{
+			iFlags |= SDL_FULLSCREEN;
+		}
+		else if ( !strcmp(argv[i], "-hwsurface") )
+		{
+			iFlags |= SDL_HWSURFACE;
+		}
+		else if ( !strcmp(argv[i], "-doublebuf") )
+		{
+			iFlags |= SDL_DOUBLEBUF;
+		}
+		else if ( !strcmp(argv[i], "-anyformat") )
+		{
+			iFlags |= SDL_ANYFORMAT;
+		}
+
+*/
 		else
 		{
+//			printf( "Usage: %s [-debug] [-fullscreen] [-hwsurface] [-doublebuf] [-anyformat]\n", argv[0] );
 			printf( "Usage: %s [-debug]\n", argv[0] );
 			return 0;
 		}
@@ -608,13 +627,11 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	PgTest();
-
 	InitJoystick();
 	
 	g_oState.SetLanguage( g_oState.m_acLanguage );
 	
-	new COpenMortalAudio;
+	new MszAudio;
 //	Audio->LoadMusic( "Last_Ninja_-_The_Wilderness.mid", "DemoMusic" );
 	Audio->LoadMusic( "ride.mod", "DemoMusic" );
 	Audio->PlayMusic( "DemoMusic" );
@@ -642,7 +659,28 @@ int main(int argc, char *argv[])
 
 	*/
 
-
+/*	while ( !g_oState.m_bQuitFlag )
+	{
+		g_oState.m_enGameMode = SState::IN_MULTI;
+		g_oState.m_bTeamMultiselect = false;
+		g_oState.m_iTeamSize = 3;
+		g_oState.m_enTeamMode = SState::Team_CUSTOM;
+		
+		std::vector<FighterEnum>& roTeam0 = g_oPlayerSelect.EditPlayerInfo(0).m_aenTeam;
+		std::vector<FighterEnum>& roTeam1 = g_oPlayerSelect.EditPlayerInfo(1).m_aenTeam;
+		
+		roTeam0.clear();
+		roTeam0.push_back( ZOLI );
+		roTeam0.push_back( SIRPI );
+		roTeam0.push_back( MACI );
+		roTeam1.clear();
+		roTeam1.push_back( UPI );
+		roTeam1.push_back( ZOLI );
+		roTeam1.push_back( ULMAR );
+		
+		DoGame( NULL, false, false );
+	}
+*/	
 	while ( 1 )
 	{
 		if ( g_oState.m_bQuitFlag ) break;
@@ -662,6 +700,54 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
+#if 0
+		// Remaining are game modes: IN_SINGLE, IN_MULTI, IN_NETWORK
+		
+		Audio->PlaySample( "car_start.voc" );
+		Audio->PlayMusic( "GameMusic" );
+
+		bNetworkGame = false;
+
+		while ( g_oState.m_enGameMode != SState::IN_DEMO
+			&& g_oState.m_enGameMode != SState::IN_CHAT
+			&& !g_oState.m_bQuitFlag )
+		{
+			bNetworkGame = SState::IN_NETWORK == g_oState.m_enGameMode;
+			
+			g_oPlayerSelect.DoPlayerSelect();
+			if ( g_oState.m_bQuitFlag || g_oState.m_enGameMode == SState::IN_DEMO  ) break;
+			
+			//sprintf( acReplayFile, "/tmp/msz%d.replay", ++iGameNumber );
+			
+			int iGameResult = DoGame( NULL, false, bDebug );
+			//int iGameResult = DoGame( acReplayFile, false, bDebug );
+			//DoGame( acReplayFile, true, bDebug );
+			if ( g_oState.m_bQuitFlag || g_oState.m_enGameMode == SState::IN_DEMO  ) break;
+			
+			debug ( "iGameResult = %d\n", iGameResult );
+			
+			if ( iGameResult >= 0 && !bNetworkGame )
+			{
+				GameOver( iGameResult );
+
+
+				FighterStatsDemo oDemo( g_oPlayerSelect.GetPlayerInfo( iGameResult ).m_enFighter );
+				oDemo.Run();		
+			}
+			if ( g_oState.m_bQuitFlag || g_oState.m_enGameMode == SState::IN_DEMO  ) break;
+		}
+		
+		if ( bNetworkGame && !g_oState.m_bQuitFlag )
+		{
+			DrawTextMSZ( "Connection closed.", inkFont, 320, 210, AlignHCenter | UseShadow, C_WHITE, gamescreen );
+			DrawTextMSZ( g_poNetwork->GetLastError(), impactFont, 320, 250, AlignHCenter | UseShadow, C_WHITE, gamescreen );
+			SDL_Delay( 1000 );
+			GetKey( true );
+		}
+		
+		if ( g_oState.m_bQuitFlag ) break;
+		Audio->PlayMusic( "DemoMusic" );
+#endif
 	}
 	
 	g_oState.Save();

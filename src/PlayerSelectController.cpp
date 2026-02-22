@@ -169,7 +169,7 @@ void CPlayerSelectController::HandleEvents()
 				DoMenu();
 				if ( m_bNetworkGame && g_poNetwork->IsMaster() )
 				{
-					g_poNetwork->SendGameParams( g_oState.m_iGameSpeed, g_oState.m_iRoundLength, g_oState.m_iHitPoints, GetBackgroundNumber() );
+					g_poNetwork->SendGameParams( g_oState.m_iGameSpeed, g_oState.m_iGameTime, g_oState.m_iHitPoints, GetBackgroundNumber() );
 				}
 				break;
 				
@@ -246,8 +246,8 @@ void CPlayerSelectController::HandleKey( int a_iPlayer, int a_iKey )
 
 	bool bKeepPlayerActive = false;
 
-	SPlayerInfo& roInfo = g_oPlayerSelect.EditPlayerInfo(a_iPlayer);
-	const SPlayerInfo& roOtherInfo = g_oPlayerSelect.GetPlayerInfo(1-a_iPlayer);
+	PlayerInfo& roInfo = g_oPlayerSelect.EditPlayerInfo(a_iPlayer);
+	const PlayerInfo& roOtherInfo = g_oPlayerSelect.GetPlayerInfo(1-a_iPlayer);
 	int iTeamSize = roInfo.m_aenTeam.size() + 1;
 	int iOtherTeamSize = roOtherInfo.m_aenTeam.size();
 
@@ -326,7 +326,7 @@ void CPlayerSelectController::HandleNetwork()
 		Audio->PlaySample("PLAYER_SELECTED");
 		g_oBackend.PerlEvalF( "PlayerSelected(%d);", iPlayer );
 
-		SPlayerInfo& roInfo = g_oPlayerSelect.EditPlayerInfo( iPlayer );
+		PlayerInfo& roInfo = g_oPlayerSelect.EditPlayerInfo( iPlayer );
 
 		roInfo.m_aenTeam.clear();
 		roInfo.m_aenTeam.push_back( enRemoteFighter );
@@ -462,7 +462,7 @@ void CPlayerSelectController::DoPlayerSelect()
 
 	if ( m_bNetworkGame && g_poNetwork->IsMaster() )
 	{
-		g_poNetwork->SendGameParams( g_oState.m_iGameSpeed, g_oState.m_iRoundLength, g_oState.m_iHitPoints, GetBackgroundNumber() );
+		g_poNetwork->SendGameParams( g_oState.m_iGameSpeed, g_oState.m_iGameTime, g_oState.m_iHitPoints, GetBackgroundNumber() );
 	}
 
 	g_oBackend.PerlEvalF( "SelectStart(%d);", g_oState.m_iNumPlayers );

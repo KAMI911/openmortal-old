@@ -21,6 +21,9 @@
 #include <fstream>
 #ifdef MACOSX
 //[segabor]
+#if defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
+#include <windows.h>
+#endif
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 //include <unistd.h>
@@ -44,7 +47,7 @@ std::string GetConfigHeader()
 
 std::string GetConfigFilename()
 {
-#ifdef _WINDOWS
+#if defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
 	if ( NULL != g_oState.m_pcArgv0 )
 	{
 		return std::string(g_oState.m_pcArgv0) + ".ini";
@@ -77,11 +80,11 @@ SState::SState()
 	m_iTeamSize = 5;
 	m_bTeamMultiselect = false;
 
-	m_iRoundLength = 60;
+	m_iGameTime = 60;
 	m_iHitPoints = 100;
 	m_iGameSpeed = 12;
 
-	#ifdef _WINDOWS
+	#if defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
 		#ifdef _DEBUG
 			m_bFullscreen = false;
 		#else
@@ -130,7 +133,7 @@ SState::SState()
 	// NOW MOVE ON TO THE TRICKIER ONES.
 
 	// 2.1. FIND THE LANGUAGE
-#ifdef _WINDOWS
+#if defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
 	LANGID iLangID = GetUserDefaultLangID() & 0x007f;
 	const char* pcLang;
 	switch ( iLangID )
@@ -183,8 +186,7 @@ SState::SState()
 #endif
 
 	// 2.2. FIND THE USER NAME
-
-#ifdef _WINDOWS
+#if defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
 	m_acNick[0] = 0;
 	DWORD iLen = 127;
 	BOOL iResult = GetUserName( m_acNick, &iLen );
@@ -293,11 +295,11 @@ void SState::Load()
 	poSv = get_sv("TEAMSIZE", FALSE); if (poSv) m_iTeamSize = SvIV( poSv );
 	poSv = get_sv("TEAMMULTISELECT", FALSE); if (poSv) m_bTeamMultiselect = SvIV( poSv );
 
-	poSv = get_sv("ROUNDLENGTH", FALSE); if (poSv) m_iRoundLength = SvIV( poSv );
+	poSv = get_sv("GAMETIME", FALSE); if (poSv) m_iGameTime = SvIV( poSv );
 	poSv = get_sv("HITPOINTS", FALSE); if (poSv) m_iHitPoints = SvIV( poSv );
 	poSv = get_sv("GAMESPEED", FALSE); if (poSv) m_iGameSpeed = SvIV( poSv );
 
-	poSv = get_sv("FULLSCREEN", FALSE); if (poSv) m_bFullscreen = SvIV( poSv ) != 0;
+	poSv = get_sv("FULLSCREEN", FALSE); if (poSv) m_bFullscreen = SvIV( poSv );
 	poSv = get_sv("CHANNELS", FALSE); if (poSv) m_iChannels = SvIV( poSv );
 	poSv = get_sv("MIXINGRATE", FALSE); if (poSv) m_iMixingRate = SvIV( poSv );
 	poSv = get_sv("MIXINGBITS", FALSE); if (poSv) m_iMixingBits = SvIV( poSv );
@@ -306,7 +308,7 @@ void SState::Load()
 	poSv = get_sv("LANGUAGE", FALSE); if (poSv) { strncpy( m_acLanguage, SvPV_nolen( poSv ), 9 ); m_acLanguage[9] = 0; }
 
 	poSv = get_sv("LATESTSERVER", FALSE); if (poSv) { strncpy( m_acLatestServer, SvPV_nolen( poSv ), 255 ); m_acLatestServer[255] = 0; }
-	poSv = get_sv("SERVER", FALSE); if (poSv) m_bServer = SvIV( poSv ) != 0;
+	poSv = get_sv("SERVER", FALSE); if (poSv) m_bServer = SvIV( poSv );
 	poSv = get_sv("NICK", FALSE); if (poSv) { strncpy( m_acNick, SvPV_nolen( poSv ), 127 ); m_acNick[127] = 0; }
 	
 	char pcBuffer[1024];
@@ -340,7 +342,7 @@ void SState::Save()
 	oStream << "TEAMSIZE=" << m_iTeamSize << '\n';
 	oStream << "TEAMMULTISELECT=" << m_bTeamMultiselect << '\n';
 
-	oStream << "ROUNDLENGTH=" << m_iRoundLength << '\n';
+	oStream << "GAMETIME=" << m_iGameTime << '\n';
 	oStream << "HITPOINTS=" << m_iHitPoints << '\n';
 	oStream << "GAMESPEED=" << m_iGameSpeed << '\n';
 

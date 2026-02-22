@@ -1,64 +1,235 @@
-name: OpenMortal CI/CD
+name: OpenSUSE Build Service Integration
 
 on:
   push:
-    branches:
-      - main
-  push:
+    branches: [ upgrade, main ]
     tags:
-      - 'v*.*'
+      - "v*.*.*"
   workflow_dispatch:
 
+env:
+  OBS_PROJECT: home:kami911:openmortal
+  OBS_PACKAGE: openmortal
+  VERSION: 0.7.2
+
 jobs:
-  # Linux build és OBS deploy
-  build-linux:
+  # ============================================================================
+  # OBS csomag frissítés
+  # ============================================================================
+  update-obs:
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Install osc
-        run: sudo apt update && sudo apt install -y osc gzip make gcc
-
-      - name: Configure osc
+      
+      - name: Install dependencies
+        run: |
+          sudo apt update && apt upgrade -y &&
+          sudo apt-get install -y wget
+          sudo apt install -y build-essential autoconf automake libtool pkg-config dh-autoreconf debhelper devscripts fakeroot build-essential &&
+          sudo apt install -y libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
+          
+      - name: Install OBS tooling
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y osc
+     
+      - name: Configure OBS credentials
+        env:
+          OBS_USER: ${{ secrets.OBS_USER }}
+          OBS_PASSWORD: ${{ secrets.OBS_PASS }}
         run: |
           mkdir -p ~/.config/osc
-          cat > ~/.config/osc/oscrc <<EOF
+          cat > ~/.config/osc/oscrc << EOF
           [general]
           apiurl = https://api.opensuse.org
+          
           [https://api.opensuse.org]
-          user = ${{ secrets.OBS_USER }}
-          pass = ${{ secrets.OBS_PASS }}
+          user = ${OBS_USER}
+          pass = ${OBS_PASSWORD}
           EOF
-
-      - name: Set version
-        run: |
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            VERSION=${GITHUB_REF##refs/tags/}
-          else
-            VERSION=$(git describe --tags --dirty --always || echo "1.0")
-          fi
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
+          chmod 600 ~/.config/osc/oscrc
+      
       - name: Create source tarball
         run: |
-          mkdir -p dist
-          git archive --prefix=openmortal-${VERSION}/ HEAD | gzip > dist/openmortal-${VERSION}.tar.gz
-
-      - name: Checkout OBS project
-        run: |
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            PROJECT="home:${{ secrets.OBS_USER }}:openmortal"      # stable
+          # Ha van autotools konfiguráció
+          if [ -f configure.ac ] || [ -f configure.in ]; then
+            autoreconf -i -f
+            ./configure
+            make dist
           else
-            PROJECT="home:${{ secrets.OBS_USER }}:openmortal:testing" # testing
+            # Egyébként manuális tarball
+            tar czf openmortal-${VERSION}.tar.gz \
+              --exclude=.git \
+              --exclude=.github \
+              --transform "s,^,openmortal-${VERSION}/," \
+              *
           fi
-          osc checkout $PROJECT openmortal
-
-      - name: Upload tarball and commit
+      
+      - name: Checkout OBS package
         run: |
-          cp dist/openmortal-${VERSION}.tar.gz $PROJECT/openmortal/
-          cd $PROJECT/openmortal
-          sed -i "s/^Version:.*/Version:        ${VERSION}/" openmortal.spec
-          osc addremove
-          osc commit -m "CI build ${VERSION}"
+          osc co ${OBS_PROJECT}/${OBS_PACKAGE}
+          cd ${OBS_PROJECT}/${OBS_PACKAGE}
+      
+      - name: Update package files
+        run: |
+          cd ${OBS_PROJECT}/${OBS_PACKAGE}
+          
+          # Töröljük a régi forrás tarballt
+          rm -f openmortal-*.tar.gz
+          
+          # Másoljuk az újat
+          cp ../../openmortal-${VERSION}.tar.gz .
+          
+          # Frissítjük a spec fájlt ha létezik a repo-ban
+          if [ -f ../../rpm/openmortal.spec ]; then
+            cp ../../rpm/openmortal.spec .
+          fi
+          
+          # Debian fájlok másolása
+          if [ -d ../../debian ]; then
+            tar czf debian.tar.gz -C ../../ debian/
+          fi
+      
+      - name: Add files to OBS
+        run: |
+          cd ${OBS_PROJECT}/${OBS_PACKAGE}
+          osc add openmortal-${VERSION}.tar.gz || true
+          osc add openmortal.spec || true
+          osc add debian.tar.gz || true
+      
+      - name: Commit changes to OBS
+        run: |
+          cd ${OBS_PROJECT}/${OBS_PACKAGE}
+          
+          # Commit üzenet összeállítása
+          if [ -n "${{ github.event.head_commit.message }}" ]; then
+            COMMIT_MSG="${{ github.event.head_commit.message }}"
+          else
+            COMMIT_MSG="Update to version ${VERSION}"
+          fi
+          
+          osc commit -m "${COMMIT_MSG}"
+      
+      - name: Trigger build
+        run: |
+          # Az osc commit automatikusan triggerel buildet
+          # De manuálisan is kérhetünk rebuild-et ha kell
+          # osc rebuild ${OBS_PROJECT} ${OBS_PACKAGE}
+          echo "Build triggered on OBS"
+      
+      - name: Wait and check build status
+        run: |
+          echo "Checking build status..."
+          sleep 30
+          osc results ${OBS_PROJECT} ${OBS_PACKAGE} || true
+
+  # ============================================================================
+  # OBS projekt inicializálás (csak első alkalommal)
+  # ============================================================================
+  setup-obs-project:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Install OBS tooling
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y osc
+      
+      - name: Configure OBS credentials
+        env:
+          OBS_USER: ${{ secrets.OBS_USER }}
+          OBS_PASSWORD: ${{ secrets.OBS_PASS }}
+        run: |
+          mkdir -p ~/.config/osc
+          cat > ~/.config/osc/oscrc << EOF
+          [general]
+          apiurl = https://api.opensuse.org
+          
+          [https://api.opensuse.org]
+          user = ${OBS_USER}
+          pass = ${OBS_PASSWORD}
+          EOF
+          chmod 600 ~/.config/osc/oscrc
+      
+      - name: Create OBS project structure
+        run: |
+          # Project meta fájl létrehozása
+          cat > project_meta.xml << 'EOF'
+          <project name="${OBS_PROJECT}">
+            <title>OpenMortal Game</title>
+            <description>OpenMortal is a parody of the once popular coin-up game, Mortal Kombat</description>
+            <person userid="${OBS_USER}" role="maintainer"/>
+            
+            <!-- Repository definitions -->
+            <repository name="openSUSE_Tumbleweed">
+              <path project="openSUSE:Factory" repository="snapshot"/>
+              <arch>x86_64</arch>
+              <arch>i586</arch>
+            </repository>
+            
+            <repository name="openSUSE_Leap_15.6">
+              <path project="openSUSE:Leap:15.6" repository="standard"/>
+              <arch>x86_64</arch>
+            </repository>
+            
+            <repository name="openSUSE_Leap_15.5">
+              <path project="openSUSE:Leap:15.5" repository="standard"/>
+              <arch>x86_64</arch>
+            </repository>
+            
+            <repository name="Fedora_40">
+              <path project="Fedora:40" repository="standard"/>
+              <arch>x86_64</arch>
+            </repository>
+            
+            <repository name="Fedora_39">
+              <path project="Fedora:39" repository="standard"/>
+              <arch>x86_64</arch>
+            </repository>
+            
+            <repository name="Debian_12">
+              <path project="Debian:12" repository="standard"/>
+              <arch>x86_64</arch>
+            </repository>
+            
+            <repository name="xUbuntu_24.04">
+              <path project="Ubuntu:24.04" repository="standard"/>
+              <arch>x86_64</arch>
+            </repository>
+            
+            <repository name="xUbuntu_22.04">
+              <path project="Ubuntu:22.04" repository="standard"/>
+              <arch>x86_64</arch>
+            </repository>
+          </project>
+          EOF
+          
+          # Helyettesítések
+          sed -i "s|\${OBS_PROJECT}|${OBS_PROJECT}|g" project_meta.xml
+          sed -i "s|\${OBS_USER}|${OBS_USER}|g" project_meta.xml
+          
+          # Projekt létrehozása
+          osc meta prj ${OBS_PROJECT} -F project_meta.xml || echo "Project may already exist"
+      
+      - name: Create package
+        run: |
+          # Package meta
+          cat > package_meta.xml << 'EOF'
+          <package name="${OBS_PACKAGE}" project="${OBS_PROJECT}">
+            <title>OpenMortal</title>
+            <description>OpenMortal is a parody of the once popular coin-up game, Mortal Kombat</description>
+          </package>
+          EOF
+          
+          sed -i "s|\${OBS_PROJECT}|${OBS_PROJECT}|g" package_meta.xml
+          sed -i "s|\${OBS_PACKAGE}|${OBS_PACKAGE}|g" package_meta.xml
+          
+          osc meta pkg ${OBS_PROJECT} ${OBS_PACKAGE} -F package_meta.xml || echo "Package may already exist"

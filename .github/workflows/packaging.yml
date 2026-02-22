@@ -1,0 +1,195 @@
+name: OpenMortal multi-platform build & release
+
+on:
+  push:
+    branches: [ upgrade ]
+    tags:
+      - "v*.*.*"
+  pull_request:
+    branches: [ upgrade ]
+  workflow_dispatch:
+
+env:
+  APPIMAGE_EXTRACT_AND_RUN: 1
+  VERSION: 0.7.2
+  DIST_FOLDER: $(pwd)/distribution
+jobs:
+  linux-x86-64_build:
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:24.04
+    env:
+      OSNAME: linux-ubuntu-noble
+      PLATFORM: x86-64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Define paths
+        run: |
+          echo "PLATFORM_BUILD_PATH=${DIST_FOLDER}/linux-${PLATFORM}_build" >> $GITHUB_ENV
+          echo "PLATFORM_PACKAGE_PATH=${DIST_FOLDER}/linux-${PLATFORM}_package" >> $GITHUB_ENV
+          echo "PLATFORM_APPIMAGE_PATH=${DIST_FOLDER}/AppDir" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: |
+          apt update && apt upgrade -y &&
+          apt-get install -y wget
+          apt install -y build-essential autoconf automake libtool pkg-config dh-autoreconf debhelper devscripts fakeroot build-essential &&
+          apt install -y libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
+
+      - name: Build from source
+        run: |
+          autoreconf -i -f
+          ./configure --prefix=/usr
+          make -j$(nproc)
+
+      - name: Create distributable archive
+        run: |
+          make dist
+
+      - name: make binary files
+        run: |
+          make DESTDIR="${{ env.PLATFORM_BUILD_PATH }}/" install
+  
+      - name: Prepare AppImage environment
+        run: |
+          mkdir -p ${{ env.PLATFORM_APPIMAGE_PATH }}/usr/bin
+          mkdir -p ${{ env.PLATFORM_APPIMAGE_PATH }}/usr/share/icons/hicolor/32x32/apps
+          install -m644 data/gfx/icon.png ${{ env.PLATFORM_APPIMAGE_PATH }}/usr/share/icons/hicolor/32x32/apps/openmortal.png
+          mkdir -p ${{ env.PLATFORM_APPIMAGE_PATH }}/usr/share/openmortal
+          cp -a ${{ env.PLATFORM_BUILD_PATH }}/usr/share ${{ env.PLATFORM_APPIMAGE_PATH }}/usr/
+          install -m644 packaging/openmortal.AppImage.desktop ${{ env.PLATFORM_APPIMAGE_PATH }}/openmortal.desktop
+          install -m755 ${{ env.PLATFORM_BUILD_PATH }}/usr/bin/openmortal ${{ env.PLATFORM_APPIMAGE_PATH }}/usr/bin/openmortal
+          mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/bin
+          mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/share/openmortal
+          cp -a ${{ env.PLATFORM_BUILD_PATH }}/usr/share ${{ env.PLATFORM_PACKAGE_PATH }}/usr/
+          install -m755 ${{ env.PLATFORM_BUILD_PATH }}/usr/bin/openmortal ${{ env.PLATFORM_PACKAGE_PATH }}/usr/bin/openmortal
+          tar zcvf openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz -C ${{ env.PLATFORM_PACKAGE_PATH }} .
+
+      - name: Download linuxdeploy and appimagetool
+        run: |
+          wget -qO /tmp/linuxdeploy-x86_64.AppImage "https://github.com/linuxdeploy/linuxdeploy/releases/latest/download/linuxdeploy-x86_64.AppImage"
+          chmod +x /tmp/linuxdeploy-x86_64.AppImage
+          wget -qO /tmp/appimagetool.AppImage "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
+          chmod +x /tmp/appimagetool.AppImage
+
+      - name: Create AppImage
+        run: |
+          /tmp/linuxdeploy-x86_64.AppImage --appdir ${{ env.PLATFORM_APPIMAGE_PATH }} --desktop-file=${{ env.PLATFORM_APPIMAGE_PATH }}/openmortal.desktop --icon-file=${{ env.PLATFORM_APPIMAGE_PATH }}/usr/share/icons/hicolor/32x32/apps/openmortal.png
+          /tmp/appimagetool.AppImage ${{ env.PLATFORM_APPIMAGE_PATH }}
+
+      - name: Upload AppImage
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal_appimage_${{ env.PLATFORM }}
+          path: ./*.AppImage
+      #- name: Upload Linux source xz archives for ${{ env.PLATFORM }}/
+      #  uses: actions/upload-artifact@v4
+      #  with:
+      #    name: openmortal_linux_binary_${{ env.PLATFORM }}/.xz
+      #    path: ../openmortal-0.7.tar.xz
+      - name: Upload Linux source gzip archives for ${{ env.PLATFORM }}/
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-7.2.tar.gz
+          path: ./openmortal-7.2.tar.gz
+      - name: Upload Linux binary gzip archives for ${{ env.PLATFORM }}/
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz
+          path: ./openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz
+
+  linux-x86-64_build-debian:
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:24.04
+    env:
+      OSNAME: linux-ubuntu-noble
+      PLATFORM: x86-64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Define paths
+        run: |
+          echo "PLATFORM_BUILD_PATH=${DIST_FOLDER}/linux-${PLATFORM}_build" >> $GITHUB_ENV
+          echo "PLATFORM_PACKAGE_PATH=${DIST_FOLDER}/linux-${PLATFORM}_package" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: |
+          apt update && apt upgrade -y &&
+          apt-get install -y wget
+          apt install -y build-essential autoconf automake libtool pkg-config dh-autoreconf debhelper devscripts fakeroot build-essential &&
+          apt install -y libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
+
+      - name: Build from source
+        run: |
+          pwd
+          export
+          dpkg-buildpackage -us -uc
+          mkdir -p $GITHUB_WORKSPACE/build
+          cp -rv ../*.deb $GITHUB_WORKSPACE/build/
+
+      - name: Upload Linux debian binary packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal_debian_binary_${{ env.OSNAME }}_${{ env.PLATFORM }}
+          path: build/openmortal_*.deb
+
+      - name: Upload Linux debian data packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal_debian_data_${{ env.OSNAME }}_${{ env.PLATFORM }}
+          path: build/openmortal-data_*.deb
+
+  linux-x86-64_build-local:
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:24.04
+    env:
+      OSNAME: linux-ubuntu-noble
+      PLATFORM: x86-64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Define paths
+        run: |
+          echo "PLATFORM_BUILD_PATH=${DIST_FOLDER}/linux-${PLATFORM}_build" >> $GITHUB_ENV
+          echo "PLATFORM_PACKAGE_PATH=${DIST_FOLDER}/linux-${PLATFORM}_package" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: |
+          apt update && apt upgrade -y &&
+          apt-get install -y wget
+          apt install -y build-essential autoconf automake libtool pkg-config dh-autoreconf debhelper devscripts fakeroot build-essential &&
+          apt install -y libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
+
+      - name: Build from source
+        run: |
+          autoreconf -i -f
+          ./configure
+          make -j$(nproc)
+
+      - name: Create distributable archive
+        run: |
+          make dist
+
+      - name: make binary files
+        run: |
+          make DESTDIR="${{ env.PLATFORM_BUILD_PATH }}/" install
+  
+      - name: Prepare AppImage environment
+        run: |
+          mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/local/bin
+          mkdir -p ${{ env.PLATFORM_PACKAGE_PATH }}/usr/local/share/openmortal
+          cp -a ${{ env.PLATFORM_BUILD_PATH }}/usr/local/share ${{ env.PLATFORM_PACKAGE_PATH }}/usr/local/
+          install -m755 ${{ env.PLATFORM_BUILD_PATH }}/usr/local/bin/openmortal ${{ env.PLATFORM_PACKAGE_PATH }}/usr/local/bin/openmortal
+          tar zcvf openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}-local.tar.gz -C ${{ env.PLATFORM_PACKAGE_PATH }} .
+
+      - name: Upload Linux binary (/usr/local) gzip archives for ${{ env.PLATFORM }}/
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}-local.tar.gz
+          path: ./openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}-local.tar.gz

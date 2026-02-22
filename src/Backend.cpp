@@ -22,7 +22,7 @@
 ***************************************************************************/
 
 PerlInterpreter*	my_perl;
-CBackend			g_oBackend;
+Backend				g_oBackend;
 
 
 /***************************************************************************
@@ -119,7 +119,7 @@ const char* TranslateUTF8( const char* a_pcText )
 }
 
 
-CBackend::CBackend()
+Backend::Backend()
 {
 	m_iBgX = m_iBgY = 0;
 	m_iNumDoodads = m_iNumSounds = 0;
@@ -132,7 +132,7 @@ CBackend::CBackend()
 }
 
 
-CBackend::~CBackend()
+Backend::~Backend()
 {
 	if ( NULL != my_perl )
 	{
@@ -143,7 +143,7 @@ CBackend::~CBackend()
 }
 
 
-bool CBackend::Construct()
+bool Backend::Construct()
 {
 	if ( my_perl != NULL )
 	{
@@ -157,7 +157,7 @@ bool CBackend::Construct()
 	std::string sFileName = DATADIR;
 	sFileName += "/script";
 
-#ifndef _WINDOWS
+#ifndef _WIN32
 	chdir( sFileName.c_str() );
 #endif
 	
@@ -190,7 +190,7 @@ bool CBackend::Construct()
 }
 
 
-const char* CBackend::PerlEvalF( const char* a_pcFormat, ... )
+const char* Backend::PerlEvalF( const char* a_pcFormat, ... )
 {
 	va_list ap;
 	va_start( ap, a_pcFormat );
@@ -213,7 +213,7 @@ const char* CBackend::PerlEvalF( const char* a_pcFormat, ... )
 }
 
 
-const char* CBackend::GetPerlString( const char* acScalarName )
+const char* Backend::GetPerlString( const char* acScalarName )
 {
 	SV* poScalar = get_sv( acScalarName, FALSE );
 	if ( NULL == poScalar )
@@ -225,7 +225,7 @@ const char* CBackend::GetPerlString( const char* acScalarName )
 }
 
 
-int CBackend::GetPerlInt( const char* acScalarName )
+int Backend::GetPerlInt( const char* acScalarName )
 {
 	SV* poScalar = get_sv( acScalarName, FALSE );
 	if ( NULL == poScalar )
@@ -245,9 +245,9 @@ some or many characters may not be ready or installed.
 \see GetFighterID
 \see GetNumberOfAvailableFighters
 */
-int CBackend::GetNumberOfFighters()
+int Backend::GetNumberOfFighters()
 {
-	PerlEvalF( "$::CppNumberOfFighters = scalar keys %%::FighterStats;" );
+	PerlEvalF( "$::CppNumberOfFighters = scalar keys %::FighterStats;" );
 	return GetPerlInt( "CppNumberOfFighters" );
 }
 
@@ -257,7 +257,7 @@ zero, and be less than the value returned by GetNumberOfFighters().
 
 \see GetNumberOfFighters
 */
-FighterEnum CBackend::GetFighterID( int a_iIndex )
+FighterEnum Backend::GetFighterID( int a_iIndex )
 {
 	PerlEvalF( "$::CppFighterID = (sort { $a - $b } keys %%::FighterStats)[%d];", a_iIndex );
 	return (FighterEnum) GetPerlInt( "CppFighterID" );
@@ -272,7 +272,7 @@ fighters as well, so it can only be used in conjunction with GetNumberOfFighters
 
 \see GetNumberOfFighters
 */
-int CBackend::GetNumberOfAvailableFighters()
+int Backend::GetNumberOfAvailableFighters()
 {
 	PerlEvalF( "GetNumberOfAvailableFighters();" );	// Defined in FighterStats.pl
 	return GetPerlInt( "CppNumberOfAvailableFighters" );
@@ -285,14 +285,14 @@ This should be called a constant number of time per second to make the game
 running seamlessly. Most speedup or slowdown effects are accomplished by 
 changing the frequency at which this method is called.
 */
-void CBackend::AdvancePerl()
+void Backend::AdvancePerl()
 {
 	PerlEvalF("GameAdvance();");
 }
 
 
 
-void CBackend::ReadFromPerl()
+void Backend::ReadFromPerl()
 {
 	int i;
 
@@ -325,7 +325,7 @@ void CBackend::ReadFromPerl()
 	m_iBgX = SvIV( perl_bgx );
 	m_iBgY = SvIV( perl_bgy );
 	m_iGameOver = SvIV( perl_over );
-	m_bKO = SvIV( perl_ko ) != 0;
+	m_bKO = SvIV( perl_ko );
 
 	for ( i=0; i<g_oState.m_iNumPlayers; ++i )
 	{
@@ -403,13 +403,13 @@ void CBackend::ReadFromPerl()
 }
 
 
-bool CBackend::IsDead( int a_iPlayer )
+bool Backend::IsDead( int a_iPlayer )
 {
 	return m_aoPlayers[ a_iPlayer ].m_iRealHitPoints <= 0;
 }
 
 
-void CBackend::PlaySounds()
+void Backend::PlaySounds()
 {
 	for ( int i=0; i<m_iNumSounds; ++i )
 	{
@@ -424,7 +424,7 @@ void CBackend::PlaySounds()
 ***************************************************************************/
 
 
-void CBackend::WriteToString( std::string& a_rsOutString )
+void Backend::WriteToString( std::string& a_rsOutString )
 {
 	char acBuffer[2048];
 	int iNumChars = sprintf( acBuffer, "%d %d  %d %d %d %d  %d %d %d %d  %d  ",
@@ -455,13 +455,13 @@ void CBackend::WriteToString( std::string& a_rsOutString )
 }
 
 
-void CBackend::ReadFromString( const std::string& a_rsString )
+void Backend::ReadFromString( const std::string& a_rsString )
 {
 	ReadFromString( a_rsString.c_str() );
 }
 
 
-void CBackend::ReadFromString( const char* a_pcBuffer )
+void Backend::ReadFromString( const char* a_pcBuffer )
 {
 	if ( strlen( a_pcBuffer ) < 10 )
 	{

@@ -1,0 +1,413 @@
+name: OpenMortal Unified Multi-Platform Build
+
+on:
+  push:
+    branches: [ upgrade, main ]
+    tags:
+      - "v*.*.*"
+  pull_request:
+    branches: [ upgrade, main ]
+  workflow_dispatch:
+
+env:
+  APPIMAGE_EXTRACT_AND_RUN: 1
+  VERSION: 0.7.2
+  PACKAGE_NAME: openmortal
+
+jobs:
+  # ============================================================================
+  # Debian/Ubuntu alapú build-ek
+  # ============================================================================
+  build-debs:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - debian:11
+          - debian:12
+          - debian:13
+          # - ubuntu:20.04
+          - ubuntu:22.04
+          - ubuntu:24.04
+          - ubuntu:25.04
+          - ubuntu:25.10
+          - ubuntu:26.04
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up build environment
+        run: |
+          mkdir -p artifacts
+          chmod 777 artifacts
+      
+      - name: Build DEB package
+        run: |
+          docker run --rm \
+            -v "$PWD":/workspace \
+            -e DEBIAN_FRONTEND=noninteractive \
+            ${{ matrix.distro }} \
+            /bin/bash -c '
+              set -euo pipefail
+              
+              # Install build dependencies
+              apt-get update
+              apt-get install -y \
+                build-essential \
+                autoconf \
+                automake \
+                libtool \
+                pkg-config \
+                dh-autoreconf \
+                debhelper \
+                devscripts \
+                fakeroot \
+                libperl-dev \
+                libsdl1.2-dev \
+                libsdl-image1.2-dev \
+                libsdl-mixer1.2-dev \
+                libsdl-net1.2-dev \
+                libfreetype6-dev
+              
+              # Copy source to build directory
+              cp -r /workspace /build
+              cd /build
+              
+              # Build package
+              dpkg-buildpackage -us -uc -b
+              
+              # Copy artifacts back
+              find /build/.. -maxdepth 1 -name "*.deb" -exec cp {} /workspace/artifacts/ \;
+            '
+      
+      - name: Verify build output
+        run: |
+          if [ ! "$(ls -A artifacts/*.deb 2>/dev/null)" ]; then
+            echo "ERROR: No DEB packages were built!"
+            exit 1
+          fi
+          
+          echo "Built packages:"
+          ls -lh artifacts/
+
+      - name: Prepare artifact name
+        id: artifact
+        run: |
+          # Replace : with - for valid artifact name
+          ARTIFACT_NAME=$(echo "debs-${{ matrix.distro }}" | tr ':' '-')
+          echo "name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
+      
+      - name: Upload DEBs
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.artifact.outputs.name }}
+          path: artifacts/*.deb
+          if-no-files-found: error
+          retention-days: 30
+  # ============================================================================
+  # RPM alapú build-ek (Fedora, AlmaLinux, Rocky Linux)
+  # ============================================================================
+  build-rpms:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - distro: fedora:41
+            pkg_manager: dnf
+          - distro: fedora:42
+            pkg_manager: dnf
+          - distro: fedora:43
+            pkg_manager: dnf
+          - distro: almalinux:8
+            pkg_manager: dnf
+          - distro: almalinux:9
+            pkg_manager: dnf
+          - distro: rockylinux:8
+            pkg_manager: dnf
+          - distro: rockylinux:9
+            pkg_manager: dnf
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up build environment
+        run: |
+          mkdir -p artifacts
+          chmod 777 artifacts
+      
+      - name: Build RPM package
+        run: |
+          docker run --rm \
+            -v "$PWD":/workspace \
+            ${{ matrix.distro }} \
+            /bin/bash -c '
+              set -euo pipefail
+              
+              # Install EPEL for RHEL clones if needed
+              if [[ "${{ matrix.distro }}" == almalinux* ]] || [[ "${{ matrix.distro }}" == rockylinux* ]]; then
+                ${{ matrix.pkg_manager }} install -y epel-release
+              fi
+              
+              # Install build dependencies
+              ${{ matrix.pkg_manager }} install -y \
+                rpm-build \
+                gcc \
+                gcc-c++ \
+                make \
+                autoconf \
+                automake \
+                libtool \
+                pkgconfig \
+                perl-devel \
+                SDL-devel \
+                SDL_image-devel \
+                SDL_mixer-devel \
+                SDL_net-devel \
+                SDL_ttf-devel \
+                freetype-devel \
+                tar \
+                gzip
+              
+              # Copy source to build directory
+              cp -r /workspace /build
+              cd /build
+              
+              # Create RPM build structure
+              mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+              
+              # Create source tarball
+              tar czf rpmbuild/SOURCES/openmortal-${VERSION:-1.0}.tar.gz \
+                --exclude=.git \
+                --exclude=rpmbuild \
+                --exclude=artifacts \
+                .
+
+              ls -la rpmbuild/SOURCES/
+              # Copy spec file
+              if [ ! -f rpm/openmortal.spec ]; then
+                echo "ERROR: rpm/openmortal.spec not found!"
+                exit 1
+              fi
+              cp rpm/openmortal.spec rpmbuild/SPECS/
+              
+              # Build RPM
+              rpmbuild -ba \
+                --define "_topdir $(pwd)/rpmbuild" \
+                rpmbuild/SPECS/openmortal.spec
+              
+              # Copy artifacts back
+              find rpmbuild -name "*.rpm" -exec cp {} /workspace/artifacts/ \;
+            '
+      
+      - name: Verify build output
+        run: |
+          if [ ! "$(ls -A artifacts/*.rpm 2>/dev/null)" ]; then
+            echo "ERROR: No RPM packages were built!"
+            exit 1
+          fi
+          
+          echo "Built packages:"
+          ls -lh artifacts/
+
+      - name: Prepare artifact name
+        id: artifact
+        run: |
+          # Replace : with - for valid artifact name
+          ARTIFACT_NAME=$(echo "rpms-${{ matrix.distro }}" | tr ':' '-')
+          echo "name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
+      
+      - name: Upload RPMs
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.artifact.outputs.name }}
+          path: artifacts/*.rpm
+          if-no-files-found: error
+          retention-days: 30
+      
+
+  # ============================================================================
+  # AppImage és tarballs
+  # ============================================================================
+  build-appimage:
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:24.04
+    env:
+      OSNAME: linux-ubuntu-noble
+      PLATFORM: x86-64
+      DIST_FOLDER: /workspace/distribution
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Define paths
+        run: |
+          echo "PLATFORM_BUILD_PATH=${DIST_FOLDER}/linux-${PLATFORM}_build" >> $GITHUB_ENV
+          echo "PLATFORM_PACKAGE_PATH=${DIST_FOLDER}/linux-${PLATFORM}_package" >> $GITHUB_ENV
+          echo "PLATFORM_APPIMAGE_PATH=${DIST_FOLDER}/AppDir" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: |
+          apt update && apt upgrade -y
+          apt-get install -y wget file
+          apt install -y build-essential autoconf automake libtool pkg-config \
+            dh-autoreconf debhelper devscripts fakeroot \
+            libperl-dev libsdl1.2-dev libsdl-image1.2-dev \
+            libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
+
+      - name: Build from source
+        run: |
+          autoreconf -i -f
+          ./configure --prefix=/usr
+          make -j$(nproc)
+
+      - name: Create distributable archive
+        run: |
+          make dist
+
+      - name: Install to build path
+        run: |
+          make DESTDIR="${PLATFORM_BUILD_PATH}/" install
+  
+      - name: Prepare binary tarball
+        run: |
+          mkdir -p ${PLATFORM_PACKAGE_PATH}/usr/bin
+          mkdir -p ${PLATFORM_PACKAGE_PATH}/usr/share/openmortal
+          cp -a ${PLATFORM_BUILD_PATH}/usr/share ${PLATFORM_PACKAGE_PATH}/usr/
+          install -m755 ${PLATFORM_BUILD_PATH}/usr/bin/openmortal ${PLATFORM_PACKAGE_PATH}/usr/bin/openmortal
+          cd ${PLATFORM_PACKAGE_PATH}
+          tar zcvf /workspace/openmortal-${VERSION}_linux_${PLATFORM}.tar.gz .
+
+      - name: Prepare AppImage environment
+        run: |
+          mkdir -p ${PLATFORM_APPIMAGE_PATH}/usr/bin
+          mkdir -p ${PLATFORM_APPIMAGE_PATH}/usr/share/icons/hicolor/32x32/apps
+          mkdir -p ${PLATFORM_APPIMAGE_PATH}/usr/share/openmortal
+          
+          install -m644 data/gfx/icon.png ${PLATFORM_APPIMAGE_PATH}/usr/share/icons/hicolor/32x32/apps/openmortal.png
+          cp -a ${PLATFORM_BUILD_PATH}/usr/share ${PLATFORM_APPIMAGE_PATH}/usr/
+          install -m644 packaging/openmortal.AppImage.desktop ${PLATFORM_APPIMAGE_PATH}/openmortal.desktop
+          install -m755 ${PLATFORM_BUILD_PATH}/usr/bin/openmortal ${PLATFORM_APPIMAGE_PATH}/usr/bin/openmortal
+
+      - name: Download linuxdeploy and appimagetool
+        run: |
+          wget -qO /tmp/linuxdeploy-x86_64.AppImage "https://github.com/linuxdeploy/linuxdeploy/releases/latest/download/linuxdeploy-x86_64.AppImage"
+          chmod +x /tmp/linuxdeploy-x86_64.AppImage
+          wget -qO /tmp/appimagetool.AppImage "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
+          chmod +x /tmp/appimagetool.AppImage
+
+      - name: Create AppImage
+        run: |
+          /tmp/linuxdeploy-x86_64.AppImage \
+            --appdir ${PLATFORM_APPIMAGE_PATH} \
+            --desktop-file=${PLATFORM_APPIMAGE_PATH}/openmortal.desktop \
+            --icon-file=${PLATFORM_APPIMAGE_PATH}/usr/share/icons/hicolor/32x32/apps/openmortal.png
+          /tmp/appimagetool.AppImage ${PLATFORM_APPIMAGE_PATH}
+
+      - name: Upload AppImage
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-appimage-x86_64
+          path: ./*.AppImage
+          retention-days: 30
+
+      - name: Upload source tarball
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-source-tarball
+          path: ./openmortal-*.tar.gz
+          retention-days: 30
+
+      - name: Upload binary tarball
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-binary-tarball-x86_64
+          path: /workspace/openmortal-${VERSION}_linux_${PLATFORM}.tar.gz
+          retention-days: 30
+
+  # ============================================================================
+  # /usr/local prefix build
+  # ============================================================================
+  build-local-install:
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:24.04
+    env:
+      OSNAME: linux-ubuntu-noble
+      PLATFORM: x86-64
+      DIST_FOLDER: /workspace/distribution
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Define paths
+        run: |
+          echo "PLATFORM_BUILD_PATH=${DIST_FOLDER}/linux-${PLATFORM}_build" >> $GITHUB_ENV
+          echo "PLATFORM_PACKAGE_PATH=${DIST_FOLDER}/linux-${PLATFORM}_package" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: |
+          apt update && apt upgrade -y
+          apt-get install -y wget
+          apt install -y build-essential autoconf automake libtool pkg-config \
+            dh-autoreconf debhelper devscripts fakeroot \
+            libperl-dev libsdl1.2-dev libsdl-image1.2-dev \
+            libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
+
+      - name: Build from source
+        run: |
+          autoreconf -i -f
+          ./configure
+          make -j$(nproc)
+
+      - name: Install to build path
+        run: |
+          make DESTDIR="${PLATFORM_BUILD_PATH}/" install
+  
+      - name: Create local install tarball
+        run: |
+          mkdir -p ${PLATFORM_PACKAGE_PATH}/usr/local/bin
+          mkdir -p ${PLATFORM_PACKAGE_PATH}/usr/local/share/openmortal
+          cp -a ${PLATFORM_BUILD_PATH}/usr/local/share ${PLATFORM_PACKAGE_PATH}/usr/local/
+          install -m755 ${PLATFORM_BUILD_PATH}/usr/local/bin/openmortal ${PLATFORM_PACKAGE_PATH}/usr/local/bin/openmortal
+          cd ${PLATFORM_PACKAGE_PATH}
+          tar zcvf /workspace/openmortal-${VERSION}_linux_${PLATFORM}-local.tar.gz .
+
+      - name: Upload local install tarball
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-local-install-tarball-x86_64
+          path: /workspace/openmortal-${VERSION}_linux_${PLATFORM}-local.tar.gz
+          retention-days: 30
+
+  # ============================================================================
+  # Release létrehozása tag esetén
+  # ============================================================================
+  create-release:
+    needs: [build-debs, build-rpms, build-appimage, build-local-install]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-artifacts
+      
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: all-artifacts/**/*
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

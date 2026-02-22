@@ -1,0 +1,288 @@
+name: Linux Multi-Arch Build
+
+on:
+  push:
+    branches: [ master, upgrade ]
+  pull_request:
+    branches: [ master, upgrade ]
+  workflow_dispatch:
+
+env:
+  VERSION: 0.7.2
+  # AppImages must not use FUSE inside Docker — extract-and-run mode instead
+  APPIMAGE_EXTRACT_AND_RUN: 1
+
+jobs:
+
+  # ── x86-64 (64-bit modern Linux) + AppImage ────────────────────────────────
+  linux-x86_64:
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:22.04
+    env:
+      DEBIAN_FRONTEND: noninteractive
+      PLATFORM: x86_64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y \
+            build-essential autoconf automake libtool pkg-config wget \
+            libperl-dev \
+            libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev \
+            libfreetype6-dev
+
+      - name: Build
+        run: |
+          autoreconf -i -f
+          ./configure --prefix=/usr
+          make -j$(nproc)
+          make DESTDIR="$(pwd)/dist" install
+
+      # ── portable tar.gz ──────────────────────────────────────────────────────
+      - name: Package tar.gz
+        run: |
+          tar zcf "openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz" \
+            -C dist .
+
+      - name: Upload tar.gz artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}
+          path: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz
+
+      # ── AppImage (x86_64) ────────────────────────────────────────────────────
+      - name: Download AppImage tools (x86_64)
+        run: |
+          wget -qO /tmp/linuxdeploy.AppImage \
+            "https://github.com/linuxdeploy/linuxdeploy/releases/latest/download/linuxdeploy-x86_64.AppImage"
+          wget -qO /tmp/appimagetool.AppImage \
+            "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
+          chmod +x /tmp/linuxdeploy.AppImage /tmp/appimagetool.AppImage
+
+      - name: Assemble AppDir (x86_64)
+        run: |
+          APPDIR="$(pwd)/AppDir-x86_64"
+          mkdir -p "${APPDIR}/usr/bin"
+          mkdir -p "${APPDIR}/usr/share/icons/hicolor/32x32/apps"
+          mkdir -p "${APPDIR}/usr/share/icons/hicolor/128x128/apps"
+
+          # Binary
+          install -m755 dist/usr/bin/openmortal "${APPDIR}/usr/bin/openmortal"
+          # Game data
+          cp -a dist/usr/share/openmortal "${APPDIR}/usr/share/"
+          # Icons
+          install -m644 packaging/32x32/openmortal.png \
+            "${APPDIR}/usr/share/icons/hicolor/32x32/apps/openmortal.png"
+          install -m644 packaging/128x128/openmortal.png \
+            "${APPDIR}/usr/share/icons/hicolor/128x128/apps/openmortal.png"
+          # Desktop file (must live at AppDir root for linuxdeploy)
+          install -m644 packaging/openmortal.AppImage.desktop \
+            "${APPDIR}/openmortal.desktop"
+
+      - name: Bundle libs with linuxdeploy and create AppImage (x86_64)
+        run: |
+          APPDIR="$(pwd)/AppDir-x86_64"
+          # linuxdeploy bundles all needed .so files automatically
+          /tmp/linuxdeploy.AppImage \
+            --appdir "${APPDIR}" \
+            --desktop-file="${APPDIR}/openmortal.desktop" \
+            --icon-file="${APPDIR}/usr/share/icons/hicolor/128x128/apps/openmortal.png"
+
+          /tmp/appimagetool.AppImage \
+            "${APPDIR}" \
+            "OpenMortal-${{ env.VERSION }}-x86_64.AppImage"
+
+      - name: Upload AppImage artifact (x86_64)
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenMortal-${{ env.VERSION }}-x86_64.AppImage
+          path: OpenMortal-${{ env.VERSION }}-x86_64.AppImage
+
+  # ── x86 / i386 (32-bit for older PCs) + AppImage ──────────────────────────
+  linux-i386:
+    runs-on: ubuntu-latest
+    container:
+      image: i386/ubuntu:22.04
+    env:
+      DEBIAN_FRONTEND: noninteractive
+      PLATFORM: i386
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y \
+            build-essential autoconf automake libtool pkg-config wget \
+            libperl-dev \
+            libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev \
+            libfreetype6-dev
+
+      - name: Build
+        run: |
+          autoreconf -i -f
+          ./configure --prefix=/usr
+          make -j$(nproc)
+          make DESTDIR="$(pwd)/dist" install
+
+      # ── portable tar.gz ──────────────────────────────────────────────────────
+      - name: Package tar.gz
+        run: |
+          tar zcf "openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz" \
+            -C dist .
+
+      - name: Upload tar.gz artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}
+          path: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz
+
+      # ── AppImage (i686) ──────────────────────────────────────────────────────
+      # linuxdeploy has no i686 build, so we assemble the AppDir manually and
+      # use the i686 build of appimagetool (which runs natively in this container).
+      - name: Download AppImage tools (i686)
+        run: |
+          wget -qO /tmp/appimagetool.AppImage \
+            "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-i686.AppImage"
+          chmod +x /tmp/appimagetool.AppImage
+
+      - name: Assemble AppDir (i686)
+        run: |
+          APPDIR="$(pwd)/AppDir-i386"
+          mkdir -p "${APPDIR}/usr/bin"
+          mkdir -p "${APPDIR}/usr/lib"
+          mkdir -p "${APPDIR}/usr/share/icons/hicolor/32x32/apps"
+          mkdir -p "${APPDIR}/usr/share/icons/hicolor/128x128/apps"
+
+          # Binary
+          install -m755 dist/usr/bin/openmortal "${APPDIR}/usr/bin/openmortal"
+          # Game data
+          cp -a dist/usr/share/openmortal "${APPDIR}/usr/share/"
+          # Icons
+          install -m644 packaging/32x32/openmortal.png \
+            "${APPDIR}/usr/share/icons/hicolor/32x32/apps/openmortal.png"
+          install -m644 packaging/128x128/openmortal.png \
+            "${APPDIR}/usr/share/icons/hicolor/128x128/apps/openmortal.png"
+          # Desktop file
+          install -m644 packaging/openmortal.AppImage.desktop \
+            "${APPDIR}/openmortal.desktop"
+          # Top-level icon symlink required by appimagetool
+          ln -sf usr/share/icons/hicolor/128x128/apps/openmortal.png \
+            "${APPDIR}/openmortal.png"
+
+          # Bundle required shared libraries (ldd-based, manual copy)
+          ldd dist/usr/bin/openmortal \
+            | awk '/=>/ && !/linux-gate/ && !/vdso/ { print $3 }' \
+            | xargs -I{} cp --no-clobber -- "{}" "${APPDIR}/usr/lib/" 2>/dev/null || true
+
+          # AppRun wrapper so the bundled libs are found at runtime
+          {
+            printf '%s\n' '#!/bin/sh'
+            printf '%s\n' 'HERE="$(dirname "$(readlink -f "${0}")")"'
+            printf '%s\n' 'export LD_LIBRARY_PATH="${HERE}/usr/lib:${LD_LIBRARY_PATH}"'
+            printf '%s\n' 'exec "${HERE}/usr/bin/openmortal" "$@"'
+          } > "${APPDIR}/AppRun"
+          chmod +x "${APPDIR}/AppRun"
+
+      - name: Create AppImage (i686)
+        run: |
+          ARCH=i686 /tmp/appimagetool.AppImage \
+            "$(pwd)/AppDir-i386" \
+            "OpenMortal-${{ env.VERSION }}-i686.AppImage"
+
+      - name: Upload AppImage artifact (i686)
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenMortal-${{ env.VERSION }}-i686.AppImage
+          path: OpenMortal-${{ env.VERSION }}-i686.AppImage
+
+  # ── ARM64 / aarch64 (Raspberry Pi 4+, modern ARM servers) ─────────────────
+  linux-arm64:
+    runs-on: ubuntu-24.04-arm
+    container:
+      image: ubuntu:22.04
+    env:
+      DEBIAN_FRONTEND: noninteractive
+      PLATFORM: arm64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y \
+            build-essential autoconf automake libtool pkg-config \
+            libperl-dev \
+            libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev \
+            libfreetype6-dev
+
+      - name: Build
+        run: |
+          autoreconf -i -f
+          ./configure --prefix=/usr
+          make -j$(nproc)
+          make DESTDIR="$(pwd)/dist" install
+
+      - name: Package
+        run: |
+          tar zcf "openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz" \
+            -C dist .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}
+          path: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz
+
+  # ── ARMv7 / armhf (Raspberry Pi 2/3, older ARM boards) ────────────────────
+  linux-armhf:
+    runs-on: ubuntu-latest
+    env:
+      PLATFORM: armhf
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up QEMU (enables running arm32v7 containers)
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm
+
+      - name: Build inside ARM32 container (emulated)
+        # arm32v7/debian:12 runs transparently via binfmt_misc QEMU
+        run: |
+          docker run --rm \
+            -v "$PWD":/workspace \
+            -w /workspace \
+            -e DEBIAN_FRONTEND=noninteractive \
+            arm32v7/debian:12 \
+            /bin/bash -c '
+              set -e
+              apt-get update
+              apt-get install -y \
+                build-essential autoconf automake libtool pkg-config \
+                libperl-dev \
+                libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev \
+                libfreetype6-dev
+              autoreconf -i -f
+              ./configure --prefix=/usr
+              make -j$(nproc)
+              make DESTDIR=/workspace/dist install
+            '
+
+      - name: Package
+        run: |
+          tar zcf "openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz" \
+            -C dist .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}
+          path: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz

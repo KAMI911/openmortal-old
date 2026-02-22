@@ -14,9 +14,9 @@
 #include <string>
 #include <vector>
 
-class CMenuItem;
-class CEnumMenuItem;
-class CTextMenuItem;
+class MenuItem;
+class EnumMenuItem;
+class TextMenuItem;
 
 
 enum
@@ -45,7 +45,7 @@ MENU_UNKNOWN,
 		MENU_CANCEL,
 	MENU_OPTIONS,
 		MENU_GAME_SPEED,
-		MENU_ROUND_LENGTH,		//	( :30 - 5:00 )
+		MENU_GAME_TIME,			//	( :30 - 5:00 )
 		MENU_TOTAL_HIT_POINTS,	// ( 25 - 1000 )
 		MENU_SOUND,
 			MENU_CHANNELS,		// MONO / STEREO
@@ -81,40 +81,40 @@ toplevel menu or invokes a command which unrolls the entire menu
 stack.
 */
 
-class CMenu
+class Menu
 {
 public:
-	CMenu( const char* a_pcTitle );
-	virtual ~CMenu();
+	Menu( const char* a_pcTitle );
+	virtual ~Menu();
 
-	virtual CMenuItem*		AddMenuItem( const char* a_pcUtf8Text, SDLKey a_tShortcut = SDLK_UNKNOWN, int a_iCode = 0 );
-	virtual CEnumMenuItem*	AddEnumMenuItem( const char* a_pcUtf8Text, int a_iInitialValue, 
+	virtual MenuItem*		AddMenuItem( const char* a_pcUtf8Text, SDLKey a_tShortcut = SDLK_UNKNOWN, int a_iCode = 0 );
+	virtual EnumMenuItem*	AddEnumMenuItem( const char* a_pcUtf8Text, int a_iInitialValue, 
 								const char** a_ppcNames, const int* a_piValues, int a_iCode = 0 );
-	virtual CTextMenuItem*	AddTextMenuItem( const char* a_pcTitle, const char* a_pcValue, int a_iCode = 0 );
-	virtual CMenuItem*		AddMenuItem( CMenuItem* a_poItem );
+	virtual TextMenuItem*	AddTextMenuItem( const char* a_pcTitle, const char* a_pcValue, int a_iCode = 0 );
+	virtual MenuItem*		AddMenuItem( MenuItem* a_poItem );
 	virtual void			AddOkCancel( int a_iOkCode = 0 );
-	virtual CMenuItem*		GetMenuItem( int a_iCode ) const;
+	virtual MenuItem*		GetMenuItem( int a_iCode ) const;
 
-	virtual void			ItemActivated( int a_iItemCode, CMenuItem* a_poMenuItem );
-	virtual void			ItemChanged( int a_iItemCode, int a_iValue, CMenuItem* a_poMenuItem );
+	virtual void			ItemActivated( int a_iItemCode, MenuItem* a_poMenuItem );
+	virtual void			ItemChanged( int a_iItemCode, int a_iValue, MenuItem* a_poMenuItem );
 	virtual int				Run();
 
 	virtual void			Draw();
 	virtual void			Clear();
-	virtual void			EnterName( const char* a_pcTitle, std::string& a_rsTarget, CTextMenuItem* a_poMenuItem, int a_iMaxlen );
+	virtual void			EnterName( const char* a_pcTitle, std::string& a_rsTarget, TextMenuItem* a_poMenuItem, int a_iMaxlen );
 
 protected:
 
 	virtual void			FocusNext();
 	virtual void			FocusPrev();
-	virtual void			InvokeSubmenu( CMenu* a_poSubmenu );
+	virtual void			InvokeSubmenu( Menu* a_poSubmenu );
 
-	typedef std::vector<CMenuItem*> CItemList;
-	typedef CItemList::iterator CItemIterator;
+	typedef std::vector<MenuItem*> ItemList;
+	typedef ItemList::iterator ItemIterator;
 
 	
 	std::string				m_sTitle;
-	CItemList				m_oItems;
+	ItemList				m_oItems;
 	int						m_iCurrentItem;
 	int						m_iReturnCode;
 	bool					m_bDone;
@@ -127,11 +127,11 @@ protected:
 Basic menu item. Menu items have a code which they pass to their parent
 menu when they are activated. Menu items can be enabled or disabled.
 */
-class CMenuItem
+class MenuItem
 {
 public:
-	CMenuItem( CMenu* a_poMenu, const char* a_pcUtf8Text, int a_iCode = -1 );
-	virtual ~CMenuItem();
+	MenuItem( Menu* a_poMenu, const char* a_pcUtf8Text, int a_iCode = -1 );
+	virtual ~MenuItem();
 
 	virtual void Draw();
 	virtual void Clear();
@@ -148,7 +148,7 @@ public:
 	virtual int  GetCode() const { return m_iCode; }
 	
 protected:
-	CMenu*			m_poMenu;
+	Menu*			m_poMenu;
 
 	// appearance
 	std::string		m_sUtf8Text;
@@ -175,11 +175,11 @@ values by incrementing and decrementing the value with the left and right
 arrow keys.
 */
 
-class CEnumMenuItem: public CMenuItem
+class EnumMenuItem: public MenuItem
 {
 public:
-	CEnumMenuItem( CMenu* a_poMenu, int a_iInitialValue, const char* a_pcUtf8Text, int a_iCode = -1 );
-	virtual ~CEnumMenuItem();
+	EnumMenuItem(  Menu* a_poMenu, int a_iInitialValue, const char* a_pcUtf8Text, int a_iCode = -1 );
+	virtual ~EnumMenuItem();
 	
 	int GetCurrentValue();
 	const char* GetCurrentText();
@@ -207,11 +207,11 @@ which can be set. This value is displayed next to the regular name of
 the menu item.
 */
 
-class CTextMenuItem: public CMenuItem
+class TextMenuItem: public MenuItem
 {
 public:
-	CTextMenuItem( CMenu* a_poMenu, const char* a_pcInitialValue, const char* a_pcUtf8Title, int a_iCode );
-	virtual ~CTextMenuItem();
+	TextMenuItem( Menu* a_poMenu, const char* a_pcInitialValue, const char* a_pcUtf8Title, int a_iCode );
+	virtual ~TextMenuItem();
 
 	virtual void Draw();
 	virtual void SetValue( const char* a_pcValue );
@@ -229,7 +229,7 @@ protected:
 The Network displays and modifies the network connection parameters.
 */
 
-class CNetworkMenu: public CMenu
+class CNetworkMenu: public Menu
 {
 public:
 	CNetworkMenu();
@@ -237,8 +237,8 @@ public:
 	
 	void Connect();
 	
-	void ItemActivated( int a_iItemCode, CMenuItem* a_poMenuItem );
-	void ItemChanged( int a_iItemCode, int a_iValue, CMenuItem* a_poMenuItem );
+	void ItemActivated( int a_iItemCode, MenuItem* a_poMenuItem );
+	void ItemChanged( int a_iItemCode, int a_iValue, MenuItem* a_poMenuItem );
 
 protected:
 	bool			m_bOK;
@@ -246,14 +246,14 @@ protected:
 	std::string		m_sHostname;
 	std::string		m_sNick;
 
-	CTextMenuItem*	m_poServerMenuItem;
-	CTextMenuItem*	m_poNickMenuItem;
+	TextMenuItem*	m_poServerMenuItem;
+	TextMenuItem*	m_poNickMenuItem;
 };
 
 
 
 
 void DoMenu();
-void DoMenu( CMenu& a_roMenu );
+void DoMenu( Menu& a_roMenu );
 
 #endif

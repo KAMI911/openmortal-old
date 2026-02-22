@@ -1,0 +1,111 @@
+name: Flatpak Build (Linux x86_64 + i386)
+
+on:
+  push:
+    branches: [ master, upgrade ]
+  pull_request:
+    branches: [ master, upgrade ]
+  workflow_dispatch:
+
+env:
+  VERSION: 0.7.2
+  FLATPAK_ID: net.sourceforge.openmortal
+  MANIFEST: packaging/net.sourceforge.openmortal.yml
+
+jobs:
+
+  # ── x86_64 Flatpak ──────────────────────────────────────────────────────────
+  flatpak-x86_64:
+    runs-on: ubuntu-latest
+    name: Flatpak x86_64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Flatpak and flatpak-builder
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak flatpak-builder desktop-file-utils
+
+      - name: Add Flathub remote and install x86_64 SDK/runtime
+        run: |
+          sudo flatpak remote-add --if-not-exists flathub \
+            https://flathub.org/repo/flathub.flatpakrepo
+          sudo flatpak install -y --arch=x86_64 \
+            org.freedesktop.Platform//24.08 \
+            org.freedesktop.Sdk//24.08
+
+      - name: Build Flatpak (x86_64)
+        run: |
+          flatpak-builder \
+            --arch=x86_64 \
+            --repo=repo \
+            --force-clean \
+            --ccache \
+            --disable-rofiles-fuse \
+            builddir-x86_64 \
+            "${{ env.MANIFEST }}"
+
+      - name: Export .flatpak bundle (x86_64)
+        run: |
+          flatpak build-bundle \
+            --arch=x86_64 \
+            repo \
+            "${{ env.FLATPAK_ID }}-${{ env.VERSION }}-x86_64.flatpak" \
+            "${{ env.FLATPAK_ID }}"
+
+      - name: Upload Flatpak artifact (x86_64)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.FLATPAK_ID }}-${{ env.VERSION }}-x86_64.flatpak
+          path: ${{ env.FLATPAK_ID }}-${{ env.VERSION }}-x86_64.flatpak
+
+  # ── i386 Flatpak ─────────────────────────────────────────────────────────────
+  # x86_64 Linux hosts can build i386 Flatpaks natively (no QEMU needed) because
+  # x86_64 CPUs support 32-bit mode. The i386 Freedesktop SDK is installed from
+  # Flathub and flatpak-builder cross-builds all modules inside it.
+  flatpak-i386:
+    runs-on: ubuntu-latest
+    name: Flatpak i386
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Flatpak and flatpak-builder
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak flatpak-builder desktop-file-utils
+
+      - name: Add Flathub remote and install i386 SDK/runtime
+        run: |
+          sudo flatpak remote-add --if-not-exists flathub \
+            https://flathub.org/repo/flathub.flatpakrepo
+          # i386 variant of the Freedesktop platform
+          sudo flatpak install -y --arch=i386 \
+            org.freedesktop.Platform//24.08 \
+            org.freedesktop.Sdk//24.08
+
+      - name: Build Flatpak (i386)
+        run: |
+          flatpak-builder \
+            --arch=i386 \
+            --repo=repo \
+            --force-clean \
+            --ccache \
+            --disable-rofiles-fuse \
+            builddir-i386 \
+            "${{ env.MANIFEST }}"
+
+      - name: Export .flatpak bundle (i386)
+        run: |
+          flatpak build-bundle \
+            --arch=i386 \
+            repo \
+            "${{ env.FLATPAK_ID }}-${{ env.VERSION }}-i386.flatpak" \
+            "${{ env.FLATPAK_ID }}"
+
+      - name: Upload Flatpak artifact (i386)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.FLATPAK_ID }}-${{ env.VERSION }}-i386.flatpak
+          path: ${{ env.FLATPAK_ID }}-${{ env.VERSION }}-i386.flatpak

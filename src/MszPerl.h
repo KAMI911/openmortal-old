@@ -21,11 +21,15 @@ file helps undefine them.
 #include <EXTERN.h>
 #include <perl.h>
 
-#ifdef _WINDOWS
+#if defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
 #undef bool
 #undef chdir
 #undef close
+#undef open
+#undef read
+#undef write
 #undef eof
+
 #define vsnprintf _vsnprintf
 #endif
 
