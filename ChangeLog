@@ -1,3 +1,12 @@
+2026-02-23 22:44  kami
+
+	* debian/changelog, debian/control, debian/openmortal-data.install, debian/openmortal.install, debian/rules:
+	  Packaging: add Debian package configuration.
+	  Add debian/control (binary packages: openmortal and openmortal-data),
+	  debian/rules (dh-based build using autoreconf), debian/changelog, and
+	  .install files that split the game binary from the data package.
+	  Allows building .deb packages with: dpkg-buildpackage -us -uc
+
 2026-02-22 21:12  kami
 
 	* data/gfx/level12.desc, data/gfx/level12_layer_3.gif, data/gfx/level12_layer_4.gif, data/gfx/level12_layer_5.gif, data/gfx/level12_path.png, data/gfx/level12_path_after.gif, data/gfx/level12_sky.png:

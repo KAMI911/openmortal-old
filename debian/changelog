@@ -1,0 +1,875 @@
+openmortal (0.7.2-1) unstable; urgency=low
+
+  * * Build packages after twenty years
+
+ -- KAMI <kami911@gmail.com>  Tue, 3 Dec 2025 08:28:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/main.cpp (1.17): Minor bugfixes.
+
+ -- upi <upi@example.com>  Fri, 30 Apr 2004 08:28:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/PlayerSelectController.cpp (1.2): Fixed player selection in
+  * network mode.
+
+ -- upi <upi@example.com>  Fri, 30 Apr 2004 08:25:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Game.cpp (1.23), GameOver.cpp (1.7), OnlineChat.cpp (1.5),
+  * menu.cpp (1.15): New sound effects.
+
+ -- upi <upi@example.com>  Fri, 30 Apr 2004 08:22:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/Demo.cpp (1.11): European Union Edition message added
+
+ -- upi <upi@example.com>  Fri, 30 Apr 2004 08:19:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Background.cpp (1.4), gfx.cpp (1.6): Images are now jpg +
+  * mask instead of paletted png.
+
+ -- upi <upi@example.com>  Fri, 30 Apr 2004 08:18:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Audio.cpp (1.4), Audio.h (1.2): New sound effects based on
+  * an editable soundmap in the sound directory.
+
+ -- upi <upi@example.com>  Fri, 30 Apr 2004 08:17:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: DrawRle.h (1.1), PlayerSelectController.cpp (1.1),
+  * PlayerSelectController.h (1.1), PlayerSelectView.cpp (1.1),
+  * PlayerSelectView.h (1.1): Adjusted frontend to many-player and
+  * team modes; switched to 16-bpp and above.
+
+ -- upi <upi@example.com>  Mon, 12 Apr 2004 11:49:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Audio.cpp (1.3), Backend.cpp (1.9), Backend.h (1.7),
+  * Background.cpp (1.3), Background.h (1.3), Chooser.cpp (1.2),
+  * Chooser.h (1.2), Demo.cpp (1.10), FighterStats.cpp (1.6),
+  * Game.cpp (1.22), Game.h (1.8), GameOver.cpp (1.6), Joystick.cpp
+  * (1.3), Joystick.h (1.2), Makefile.am (1.9), Makefile.in (1.9),
+  * MortalNetwork.h (1.7), MortalNetworkImpl.cpp (1.13),
+  * OnlineChat.cpp (1.4), PlayerSelect.cpp (1.14), PlayerSelect.h
+  * (1.6), RlePack.cpp (1.8), RlePack.h (1.4), State.cpp (1.10),
+  * State.h (1.9), common.cpp (1.4), common.h (1.5), gfx.cpp (1.5),
+  * gfx.h (1.6), main.cpp (1.16), menu.cpp (1.14), menu.h (1.5):
+  * Adjusted frontend to many-player and team modes; switched to
+  * 16-bpp and above.
+
+ -- upi <upi@example.com>  Mon, 12 Apr 2004 11:27:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/: Backend.pl (1.10), CollectedStats.pl (1.2),
+  * DataHelper.pl (1.7), Doodad.pl (1.5), Fighter.pl (1.10),
+  * FighterStats.pl (1.7), PlayerInput.pl (1.4): Adjusted backend to
+  * many-player and team modes.
+
+ -- upi <upi@example.com>  Mon, 12 Apr 2004 11:17:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Demo.cpp (1.9), FighterStats.cpp (1.5), Game.cpp (1.21),
+  * Joystick.cpp (1.2): Minor fixes before 0.6 release.
+
+ -- upi <upi@example.com>  Wed, 03 Mar 2004 21:05:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Game.cpp (1.20), Game.h (1.7), MortalNetwork.h (1.6),
+  * MortalNetworkImpl.cpp (1.12), MortalNetworkImpl.h (1.6),
+  * PlayerSelect.cpp (1.13), main.cpp (1.15): Implementation: The
+  * game background is now synchronized in network mode.
+
+ -- upi <upi@example.com>  Tue, 02 Mar 2004 10:52:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/Backend.pl (1.9): Bugfix: The startup code of
+  * characters is no longer run twice.
+
+ -- upi <upi@example.com>  Tue, 02 Mar 2004 10:50:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: OnlineChat.cpp (1.3), TextArea.cpp (1.4), sge_tt_text.cpp
+  * (1.7): Minor improvements to CTextArea (Faster typing, scrolling,
+  * no last character off-by-one bug)
+
+ -- upi <upi@example.com>  Tue, 02 Mar 2004 10:16:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/main.cpp (1.14): Bugfix: Now you can go to the demo directly
+  * from MortalNet.
+
+ -- upi <upi@example.com>  Tue, 02 Mar 2004 10:14:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/main.cpp (1.13): Return to MortalNet after network game
+  * disconnects
+
+ -- upi <upi@example.com>  Tue, 02 Mar 2004 09:47:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Demo.cpp (1.8), Event.h (1.1), Game.cpp (1.19),
+  * GameOver.cpp (1.5), Joystick.cpp (1.1), Joystick.h (1.1),
+  * OnlineChat.cpp (1.2), OnlineChat.h (1.2), PlayerSelect.cpp
+  * (1.12), common.cpp (1.3), gfx.cpp (1.4), gfx.h (1.5), main.cpp
+  * (1.12), menu.cpp (1.13), menu.h (1.4): Added joystick support.
+
+ -- upi <upi@example.com>  Tue, 02 Mar 2004 09:17:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/State.cpp (1.9): User and language detection for win32 fixed.
+
+ -- upi <upi@example.com>  Tue, 02 Mar 2004 09:15:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/MortalNetworkImpl.cpp (1.11): Bugfix: Network messages are
+  * now all sent in one packet instead of two packets. (oops)
+
+ -- upi <upi@example.com>  Tue, 02 Mar 2004 09:04:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Backend.cpp (1.8), Backend.h (1.6), Background.cpp (1.2),
+  * Game.cpp (1.18), Game.h (1.6), Makefile.am (1.8), Makefile.in
+  * (1.8), MortalNetwork.h (1.5), MortalNetworkImpl.cpp (1.10),
+  * MortalNetworkImpl.h (1.5), common.cpp (1.2), main.cpp (1.11):
+  * Updated networking (less lag, symmetric degradation)
+
+ -- upi <upi@example.com>  Mon, 01 Mar 2004 13:47:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/gfx/Makefile.am (1.5): Updated graphics for 0.6 release.
+
+ -- upi <upi@example.com>  Mon, 01 Mar 2004 13:43:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/: Backend.pl (1.8), CollectStats.pl (1.1),
+  * CollectedStats.pl (1.1), DataHelper.pl (1.6), Doodad.pl (1.4),
+  * Fighter.pl (1.9), FighterStats.pl (1.6), Makefile.am (1.4),
+  * Makefile.in (1.4), PlayerInput.pl (1.3), QuickSave.pl (1.2),
+  * Rewind.pl (1.1), Translate.pl (1.8): Updated networking (less
+  * lag, symmetric degradation)
+
+ -- upi <upi@example.com>  Mon, 01 Mar 2004 13:00:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/: Makefile.am (1.3), Makefile.in (1.3): Fix CVS problem with
+  * characters directory.
+
+ -- upi <upi@example.com>  Mon, 01 Mar 2004 12:51:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * ChangeLog (1.4), README (1.3), TODO (1.3), configure (1.3),
+  * configure.in (1.4), openmortal.lsm (1.3): Version number set to
+  * 0.6
+
+ -- upi <upi@example.com>  Mon, 01 Mar 2004 12:50:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/: DataHelper.pl (1.5), Fighter.pl (1.8): RFE824745:
+  * Blocking improved: Now it works faster, and causes DEL penalties
+  * to the opponent. Block jumpkicking and jumppunching is greatly
+  * penaltized.
+
+ -- upi <upi@example.com>  Sat, 14 Feb 2004 11:04:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/PlayerInput.pl (1.2): Implementation: Better key
+  * handling. Arrow keys now work as default if they are kept pressed
+  * (RFE891821)
+
+ -- upi <upi@example.com>  Sat, 14 Feb 2004 09:13:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/MortalNetworkImpl.cpp (1.9): Clearer messages when
+  * connecting.
+
+ -- upi <upi@example.com>  Fri, 13 Feb 2004 20:38:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Demo.cpp (1.7), main.cpp (1.10): Added version string to
+  * title screen, "Press Escape for the menu" message to demo
+  * screens.
+
+ -- upi <upi@example.com>  Fri, 13 Feb 2004 20:29:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Game.cpp (1.17), sge_tt_text.cpp (1.6): Fixed unicode
+  * translation bug.
+
+ -- upi <upi@example.com>  Thu, 05 Feb 2004 09:54:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/MortalNetworkImpl.cpp (1.8): Fixed compile error
+
+ -- vfortuna <upi@example.com>  Thu, 05 Feb 2004 08:43:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/FighterStats.hu (1.2): Removed obsolete file
+  * FighterStats.hu
+
+ -- vfortuna <upi@example.com>  Thu, 05 Feb 2004 08:23:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/: Makefile.am (1.3), Makefile.in (1.3): Removed
+  * obsolete FighterStats.hu
+
+ -- upi <upi@example.com>  Thu, 05 Feb 2004 07:56:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/FighterStats.hu (1.1): Initial revision (Fighters
+  * Stats Hungarian Translation)
+
+ -- vfortuna <upi@example.com>  Thu, 05 Feb 2004 05:32:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/Translate.pl (1.7): Portuguese LanguageCode
+  * correction and minor changes in translation.
+
+ -- vfortuna <upi@example.com>  Wed, 04 Feb 2004 15:00:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/Translate.pl (1.6): Minor Portuguese translation
+  * correction and some credits update
+
+ -- vfortuna <upi@example.com>  Wed, 04 Feb 2004 02:22:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/menu.cpp (1.12): Added Portuguese Language
+
+ -- vfortuna <upi@example.com>  Wed, 04 Feb 2004 01:14:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/Translate.pl (1.5): Added Portuguese Translation
+
+ -- vfortuna <upi@example.com>  Wed, 04 Feb 2004 00:45:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/Translate.pl (1.4): Updated credits.
+
+ -- upi <upi@example.com>  Sat, 31 Jan 2004 16:10:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/gfx/Makefile.in (1.5): level7 is now parallax, added level8.
+
+ -- upi <upi@example.com>  Sat, 31 Jan 2004 14:05:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/gfx/: Makefile.am (1.4), Makefile.in (1.4), level7.desc
+  * (1.1), level7.png (1.2), level7_cumi.png (1.1),
+  * level7_ground1.png (1.1), level7_ground2.png (1.1),
+  * level7_ground3.png (1.1), level7_ground4.png (1.1),
+  * level7_logo.png (1.1), level7_sky.png (1.1), level7_upi.png
+  * (1.1), level8.png (1.1): level7 is now parallax, added level8.
+
+ -- upi <upi@example.com>  Sat, 31 Jan 2004 13:53:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * configure.in (1.3): Bumped version to 0.5 for testing before the
+  * release.
+
+ -- upi <upi@example.com>  Fri, 30 Jan 2004 23:21:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Background.h (1.2), FighterStats.h (1.2), Game.cpp (1.16),
+  * MortalNetworkImpl.cpp (1.7), State.cpp (1.8): Fixes for Visual
+  * C++
+
+ -- upi <upi@example.com>  Fri, 30 Jan 2004 23:13:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: OnlineChat.cpp (1.1), OnlineChat.h (1.1): Added online
+  * chat.
+
+ -- upi <upi@example.com>  Fri, 30 Jan 2004 23:12:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/: FighterStats.pl (1.5), Translate.pl (1.3): Fix for
+  * UTF-8/unicode locales.
+
+ -- upi <upi@example.com>  Fri, 30 Jan 2004 15:52:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/fonts/: Makefile.am (1.3), Makefile.in (1.3), thin.ttf
+  * (1.1): Added graphics capabilities for online chat.
+
+ -- upi <upi@example.com>  Fri, 30 Jan 2004 15:50:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Makefile.am (1.7), Makefile.in (1.7), MortalNetworkImpl.cpp
+  * (1.6), State.h (1.8), main.cpp (1.9), menu.cpp (1.11), menu.h
+  * (1.3): Added online chat.
+
+ -- upi <upi@example.com>  Fri, 30 Jan 2004 15:49:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: TextArea.cpp (1.3), TextArea.h (1.3), gfx.h (1.4),
+  * sge_tt_text.cpp (1.5), sge_tt_text.h (1.4), PlayerSelect.cpp
+  * (1.11): Added graphics capabilities for online chat.
+
+ -- upi <upi@example.com>  Fri, 30 Jan 2004 15:46:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Demo.cpp (1.6), Game.cpp (1.15), GameOver.cpp (1.4),
+  * common.h (1.4): Adjusted to interface change in DoMenu.
+
+ -- upi <upi@example.com>  Fri, 30 Jan 2004 15:44:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/FlyingChars.cpp (1.4): Suppressed a warning.
+
+ -- upi <upi@example.com>  Fri, 30 Jan 2004 15:41:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/sound/: Last_Ninja_-_The_Wilderness.mid (1.2), Makefile.in
+  * (1.3): Removed midi.
+
+ -- upi <upi@example.com>  Fri, 30 Jan 2004 08:14:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Game.cpp (1.14), RlePack.cpp (1.7), RlePack.h (1.3),
+  * sge_primitives.cpp (1.3): Added elliptic shadows
+
+ -- upi <upi@example.com>  Thu, 29 Jan 2004 23:54:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: MortalNetwork.h (1.4), MortalNetworkImpl.cpp (1.5),
+  * MortalNetworkImpl.h (1.4), State.cpp (1.7), State.h (1.7),
+  * main.cpp (1.8), menu.cpp (1.10): Added nicknames to the network
+  * mode.
+
+ -- upi <upi@example.com>  Thu, 29 Jan 2004 18:33:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/Game.cpp (1.13): Sounds now played correctly on the client
+  * side
+
+ -- upi <upi@example.com>  Thu, 29 Jan 2004 18:30:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/gfx/PlayerSelect_chat.png (1.3): Larger chat area.
+
+ -- upi <upi@example.com>  Thu, 29 Jan 2004 15:05:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/gfx/PlayerSelect_chat.png (1.2): Larger chat area.
+
+ -- upi <upi@example.com>  Thu, 29 Jan 2004 14:45:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/menu.cpp (1.9): Friendlier player key selection.
+
+ -- upi <upi@example.com>  Thu, 29 Jan 2004 14:45:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: MortalNetworkImpl.cpp (1.4), PlayerSelect.cpp (1.10),
+  * TextArea.cpp (1.2), TextArea.h (1.2): Cuter, colorful, scrollable
+  * chat.
+
+ -- upi <upi@example.com>  Thu, 29 Jan 2004 14:44:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Game.cpp (1.12), MortalNetwork.h (1.3),
+  * MortalNetworkImpl.cpp (1.3), MortalNetworkImpl.h (1.3),
+  * PlayerSelect.cpp (1.9), PlayerSelect.h (1.5), main.cpp (1.7),
+  * menu.cpp (1.8): Network play enhancements: HurryUp/TimeUp
+  * transfer, disconnect detection during game, disconnection during
+  * synchronization, checking the availability of remote fighters,
+  * Game Params sent to chat box.
+
+ -- upi <upi@example.com>  Thu, 29 Jan 2004 13:05:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/sound/: Makefile.am (1.3), pop.wav (1.1), ride.mod (1.1):
+  * Added new intro music to replace mid
+
+ -- upi <upi@example.com>  Thu, 29 Jan 2004 12:52:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/gfx/: Makefile.am (1.3), PlayerSelect_chat.png (1.1),
+  * Makefile.in (1.3): Added network mode PlayerSelect screen
+
+ -- upi <upi@example.com>  Wed, 28 Jan 2004 20:14:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Backend.cpp (1.7), Backend.h (1.5), Chooser.cpp (1.1),
+  * Chooser.h (1.1), Game.cpp (1.11), Game.h (1.5), Makefile.am
+  * (1.6), Makefile.in (1.6), MortalNetwork.h (1.2),
+  * MortalNetworkImpl.cpp (1.2), MortalNetworkImpl.h (1.2),
+  * PlayerSelect.cpp (1.8), PlayerSelect.h (1.4), TextArea.cpp (1.1),
+  * TextArea.h (1.1), gfx.h (1.3), main.cpp (1.6), menu.cpp (1.7),
+  * sge_surface.cpp (1.3), sge_surface.h (1.3), sge_tt_text.cpp
+  * (1.4), sge_tt_text.h (1.3): Added support and related classes and
+  * methods for network game.
+
+ -- upi <upi@example.com>  Wed, 28 Jan 2004 20:08:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/Backend.pl (1.7): Removed the  variable, this is now
+  * handled by the C++ part.
+
+ -- upi <upi@example.com>  Wed, 28 Jan 2004 20:00:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/FighterStats.pl (1.4): Added the CODENAME attribute
+  * to fighters, as a basename to all files.
+
+ -- upi <upi@example.com>  Wed, 28 Jan 2004 20:00:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/: Translate.pl (1.2), Fighter.pl (1.7): Minor
+  * translation updates
+
+ -- upi <upi@example.com>  Wed, 28 Jan 2004 19:59:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/sound/: Makefile.am (1.2), Makefile.in (1.2), moo2.voc
+  * (1.1): Added 'moo'.
+
+ -- upi <upi@example.com>  Mon, 26 Jan 2004 18:14:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/gfx/: Makefile.am (1.2), Makefile.in (1.2), PlayerSelect.png
+  * (1.2), Story2.png (1.1), level1.png (1.2), level2.png (1.1),
+  * level3.desc (1.1), level3.png (1.2), level3_city.png (1.1),
+  * level3_ground.png (1.1), level3_moon.png (1.1), level3_sky.png
+  * (1.1), level4.desc (1.1), level4_earth.png (1.1),
+  * level4_ground.png (1.1), level4_moon.png (1.1), level4_nebula.png
+  * (1.1), level4_rock.png (1.1), level4_saturn.png (1.1), level5.png
+  * (1.1), level6.png (1.1), level7.png (1.1): Updated graphics files
+  * after parallax backgrounds.
+
+ -- upi <upi@example.com>  Mon, 26 Jan 2004 17:49:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/: Bence.pl (1.3), Cumi.pl (1.3), Descant.pl (1.4),
+  * Grizli.pl (1.4), Kolos.pl (1.2), Maci.pl (1.3), Sirpi.pl (1.3),
+  * UPi.pl (1.3), Ulmar.pl (1.4), Zoli.pl (1.3): Minor updates after
+  * version 0.4
+
+ -- upi <upi@example.com>  Mon, 26 Jan 2004 17:37:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/: Backend.pl (1.6), Collision.pl (1.2), DataHelper.pl
+  * (1.4), Doodad.pl (1.3), Fighter.pl (1.6), FighterStats.pl (1.3),
+  * Makefile.am (1.2), Makefile.in (1.2), State.pl (1.2),
+  * Translate.pl (1.1): Minor updates and translations after version
+  * 0.4
+
+ -- upi <upi@example.com>  Mon, 26 Jan 2004 17:32:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/fonts/: CreditsFont2.png (1.1), Makefile.am (1.2),
+  * Makefile.in (1.2), bradybun.ttf (1.1), brandybun3.png (1.1),
+  * deadgrit.ttf (1.1), glossyfont.png (1.2): New and improved
+  * international fonts!
+
+ -- upi <upi@example.com>  Mon, 26 Jan 2004 17:27:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/: Makefile.am (1.2), Makefile.in (1.2): Import after version
+  * 0.4
+
+ -- upi <upi@example.com>  Mon, 26 Jan 2004 17:24:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * ChangeLog (1.3), INSTALL (1.2), Makefile.am (1.2), Makefile.in
+  * (1.2), README (1.2), TODO (1.2), aclocal.m4 (1.2), config.guess
+  * (1.2), config.sub (1.2), configure (1.2), configure.in (1.2),
+  * openmortal.lsm (1.2): Updated after version 0.4.  Now requires
+  * SDL_net too.
+
+ -- upi <upi@example.com>  Mon, 26 Jan 2004 17:21:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/FighterStats.h (1.1): Separated the FighterStats class from
+  * the Demo.h header.
+
+ -- upi <upi@example.com>  Mon, 26 Jan 2004 17:10:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Makefile.am (1.5), Makefile.in (1.5), MortalNetwork.h
+  * (1.1), MortalNetworkImpl.cpp (1.1), MortalNetworkImpl.h (1.1),
+  * PlayerSelect.cpp (1.7), PlayerSelect.h (1.3), main.cpp (1.5),
+  * menu.cpp (1.6), menu.h (1.2): Initial implementation of network
+  * support (RFE 824908)
+
+ -- upi <upi@example.com>  Mon, 26 Jan 2004 17:08:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Backend.cpp (1.6), Demo.cpp (1.5), Demo.h (1.3),
+  * FighterEnum.h (1.2), FighterStats.cpp (1.4), FlyingChars.cpp
+  * (1.3), FlyingChars.h (1.2), Game.cpp (1.10), Game.h (1.4),
+  * State.cpp (1.6), State.h (1.6), common.h (1.3), gfx.cpp (1.3),
+  * gfx.h (1.2), sge_bm_text.cpp (1.4): Implemented translations
+  * (English, Hungarian, Spanish, French), as described in RFE
+  * 824819.
+
+ -- upi <upi@example.com>  Mon, 26 Jan 2004 17:01:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Background.cpp (1.1), Background.h (1.1), Game.cpp (1.9),
+  * Game.h (1.3), Makefile.am (1.4), Makefile.in (1.4): Implemented
+  * RFE 824454: Multi-layer arenas
+
+ -- upi <upi@example.com>  Sun, 11 Jan 2004 22:00:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/Backend.cpp (1.5): Quick fix to handle the end of the demo
+  * more gracefully.
+
+ -- upi <upi@example.com>  Sun, 11 Jan 2004 21:56:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/sge_tt_text.cpp (1.3): Fixed bug 874911: compilation should
+  * work with newer versions of freetype2.
+
+ -- upi <upi@example.com>  Sun, 11 Jan 2004 18:17:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/RlePack.cpp (1.6): Fixed bug 874234: loading now works on big
+  * endian systems, such as MacOS X.
+
+ -- upi <upi@example.com>  Sun, 11 Jan 2004 18:04:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Backend.cpp (1.4), Demo.cpp (1.4), Demo.h (1.2),
+  * FighterStats.cpp (1.3), Game.cpp (1.8), Makefile.am (1.3),
+  * Makefile.in (1.3), MszPerl.h (1.1), PlayerSelect.cpp (1.6),
+  * RlePack.cpp (1.5), State.cpp (1.5), State.h (1.5), main.cpp
+  * (1.4), sge_bm_text.cpp (1.3), sge_bm_text.h (1.3): Import of
+  * version 0.4 sources.
+
+ -- upi <upi@example.com>  Sun, 11 Jan 2004 17:41:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Game.cpp (1.7), Game.h (1.2), State.cpp (1.4), State.h
+  * (1.4), menu.cpp (1.5): Implemented: Speed control (from "Snail
+  * race" to "Kung-fu movie")
+
+ -- upi <upi@example.com>  Sun, 12 Oct 2003 15:50:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/sound/: 2nd_pm.s3m (1.1), Last_Ninja_-_The_Wilderness.mid
+  * (1.1), alarm.voc (1.1), aroooga.voc (1.1), ba_gooock.voc (1.1),
+  * bowling.voc (1.1), car_start.voc (1.1), crashhh.voc (1.1),
+  * ding.voc (1.1), evil_laughter.voc (1.1), machine_start.voc (1.1),
+  * magic.voc (1.1), pop.voc (1.1), shades_rollup.voc (1.1),
+  * slip4.voc (1.1), splat.wav (1.1), splat2.voc (1.1), splat_.voc
+  * (1.1), strange_button.voc (1.1), strange_quack.voc (1.1),
+  * thump.voc (1.1), thump.wav (1.1), thump3.voc (1.1),
+  * woman_screams.voc (1.1), woosh.voc (1.1), woosh.wav (1.1): Added
+  * sound to CVS.
+
+ -- upi <upi@example.com>  Sun, 05 Oct 2003 10:03:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/gfx/: Credits.png (1.1), Doodads.png (1.1), FighterStats.png
+  * (1.1), Foot.png (1.1), GameOver.png (1.1), Mortal.png (1.1),
+  * PlayerSelect.png (1.1), Story1.png (1.1), icon.bmp (1.1),
+  * icon.png (1.1), level1.png (1.1), level3.png (1.1): Added gfx to
+  * CVS.
+
+ -- upi <upi@example.com>  Sun, 05 Oct 2003 09:54:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/fonts/: aardvark.ttf (1.1), fangfont.png (1.1),
+  * glossyfont.png (1.1), gooddogc.ttf (1.1), impactfont2.png (1.1),
+  * manslem.ttf (1.1): Added fonts to CVS
+
+ -- upi <upi@example.com>  Sun, 05 Oct 2003 09:50:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * ChangeLog (1.2), data/script/Backend.pl (1.5),
+  * data/script/Bence.pl (1.2), data/script/Cumi.pl (1.2),
+  * data/script/DataHelper.pl (1.3), data/script/Descant.pl (1.3),
+  * data/script/Doodad.pl (1.2), data/script/Fighter.pl (1.5),
+  * data/script/FighterStats.pl (1.2), data/script/Grizli.pl (1.3),
+  * data/script/Maci.pl (1.2), data/script/Sirpi.pl (1.2),
+  * data/script/UPi.pl (1.2), data/script/Ulmar.pl (1.3),
+  * data/script/Zoli.pl (1.2), src/Backend.cpp (1.3), src/Backend.h
+  * (1.4), src/Demo.cpp (1.3), src/Game.cpp (1.6),
+  * src/PlayerSelect.cpp (1.5): Added fighter registry.  Started
+  * implementation of projectiles.
+
+ -- upi <upi@example.com>  Fri, 03 Oct 2003 08:58:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Backend.h (1.3), Game.cpp (1.5), PlayerSelect.cpp (1.4),
+  * PlayerSelect.h (1.2): Fighter names are displayed in the
+  * PlayerSelect and Game screens.
+
+ -- upi <upi@example.com>  Fri, 12 Sep 2003 11:49:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/menu.cpp (1.4): "Hit Points" changed to "Stamina" in the
+  * menu.
+
+ -- upi <upi@example.com>  Fri, 12 Sep 2003 11:48:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/: Backend.pl (1.4), Fighter.pl (1.4): Fighters can no
+  * longer be "cornered". If a fighter is hit at the edge of the
+  * arena, the other fighter is pushed back.
+
+ -- upi <upi@example.com>  Fri, 12 Sep 2003 11:47:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/Descant.pl (1.2): Descant now cannot be leg swept too
+  * many times.
+
+ -- upi <upi@example.com>  Fri, 12 Sep 2003 11:45:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/: Backend.pl (1.3), DataHelper.pl (1.2), Fighter.pl
+  * (1.3), Grizli.pl (1.2): Added "Earthquake" effect.
+
+ -- upi <upi@example.com>  Thu, 11 Sep 2003 21:54:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Demo.cpp (1.2), State.h (1.3): Cleanup: Removed needless
+  * variables from SState.
+
+ -- upi <upi@example.com>  Thu, 11 Sep 2003 17:42:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/RlePack.cpp (1.4): Bugfix: Flipped characters no longer roll
+  * over to the left of the screen by one pixel
+
+ -- upi <upi@example.com>  Thu, 11 Sep 2003 17:40:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/: Backend.pl (1.2), Fighter.pl (1.2): Bugfix:
+  * Blocking with your back turned no longer works.
+
+ -- upi <upi@example.com>  Sun, 07 Sep 2003 16:08:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Game.cpp (1.4), GameOver.cpp (1.3), Makefile.in (1.2):
+  * Fixed several issues related to menu invocation, game starting,
+  * game surrender in various screens. They now all work alike.
+
+ -- upi <upi@example.com>  Sun, 07 Sep 2003 16:03:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * data/script/Ulmar.pl (1.2): Ulmar: Fixed the "double lowpunch"
+  * bug.
+
+ -- upi <upi@example.com>  Sat, 06 Sep 2003 22:21:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/: Backend.cpp (1.2), Backend.h (1.2), FighterEnum.h (1.1),
+  * FighterStats.cpp (1.2), Game.cpp (1.3), GameOver.cpp (1.2),
+  * Makefile.am (1.2), PlayerSelect.cpp (1.3), PlayerSelect.h (1.1),
+  * RlePack.cpp (1.3), RlePack.h (1.2), State.cpp (1.3), common.h
+  * (1.2), main.cpp (1.3), menu.cpp (1.3): RlePack: Responsibilities
+  * cleaned up, updated to new coding conventions.  PlayerSelect: Now
+  * an object.  Backend: perl is no longer included in the main
+  * header.  Eliminated the direct use of perl in some files.
+
+ -- upi <upi@example.com>  Sat, 06 Sep 2003 21:50:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * src/State.cpp (1.2): Fixed windows and linux ini file location
+  * bug.
+
+ -- upi <upi@example.com>  Fri, 05 Sep 2003 12:37:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * mkinstalldirs (1.2), src/Audio.cpp (1.2), src/FlyingChars.cpp
+  * (1.2), src/Game.cpp (1.2), src/PlayerSelect.cpp (1.2),
+  * src/RlePack.cpp (1.2), src/State.h (1.2), src/gfx.cpp (1.2),
+  * src/main.cpp (1.2), src/menu.cpp (1.2), src/sge_bm_text.cpp
+  * (1.2), src/sge_bm_text.h (1.2), src/sge_primitives.cpp (1.2),
+  * src/sge_primitives.h (1.2), src/sge_surface.cpp (1.2),
+  * src/sge_surface.h (1.2), src/sge_tt_text.cpp (1.2),
+  * src/sge_tt_text.h (1.2): Cleanup: removed gcc-specific code,
+  * cleaned up includes, minor bugfixes
+
+ -- upi <upi@example.com>  Mon, 01 Sep 2003 22:40:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * TODO (1.1), openmortal.lsm (1.1), README (1.1), aclocal.m4 (1.1),
+  * configure (1.1), configure.in (1.1), config.guess (1.1),
+  * install-sh (1.1), Makefile.am (1.1), config.sub (1.1), missing
+  * (1.1), mkinstalldirs (1.1), AUTHORS (1.1), ChangeLog (1.1),
+  * INSTALL (1.1), Makefile.in (1.1), acinclude.m4 (1.1), config.h.in
+  * (1.1), stamp-h.in (1.1), COPYING (1.1), src/sge_primitives.h
+  * (1.1), src/sge_tt_text.h (1.1), src/menu.cpp (1.1), src/Audio.h
+  * (1.1), src/Demo.h (1.1), src/Game.h (1.1), src/RlePack.h (1.1),
+  * src/gfx.h (1.1), src/sge_primitives.cpp (1.1), src/FlyingChars.h
+  * (1.1), src/sge_tt_text.cpp (1.1), src/Backend.cpp (1.1),
+  * src/Demo.cpp (1.1), src/GameOver.cpp (1.1), src/sge_bm_text.cpp
+  * (1.1), src/Backend.h (1.1), src/FighterStats.cpp (1.1),
+  * src/main.cpp (1.1), src/sge_bm_text.h (1.1), src/State.cpp (1.1),
+  * src/sge_surface.cpp (1.1), src/FlyingChars.cpp (1.1),
+  * src/Game.cpp (1.1), src/Makefile.am (1.1), src/common.h (1.1),
+  * src/gfx.cpp (1.1), src/sge_internal.h (1.1), src/Makefile.in
+  * (1.1), src/menu.h (1.1), src/sge_surface.h (1.1),
+  * src/PlayerSelect.cpp (1.1), src/State.h (1.1), src/common.cpp
+  * (1.1), src/sge_config.h (1.1), data/Makefile.am (1.1),
+  * data/Makefile.in (1.1), data/fonts/Makefile.am (1.1),
+  * data/gfx/Makefile.am (1.1), data/gfx/Makefile.in (1.1),
+  * src/Audio.cpp (1.1), src/RlePack.cpp (1.1),
+  * data/fonts/Makefile.in (1.1), data/sound/Makefile.am (1.1),
+  * data/sound/Makefile.in (1.1), data/script/Backend.pl (1.1),
+  * data/script/Bence.pl (1.1), data/script/PlayerInput.pl (1.1),
+  * data/script/QuickSave.pl (1.1), data/script/Sirpi.pl (1.1),
+  * data/script/UPi.pl (1.1), data/script/Collision.pl (1.1),
+  * data/script/FighterStats.pl (1.1), data/script/State.pl (1.1),
+  * data/script/Keys.pl (1.1), data/script/Cumi.pl (1.1),
+  * data/script/Descant.pl (1.1), data/script/Doodad.pl (1.1),
+  * data/script/Grizli.pl (1.1), data/script/Makefile.am (1.1),
+  * data/script/Makefile.in (1.1), data/script/Ulmar.pl (1.1),
+  * data/script/Damage.pl (1.1), data/script/Fighter.pl (1.1),
+  * data/script/Maci.pl (1.1), data/script/Zoli.pl (1.1),
+  * data/script/DataHelper.pl (1.1), data/script/Kolos.pl (1.1):
+  * Initial revision
+
+ -- upi <upi@example.com>  Mon, 01 Sep 2003 21:30:00 +0200
+
+openmortal (0.6-1) unstable; urgency=low
+
+  * * TODO (1.1.1.1), openmortal.lsm (1.1.1.1), README (1.1.1.1),
+  * aclocal.m4 (1.1.1.1), configure (1.1.1.1), configure.in
+  * (1.1.1.1), config.guess (1.1.1.1), install-sh (1.1.1.1),
+  * Makefile.am (1.1.1.1), config.sub (1.1.1.1), missing (1.1.1.1),
+  * mkinstalldirs (1.1.1.1), AUTHORS (1.1.1.1), ChangeLog (1.1.1.1),
+  * INSTALL (1.1.1.1), Makefile.in (1.1.1.1), acinclude.m4 (1.1.1.1),
+  * config.h.in (1.1.1.1), stamp-h.in (1.1.1.1), COPYING (1.1.1.1),
+  * src/sge_primitives.h (1.1.1.1), src/sge_tt_text.h (1.1.1.1),
+  * src/menu.cpp (1.1.1.1), src/Audio.h (1.1.1.1), src/Demo.h
+  * (1.1.1.1), src/Game.h (1.1.1.1), src/RlePack.h (1.1.1.1),
+  * src/gfx.h (1.1.1.1), src/sge_primitives.cpp (1.1.1.1),
+  * src/FlyingChars.h (1.1.1.1), src/sge_tt_text.cpp (1.1.1.1),
+  * src/Backend.cpp (1.1.1.1), src/Demo.cpp (1.1.1.1),
+  * src/GameOver.cpp (1.1.1.1), src/sge_bm_text.cpp (1.1.1.1),
+  * src/Backend.h (1.1.1.1), src/FighterStats.cpp (1.1.1.1),
+  * src/main.cpp (1.1.1.1), src/sge_bm_text.h (1.1.1.1),
+  * src/State.cpp (1.1.1.1), src/sge_surface.cpp (1.1.1.1),
+  * src/FlyingChars.cpp (1.1.1.1), src/Game.cpp (1.1.1.1),
+  * src/Makefile.am (1.1.1.1), src/common.h (1.1.1.1), src/gfx.cpp
+  * (1.1.1.1), src/sge_internal.h (1.1.1.1), src/Makefile.in
+  * (1.1.1.1), src/menu.h (1.1.1.1), src/sge_surface.h (1.1.1.1),
+  * src/PlayerSelect.cpp (1.1.1.1), src/State.h (1.1.1.1),
+  * src/common.cpp (1.1.1.1), src/sge_config.h (1.1.1.1),
+  * data/Makefile.am (1.1.1.1), data/Makefile.in (1.1.1.1),
+  * data/fonts/Makefile.am (1.1.1.1), data/gfx/Makefile.am (1.1.1.1),
+  * data/gfx/Makefile.in (1.1.1.1), src/Audio.cpp (1.1.1.1),
+  * src/RlePack.cpp (1.1.1.1), data/fonts/Makefile.in (1.1.1.1),
+  * data/sound/Makefile.am (1.1.1.1), data/sound/Makefile.in
+  * (1.1.1.1), data/script/Backend.pl (1.1.1.1), data/script/Bence.pl
+  * (1.1.1.1), data/script/PlayerInput.pl (1.1.1.1),
+  * data/script/QuickSave.pl (1.1.1.1), data/script/Sirpi.pl
+  * (1.1.1.1), data/script/UPi.pl (1.1.1.1), data/script/Collision.pl
+  * (1.1.1.1), data/script/FighterStats.pl (1.1.1.1),
+  * data/script/State.pl (1.1.1.1), data/script/Keys.pl (1.1.1.1),
+  * data/script/Cumi.pl (1.1.1.1), data/script/Descant.pl (1.1.1.1),
+  * data/script/Doodad.pl (1.1.1.1), data/script/Grizli.pl (1.1.1.1),
+  * data/script/Makefile.am (1.1.1.1), data/script/Makefile.in
+  * (1.1.1.1), data/script/Ulmar.pl (1.1.1.1), data/script/Damage.pl
+  * (1.1.1.1), data/script/Fighter.pl (1.1.1.1), data/script/Maci.pl
+  * (1.1.1.1), data/script/Zoli.pl (1.1.1.1),
+  * data/script/DataHelper.pl (1.1.1.1), data/script/Kolos.pl
+  * (1.1.1.1): release version 0.3, initial CVS version
+
+ -- upi <upi@example.com>  Mon, 01 Sep 2003 21:30:00 +0200
+

@@ -1,0 +1,6 @@
+usr/bin/
+packaging/openmortal.desktop usr/share/applications/
+packaging/32x32/openmortal.png usr/share/icons/hicolor/32x32/apps/
+packaging/64x64/openmortal.png usr/share/icons/hicolor/64x64/apps/
+packaging/128x128/openmortal.png usr/share/icons/hicolor/128x128/apps/
+packaging/1024x1024/openmortal.png usr/share/icons/hicolor/1024x1024/apps/
