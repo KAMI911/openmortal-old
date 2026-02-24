@@ -1,3 +1,11 @@
+2026-02-24 20:14  kami
+
+	* packaging/1024x1024/openmortal.png, packaging/128x128/openmortal.png, packaging/32x32/openmortal.png, packaging/64x64/openmortal.png, packaging/openmortal.AppImage.desktop, packaging/openmortal.desktop, packaging/openmortal.png:
+	  Packaging: add AppImage desktop files and icon assets in multiple resolutions.
+	  Add openmortal.desktop and openmortal.AppImage.desktop (with AppDir
+	  category metadata), plus PNG icons at 32×32, 64×64, 128×128 and
+	  1024×1024 for use by AppImage and system desktop integration.
+
 2026-02-23 22:44  kami
 
 	* debian/changelog, debian/control, debian/openmortal-data.install, debian/openmortal.install, debian/rules:
