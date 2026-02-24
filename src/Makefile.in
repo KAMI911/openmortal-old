@@ -97,13 +97,14 @@ am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
-mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
+mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_openmortal_OBJECTS = Audio.$(OBJEXT) FlyingChars.$(OBJEXT) \
+am_openmortal_OBJECTS = AnimBG.$(OBJEXT) Audio.$(OBJEXT) \
+	FlyingChars.$(OBJEXT) \
 	MortalNetworkImpl.$(OBJEXT) sge_primitives.$(OBJEXT) \
 	Backend.$(OBJEXT) Game.$(OBJEXT) OnlineChat.$(OBJEXT) \
 	sge_surface.$(OBJEXT) Background.$(OBJEXT) GameOver.$(OBJEXT) \
@@ -130,7 +131,7 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ./$(DEPDIR)/Audio.Po ./$(DEPDIR)/Backend.Po \
+am__depfiles_remade = ./$(DEPDIR)/AnimBG.Po ./$(DEPDIR)/Audio.Po ./$(DEPDIR)/Backend.Po \
 	./$(DEPDIR)/Background.Po ./$(DEPDIR)/Chooser.Po \
 	./$(DEPDIR)/Demo.Po ./$(DEPDIR)/FighterStats.Po \
 	./$(DEPDIR)/FlyingChars.Po ./$(DEPDIR)/Game.Po \
@@ -182,8 +183,7 @@ am__define_uniq_tagged_files = \
   unique=`for i in $$list; do \
     if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
   done | $(am__uniquify_input)`
-am__DIST_COMMON = $(srcdir)/Makefile.in $(top_srcdir)/depcomp \
-	$(top_srcdir)/mkinstalldirs
+am__DIST_COMMON = $(srcdir)/Makefile.in $(top_srcdir)/depcomp
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -302,22 +302,23 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 openmortal_SOURCES = \
-	Audio.cpp         FlyingChars.cpp  MortalNetworkImpl.cpp       sge_primitives.cpp \
-	Backend.cpp       Game.cpp         OnlineChat.cpp              sge_surface.cpp \
-	Background.cpp    GameOver.cpp     PlayerSelectController.cpp  sge_tt_text.cpp \
-	Chooser.cpp       gfx.cpp          PlayerSelect.cpp            State.cpp \
-	common.cpp        Joystick.cpp     PlayerSelectView.cpp        TextArea.cpp \
-	Demo.cpp          main.cpp         RlePack.cpp \
-	FighterStats.cpp  menu.cpp         sge_bm_text.cpp
+	AnimBG.cpp        FlyingChars.cpp  MortalNetworkImpl.cpp       sge_primitives.cpp \
+	Audio.cpp         Game.cpp         OnlineChat.cpp              sge_surface.cpp \
+	Backend.cpp       GameOver.cpp     PlayerSelectController.cpp  sge_tt_text.cpp \
+	Background.cpp    gfx.cpp          PlayerSelect.cpp            State.cpp \
+	Chooser.cpp       Joystick.cpp     PlayerSelectView.cpp        TextArea.cpp \
+	common.cpp        main.cpp         RlePack.cpp \
+	Demo.cpp          menu.cpp         sge_bm_text.cpp \
+	FighterStats.cpp
 
 EXTRA_DIST = $(openmortal_SOURCES)\
-	Audio.h       Event.h         menu.h                    PlayerSelectView.h  sge_tt_text.h \
-	Backend.h     FighterEnum.h   MortalNetwork.h           RlePack.h           State.h \
-	Background.h  FighterStats.h  MortalNetworkImpl.h       sge_bm_text.h       TextArea.h \
-	Chooser.h     FlyingChars.h   MszPerl.h                 sge_config.h \
-	common.h      Game.h          OnlineChat.h              sge_internal.h \
-	Demo.h        gfx.h           PlayerSelectController.h  sge_primitives.h \
-	DrawRle.h     Joystick.h      PlayerSelect.h            sge_surface.h
+	AnimBG.h      Event.h         menu.h                    PlayerSelectView.h  sge_tt_text.h \
+	Audio.h       FighterEnum.h   MortalNetwork.h           RlePack.h           State.h \
+	Backend.h     FighterStats.h  MortalNetworkImpl.h       sge_bm_text.h       TextArea.h \
+	Background.h  FlyingChars.h   MszPerl.h                 sge_config.h \
+	Chooser.h     Game.h          OnlineChat.h              sge_internal.h \
+	common.h      gfx.h           PlayerSelectController.h  sge_primitives.h \
+	Demo.h        DrawRle.h       Joystick.h                PlayerSelect.h      sge_surface.h
 
 all: all-am
 
@@ -405,6 +406,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AnimBG.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Audio.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Backend.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Background.Po@am__quote@ # am--include-marker
@@ -578,7 +580,8 @@ clean: clean-am
 clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
-		-rm -f ./$(DEPDIR)/Audio.Po
+		-rm -f ./$(DEPDIR)/AnimBG.Po
+	-rm -f ./$(DEPDIR)/Audio.Po
 	-rm -f ./$(DEPDIR)/Backend.Po
 	-rm -f ./$(DEPDIR)/Background.Po
 	-rm -f ./$(DEPDIR)/Chooser.Po
@@ -649,7 +652,8 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-		-rm -f ./$(DEPDIR)/Audio.Po
+		-rm -f ./$(DEPDIR)/AnimBG.Po
+	-rm -f ./$(DEPDIR)/Audio.Po
 	-rm -f ./$(DEPDIR)/Backend.Po
 	-rm -f ./$(DEPDIR)/Background.Po
 	-rm -f ./$(DEPDIR)/Chooser.Po
