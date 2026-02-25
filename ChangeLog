@@ -1,3 +1,11 @@
+2026-02-25 21:17  kami
+
+	* ChangeLog, TECHNICAL.md:
+	  Docs: add TECHNICAL.md architecture overview and update ChangeLog.
+	  TECHNICAL.md documents the frontend/backend architecture, SDL 1.2 usage,
+	  embedded Perl interpreter integration, network protocol, character data
+	  format, and build instructions for new contributors.
+
 2026-02-24 20:14  kami
 
 	* packaging/1024x1024/openmortal.png, packaging/128x128/openmortal.png, packaging/32x32/openmortal.png, packaging/64x64/openmortal.png, packaging/openmortal.AppImage.desktop, packaging/openmortal.desktop, packaging/openmortal.png:
