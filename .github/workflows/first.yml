@@ -1,0 +1,47 @@
+name: Quick Build Check
+
+on:
+  push:
+    branches: [ upgrade ]
+  pull_request:
+    branches: [ upgrade ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DEBIAN_FRONTEND: noninteractive
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            build-essential autoconf automake libtool pkg-config \
+            libperl-dev libsdl1.2-dev libsdl-image1.2-dev \
+            libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev libgif-dev
+
+      - name: Build
+        run: |
+          autoreconf -i -f
+          ./configure
+          make -j$(nproc)
+
+      - name: Package sources
+        run: make dist
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-linux-x86_64
+          path: src/openmortal
+          retention-days: 7
+
+      - name: Upload source tarball
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-dist
+          path: openmortal-*.tar.*
+          retention-days: 7
