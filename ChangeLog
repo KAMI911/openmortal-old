@@ -1,3 +1,12 @@
+2026-02-27 18:44  kami
+
+	* .github/workflows/test_source.yml:
+	  CI: add cppcheck static analysis workflow for all branches.
+	  Run on every push and pull request to any branch. Executes cppcheck
+	  with --enable=warning,performance,portability, suppresses missing-include
+	  noise, and returns exit code 1 on any finding so the workflow fails
+	  visibly. Only cppcheck is installed — no compiler libraries needed.
+
 2026-02-26 17:48  kami
 
 	* .github/workflows/first.yml:
