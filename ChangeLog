@@ -1,3 +1,16 @@
+2026-02-28 19:17  kami
+
+	* .github/workflows/packaging.yml:
+	  CI: add multi-target Linux packaging workflow (AppImage and Debian).
+	  Three jobs:
+	  linux-x86-64_build — builds with --prefix=/usr, creates AppImage using
+	  linuxdeploy and appimagetool, and produces a binary tar.gz.
+	  linux-x86-64_build-debian — builds a .deb with dpkg-buildpackage and
+	  uploads separate binary and data packages.
+	  linux-x86-64_build-local — builds with default prefix (/usr/local) and
+	  packages into a tar.gz for manual installation.
+	  Triggered on push/PR to upgrade and on version tags (v*.*.*).
+
 2026-02-27 18:44  kami
 
 	* .github/workflows/test_source.yml:
