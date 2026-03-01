@@ -1,3 +1,13 @@
+2026-03-01 18:48  kami
+
+	* .github/workflows/windows_build.yml:
+	  CI: add Windows cross-build workflow using MSYS2 / MinGW.
+	  Matrix builds for x86 (MINGW32) and x86-64 (MINGW64). Installs all
+	  required MinGW packages: SDL, SDL_image, SDL_mixer, SDL_net, FreeType,
+	  giflib, Perl, ntldd. Builds with autoreconf/configure using the correct
+	  --host triplet, then collects the binary and all dependent DLLs via ntldd
+	  into a self-contained tar.gz archive.
+
 2026-02-28 19:17  kami
 
 	* .github/workflows/packaging.yml:

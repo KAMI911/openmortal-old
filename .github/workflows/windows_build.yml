@@ -1,0 +1,112 @@
+name: Windows Build (MSYS2 / MinGW64 / MinGW)
+
+on:
+  push:
+    branches: [ master, upgrade ]
+  pull_request:
+    branches: [ master, upgrade ]
+  workflow_dispatch:
+
+env:
+  VERSION: 0.7.2
+  DIST_FOLDER: ${{ runner.temp }}/distribution
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - PLATFORM: x86
+            MSYS_TARGET: i686
+            MSYSTEM: MINGW32
+          - PLATFORM: x86-64
+            MSYS_TARGET: x86_64
+            MSYSTEM: MINGW64
+
+    name: Build ${{ matrix.PLATFORM }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Define paths
+        run: |
+          echo "PLATFORM_BUILD_PATH=${{ runner.temp }}/distribution/windows-${{ matrix.PLATFORM }}_build" >> $GITHUB_ENV
+          echo "PLATFORM_PACKAGE_PATH=${{ runner.temp }}/distribution/windows-${{ matrix.PLATFORM }}_package" >> $GITHUB_ENV
+
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{ matrix.MSYSTEM }}
+          update: true
+          install: >-
+            base-devel
+            automake
+            autoconf
+            libtool
+            mingw-w64-${{ matrix.MSYS_TARGET }}-perl
+            mingw-w64-${{ matrix.MSYS_TARGET }}-icu
+            mingw-w64-${{ matrix.MSYS_TARGET }}-libiconv
+            mingw-w64-${{ matrix.MSYS_TARGET }}-toolchain
+            mingw-w64-${{ matrix.MSYS_TARGET }}-make
+            mingw-w64-${{ matrix.MSYS_TARGET }}-pkg-config
+            mingw-w64-${{ matrix.MSYS_TARGET }}-SDL
+            mingw-w64-${{ matrix.MSYS_TARGET }}-SDL_image
+            mingw-w64-${{ matrix.MSYS_TARGET }}-SDL_mixer
+            mingw-w64-${{ matrix.MSYS_TARGET }}-SDL_net
+            mingw-w64-${{ matrix.MSYS_TARGET }}-freetype
+            mingw-w64-${{ matrix.MSYS_TARGET }}-giflib
+            mingw-w64-${{ matrix.MSYS_TARGET }}-ntldd
+
+      - name: Configure project
+        shell: msys2 {0}
+        run: |
+          if [ "${{ matrix.PLATFORM }}" = "x86-64" ]; then
+            PREFIX=/mingw64
+            HOST=x86_64-w64-mingw32
+          else
+            PREFIX=/mingw32
+            HOST=i686-w64-mingw32
+          fi
+          autoreconf -i -f
+          ./configure --prefix=$PREFIX --host=$HOST
+
+      - name: Build
+        shell: msys2 {0}
+        run: make -j$(nproc)
+
+      - name: Install
+        shell: msys2 {0}
+        run: make DESTDIR="${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_build" install
+
+      - name: Package
+        shell: msys2 {0}
+        run: |
+          if [ "${{ matrix.PLATFORM }}" = "x86-64" ]; then
+            PREFIX=/mingw64
+          else
+            PREFIX=/mingw32
+          fi
+          mkdir -p ${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_package/${PREFIX}/bin
+          mkdir -p ${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_package/${PREFIX}/share/openmortal
+          cp -a ${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_build/${PREFIX}/share \
+            ${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_package/${PREFIX}/
+          install -m755 \
+            ${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_build/${PREFIX}/bin/openmortal.exe \
+            ${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_package/${PREFIX}/bin/openmortal.exe
+          ntldd -R ${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_build/${PREFIX}/bin/openmortal.exe \
+            | grep -v -i "system32" \
+            | grep -i -v "winsxs" \
+            | grep -v -i "not found" \
+            | awk '{print $3}' \
+            | xargs -d '\n' -I{} cp -- "{}" \
+              ${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_package/${PREFIX}/bin/
+          tar zcvf openmortal-${{ env.VERSION }}_windows_${{ matrix.PLATFORM }}.tar.gz \
+            -C ${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_package .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-${{ env.VERSION }}_windows_${{ matrix.PLATFORM }}
+          path: openmortal-${{ env.VERSION }}_windows_${{ matrix.PLATFORM }}.tar.gz
