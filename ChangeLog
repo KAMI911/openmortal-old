@@ -1,3 +1,12 @@
+2026-03-02 17:05  kami
+
+	* .github/workflows/obs.yml:
+	  CI: add OpenBuildService deploy workflow triggered on release tags.
+	  On every v*.* tag push, creates a source tarball with git-archive, checks
+	  out the OBS project (home:kami:openmortal), uploads the tarball, patches
+	  the .spec file version, and commits — triggering OBS to rebuild packages.
+	  OBS credentials are read from OBS_USER and OBS_PASS repository secrets.
+
 2026-03-01 18:48  kami
 
 	* .github/workflows/windows_build.yml:

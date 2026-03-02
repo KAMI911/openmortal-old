@@ -1,0 +1,57 @@
+name: OBS Deploy
+
+on:
+  push:
+    tags:
+      - 'v*.*'
+  workflow_dispatch:
+
+env:
+  OBS_PROJECT: home:kami:openmortal
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      DEBIAN_FRONTEND: noninteractive
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install osc
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends osc gzip make gcc
+
+      - name: Configure osc
+        env:
+          OBS_USER: ${{ secrets.OBS_USER }}
+          OBS_PASS: ${{ secrets.OBS_PASS }}
+        run: |
+          mkdir -p ~/.config/osc
+          printf '[general]\napiurl = https://api.opensuse.org\n[https://api.opensuse.org]\nuser = %s\npass = %s\n' \
+            "$OBS_USER" "$OBS_PASS" > ~/.config/osc/oscrc
+
+      - name: Set version
+        run: |
+          VERSION=${GITHUB_REF##refs/tags/}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Create source tarball
+        run: |
+          mkdir -p dist
+          git archive --prefix=openmortal-${VERSION}/ HEAD | gzip > dist/openmortal-${VERSION}.tar.gz
+
+      - name: Checkout OBS project
+        run: |
+          osc checkout ${{ env.OBS_PROJECT }} openmortal
+
+      - name: Upload tarball and commit
+        run: |
+          set -e
+          cp dist/openmortal-${VERSION}.tar.gz ${{ env.OBS_PROJECT }}/openmortal/
+          cd ${{ env.OBS_PROJECT }}/openmortal
+          sed -i "s/^Version:.*/Version:        ${VERSION}/" openmortal.spec
+          osc addremove
+          osc commit -m "CI build ${VERSION}"
