@@ -1,3 +1,14 @@
+2026-03-03 17:22  kami
+
+	* .github/workflows/openmortal-build.yml:
+	  CI: add multi-distro release build workflow for .deb and .rpm packages.
+	  Triggered on version tags (v*.*.*). Two matrix jobs:
+	  build-debs — builds .deb packages inside Docker containers for
+	  Debian 11/12 and Ubuntu 20.04/22.04/24.04 using dpkg-buildpackage.
+	  build-rpms — builds .rpm packages inside Fedora 38/39/40 and
+	  AlmaLinux 9 containers using rpmbuild.
+	  Artifacts are uploaded per-distro with sanitised names.
+
 2026-03-02 17:05  kami
 
 	* .github/workflows/obs.yml:

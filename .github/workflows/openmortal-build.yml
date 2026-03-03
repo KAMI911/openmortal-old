@@ -1,0 +1,90 @@
+name: OpenMortal multi-platform build & release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+env:
+  PACKAGE_NAME: openmortal
+  PACKAGE_VERSION: ${{ github.ref_name }}
+
+jobs:
+  build-debs:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - debian:11
+          - debian:12
+          - ubuntu:20.04
+          - ubuntu:22.04
+          - ubuntu:24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sanitize distro name for artifact
+        run: echo "DISTRO_SAFE=$(echo '${{ matrix.distro }}' | tr ':' '-')" >> $GITHUB_ENV
+
+      - name: Build in container
+        run: |
+          docker run --rm -v "${{ github.workspace }}":/src -w /src \
+            -e DEBIAN_FRONTEND=noninteractive \
+            ${{ matrix.distro }} /bin/bash -lc '
+          set -e
+          apt-get update -qq
+          apt-get install -y --no-install-recommends \
+            build-essential autoconf automake libtool pkg-config \
+            dh-autoreconf debhelper devscripts fakeroot \
+            libperl-dev libsdl1.2-dev libsdl-image1.2-dev \
+            libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev libgif-dev
+          dpkg-buildpackage -us -uc -b || true
+          mkdir -p /src/artifacts
+          mv ../*.deb /src/artifacts/ 2>/dev/null || true
+          '
+
+      - name: Upload DEBs
+        uses: actions/upload-artifact@v4
+        with:
+          name: debs-${{ env.DISTRO_SAFE }}
+          path: artifacts/
+
+  build-rpms:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - fedora:38
+          - fedora:39
+          - fedora:40
+          - almalinux:9
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sanitize distro name for artifact
+        run: echo "DISTRO_SAFE=$(echo '${{ matrix.distro }}' | tr ':' '-')" >> $GITHUB_ENV
+
+      - name: Build RPM in container
+        run: |
+          docker run --rm -v "${{ github.workspace }}":/src -w /src \
+            ${{ matrix.distro }} /bin/bash -lc '
+          set -e
+          dnf install -y rpm-build gcc make autoconf automake libtool pkgconfig \
+            perl-devel SDL-devel SDL_image-devel SDL_mixer-devel SDL_net-devel \
+            freetype-devel giflib-devel
+          cd /src
+          mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+          tar czf rpmbuild/SOURCES/openmortal-1.0.tar.gz --exclude=.git --exclude=rpmbuild .
+          rpmbuild --define "_topdir /src/rpmbuild" -ba rpmbuild/SPECS/openmortal.spec || true
+          mkdir -p /src/artifacts
+          find /src/rpmbuild -name "*.rpm" -exec cp {} /src/artifacts/ \;
+          '
+
+      - name: Upload RPMs
+        uses: actions/upload-artifact@v4
+        with:
+          name: rpms-${{ env.DISTRO_SAFE }}
+          path: artifacts/
