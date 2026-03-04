@@ -1,3 +1,15 @@
+2026-03-04 19:38  kami
+
+	* .gitlab-ci.yml:
+	  CI: add GitLab CI pipeline with build, test, and package stages.
+	  Three stages:
+	  build — autoreconf + configure + make, uploads the compiled binary
+	  as a 1-week artifact.
+	  test:cppcheck — runs cppcheck static analysis (interruptible).
+	  package:dist — runs make dist, uploads source tarballs.
+	  A release job runs only on tags, keeps artifacts for 4 weeks.
+	  Uses extends: for shared apt-get dependency installation logic.
+
 2026-03-03 17:22  kami
 
 	* .github/workflows/openmortal-build.yml:

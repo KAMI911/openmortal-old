@@ -1,0 +1,92 @@
+stages:
+  - build
+  - test
+  - package
+  - release
+
+default:
+  image: ubuntu:24.04
+
+variables:
+  DEBIAN_FRONTEND: noninteractive
+
+cache:
+  key: apt-cache
+  paths:
+    - apt-cache/
+
+.install-build-deps:
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y --no-install-recommends
+        build-essential autoconf automake libtool pkg-config
+        dh-autoreconf debhelper devscripts fakeroot
+        libperl-dev libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev
+        libsdl-net1.2-dev libfreetype6-dev libgif-dev
+
+build:
+  stage: build
+  extends: .install-build-deps
+  interruptible: true
+  rules:
+    - if: '$CI_COMMIT_BRANCH'
+    - if: '$CI_COMMIT_TAG'
+  script:
+    - autoreconf -i -f
+    - ./configure
+    - make -j$(nproc)
+  artifacts:
+    paths:
+      - src/openmortal
+    expire_in: 1 week
+
+test:cppcheck:
+  stage: test
+  interruptible: true
+  rules:
+    - if: '$CI_COMMIT_BRANCH'
+    - if: '$CI_COMMIT_TAG'
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y --no-install-recommends cppcheck
+  script:
+    - cppcheck
+        --enable=warning,performance,portability
+        --suppress=missingInclude
+        --suppress=missingIncludeSystem
+        --error-exitcode=1
+        --quiet
+        src/
+  allow_failure: false
+
+package:dist:
+  stage: package
+  extends: .install-build-deps
+  needs: [build]
+  interruptible: true
+  rules:
+    - if: '$CI_COMMIT_BRANCH'
+    - if: '$CI_COMMIT_TAG'
+  script:
+    - autoreconf -i -f
+    - ./configure
+    - make dist
+  artifacts:
+    paths:
+      - "*.tar.gz"
+      - "*.tar.xz"
+    expire_in: 1 week
+
+release:
+  stage: release
+  rules:
+    - if: '$CI_COMMIT_TAG'
+  needs: [build, package:dist]
+  script:
+    - echo "Publishing release for tag $CI_COMMIT_TAG"
+  artifacts:
+    paths:
+      - src/openmortal
+      - "*.tar.gz"
+      - "*.tar.xz"
+    expire_in: 4 weeks
