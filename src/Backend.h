@@ -13,7 +13,7 @@
 #include <string>
 #include "FighterEnum.h"
 
-class CRlePack;
+class RlePack;
 
 
 #define MAXDOODADS 20
@@ -43,14 +43,14 @@ The string conversion routines are used for saving replays and instant
 playback.
 */
 
-class CBackend
+class Backend
 {
 public:
 
 	// Lifecycle
 	
-	CBackend();
-	~CBackend();
+	Backend();
+	~Backend();
 	bool Construct();
 	
 	// Miscellaneous
@@ -99,7 +99,8 @@ public:
 	std::string		m_asSounds[ MAXSOUNDS ];
 };
 
-extern CBackend g_oBackend;
+extern Backend g_oBackend;
 
+int			DoGame( char* replay, bool isReplay, bool bDebug );
 
 #endif

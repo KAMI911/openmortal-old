@@ -1,3 +1,14 @@
+2026-03-05 17:46  kami
+
+	* src/Audio.cpp, src/Audio.h, src/Backend.cpp, src/Backend.h, src/Demo.cpp:
+	  Source: fix 6 bugs — null dereference, resource leak, sprintf overflow.
+	  Audio.cpp: guard Mix_FreeMusic() call against NULL pointer before freeing.
+	  Backend.cpp: replace unbounded sprintf() with snprintf() with remaining-
+	  buffer tracking across WriteToString(); truncate gracefully on overflow.
+	  Demo.cpp: fix off-by-one error in loop bound (j<=14 → j<14) that read one
+	  entry past the end of the replay array.
+	  TECHNICAL.md: document the fix context for future contributors.
+
 2026-03-04 19:38  kami
 
 	* .gitlab-ci.yml:
