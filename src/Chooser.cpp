@@ -83,9 +83,7 @@ void CChooser::Init()
 		g_oBackend.PerlEvalF( "GetFighterStats(%d);", enFighter );
 		s = g_oBackend.GetPerlString( "Portrait" );
 		
-		strcpy( pcFilename, DATADIR );
-		strcat( pcFilename, "/characters/" );
-		strcat( pcFilename, s );
+		snprintf( pcFilename, FILENAME_MAX+1, "%s/characters/%s", DATADIR, s );
 		
 		m_apoPortraits[i] = IMG_Load( pcFilename );
 		if ( m_apoPortraits[i] ) SDL_SetColorKey( m_apoPortraits[i], 0, 0 );

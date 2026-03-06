@@ -1,3 +1,14 @@
+2026-03-06 21:07  kami
+
+	* src/Chooser.cpp, src/FlyingChars.cpp, src/PlayerSelect.cpp, src/PlayerSelectController.cpp, src/gfx.cpp:
+	  Source: replace unsafe string functions with length-bounded equivalents.
+	  gfx.cpp: replace strcpy/strcat path construction with snprintf() into a
+	  FILENAME_MAX+1 buffer; fix delete(str2) → free(str2) for strdup() result.
+	  Chooser.cpp, PlayerSelect.cpp, PlayerSelectController.cpp: replace all
+	  strcpy/strcat filename construction with snprintf().
+	  FlyingChars.cpp: add bounds check on character index before array access
+	  (cast to unsigned char first, then range-check against font->Chars).
+
 2026-03-05 17:46  kami
 
 	* src/Audio.cpp, src/Audio.h, src/Backend.cpp, src/Backend.h, src/Demo.cpp:
