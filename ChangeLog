@@ -1,3 +1,17 @@
+2026-03-07 20:05  kami
+
+	* src/Jukebox.cpp, src/Jukebox.h, src/Makefile.am, src/main.cpp:
+	  Source: add Jukebox system — per-level and random music playback.
+	  Add Jukebox.h / Jukebox.cpp implementing three music modes:
+	  ORIGINAL — plays a random 00_* track on the menu, then the NN_* tracks
+	  matching the current level number during gameplay.
+	  RANDOM — plays a random non-00_ track during gameplay.
+	  OFF — no music.
+	  Jukebox::Init() scans DATADIR/sound/music/ at startup and populates
+	  per-level track lists by parsing the NN_ filename prefix. main.cpp is
+	  updated to call Jukebox::Init() and route music selection through the
+	  Jukebox API instead of hardcoded Audio->LoadMusic() calls.
+
 2026-03-06 21:07  kami
 
 	* src/Chooser.cpp, src/FlyingChars.cpp, src/PlayerSelect.cpp, src/PlayerSelectController.cpp, src/gfx.cpp:

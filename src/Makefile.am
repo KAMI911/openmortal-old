@@ -8,7 +8,8 @@ openmortal_SOURCES = \
 	Chooser.cpp       gfx.cpp          PlayerSelect.cpp            State.cpp \
 	common.cpp        Joystick.cpp     PlayerSelectView.cpp        TextArea.cpp \
 	Demo.cpp          main.cpp         RlePack.cpp \
-	FighterStats.cpp  menu.cpp         sge_bm_text.cpp
+	FighterStats.cpp  menu.cpp         sge_bm_text.cpp \
+	Jukebox.cpp       AnimGif.cpp
 
 EXTRA_DIST = $(openmortal_SOURCES)\
 	Audio.h       Event.h         menu.h                    PlayerSelectView.h  sge_tt_text.h \
@@ -17,7 +18,8 @@ EXTRA_DIST = $(openmortal_SOURCES)\
 	Chooser.h     FlyingChars.h   MszPerl.h                 sge_config.h \
 	common.h      Game.h          OnlineChat.h              sge_internal.h \
 	Demo.h        gfx.h           PlayerSelectController.h  sge_primitives.h \
-	DrawRle.h     Joystick.h      PlayerSelect.h            sge_surface.h
+	DrawRle.h     Joystick.h      PlayerSelect.h            sge_surface.h \
+	Jukebox.h     AnimGif.h
 
 CXXFLAGS= @CXXFLAGS@ -DDATADIR=\"${pkgdatadir}\" -Wall
 
