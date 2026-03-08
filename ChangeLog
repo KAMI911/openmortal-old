@@ -1,3 +1,14 @@
+2026-03-08 19:53  kami
+
+	* src/State.cpp, src/State.h, src/menu.cpp, src/menu.h:
+	  Source: expose MUSIC MODE in Sound menu and persist setting to ~/.openmortalrc.
+	  State.h: add TMusicModeEnum (ORIGINAL=0, RANDOM=1, OFF=2) and
+	  m_enMusicMode field. State::Load/Save persist MUSICMODE= key.
+	  menu.h: add MENU_MUSIC_MODE enum value.
+	  menu.cpp: add MUSIC MODE enum item to the Sound submenu (after Effects
+	  Volume). ItemChanged handler immediately switches playback mode:
+	  stops music for OFF, calls Jukebox::PlayMenuMusic() for the others.
+
 2026-03-07 20:05  kami
 
 	* src/Jukebox.cpp, src/Jukebox.h, src/Makefile.am, src/main.cpp:

@@ -66,8 +66,7 @@ struct SState
 	int		m_iTeamSize;		// The size of each team.
 	int		m_bTeamMultiselect;	// Can the same player be selected twice?
 	
-	// TODO Rename this to m_iRoundLength
-	int		m_iRoundLength;		// Length of rounds in seconds.
+	int		m_iGameTime;		// Time of rounds in seconds.
 	int		m_iHitPoints;		// The initial number of hit points.
 	int		m_iGameSpeed;		// The speed of the game (fps = 1000/GameSpeed)
 	
@@ -78,7 +77,22 @@ struct SState
 	int		m_iMixingBits;		// 1: 8bit, 2: 16bit
 	int		m_iMusicVolume;		// Volume of music; 0: off, 100: max
 	int		m_iSoundVolume;		// Volume of sound effects; 0: off, 100: max
-	
+
+	enum TMusicModeEnum {
+		Music_ORIGINAL = 0,		///< Level-specific music (00_ for menu, NN_ for level N)
+		Music_RANDOM   = 1,		///< 00_ for menu; random non-00_ track during game
+		Music_OFF      = 2,		///< No music
+	} m_enMusicMode;
+
+	enum TLevelSelectEnum {
+		Level_NATURAL = 0,		///< Levels increase sequentially
+		Level_RANDOM  = 1,		///< Random level each game
+		Level_GOOD    = 2,		///< Only "good" levels (1,2,5,6,7,10)
+		Level_EVIL    = 3,		///< Only "evil" levels (3,4,8,9,11,12)
+		Level_SELECT  = 4,		///< Specific level chosen by user
+	} m_enLevelSelect;
+	int		m_iSelectedLevel;	///< Level number when m_enLevelSelect == Level_SELECT
+
 	int		m_aiPlayerKeys[MAXPLAYERS][9];	// Player keysyms
 	char	m_acLanguage[10];	// Language ID (en,hu,fr,es,..)
 	int		m_iLanguageCode;	// Non-persistend language code (set by backend based on the language)
