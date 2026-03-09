@@ -1,3 +1,16 @@
+2026-03-09 21:56  kami
+
+	* data/script/Translate.pl:
+	  Data: fix Translate.pl ISO-8859-2 encoding; add music mode and level selector strings.
+	  Restore Translate.pl to valid ISO-8859-2 after prior UTF-8 corruption
+	  that turned accented characters into U+FFFD replacement chars. Re-insert
+	  the strings using binary I/O to preserve raw byte values (ó=0xF3, é=0xE9,
+	  ű=0xFB in ISO-8859-2).
+	  New strings added in all five languages (en/hu/fr/es/pt):
+	  Sound menu: MUSIC MODE, ORIGINAL, RANDOM (music mode labels).
+	  Options menu: LEVEL, NATURAL, GOOD ONLY, EVIL ONLY, SELECT,
+	  LEVEL NUMBER (level selector labels).
+
 2026-03-08 19:53  kami
 
 	* src/State.cpp, src/State.h, src/menu.cpp, src/menu.h:

@@ -60,6 +60,15 @@ $::English = { 'LanguageCode' => 0,
 	"SOUND FIDELITY: "	=> undef,	# 8 bit or 16 bit
 	"MUSIC VOLUME: "	=> undef,	# OFF or numeric
 	"EFFECTS VOLUME: "	=> undef,	# OFF or numeric
+	"MUSIC MODE: "		=> undef,	# ORIGINAL / RANDOM / OFF
+	"ORIGINAL"			=> undef,	# Music mode: level-specific
+	"RANDOM"			=> undef,	# Music mode: random game track
+	"LEVEL: "			=> undef,		# Level select mode label
+	"NATURAL"			=> undef,		# Level select: sequential
+	"GOOD ONLY"			=> undef,		# Level select: good levels
+	"EVIL ONLY"			=> undef,		# Level select: evil levels
+	"SELECT"			=> undef,		# Level select: specific level
+	"LEVEL NUMBER: "	=> undef,		# Specific level number label
 	
 
 # Menu options
@@ -248,6 +257,15 @@ $::Hungarian = {  'LanguageCode' => 3,
 	"SOUND FIDELITY: "	=> 'Hangpontosság: ',
 	"MUSIC VOLUME: "	=> 'Zene hangereje: ',
 	"EFFECTS VOLUME: "	=> 'Zajok hangereje: ',
+	"MUSIC MODE: "		=> 'Zene mód: ',
+	"ORIGINAL"			=> 'Eredeti',
+	"RANDOM"			=> 'Véletlenszerû',
+	"LEVEL: "			=> 'Pálya: ',
+	"NATURAL"			=> 'Természetes',
+	"GOOD ONLY"			=> 'Csak jók',
+	"EVIL ONLY"			=> 'Csak gonoszok',
+	"SELECT"			=> 'Választ',
+	"LEVEL NUMBER: "	=> 'Pálya száma: ',
 
 
 # Menu options
@@ -432,6 +450,15 @@ $::French = { 'LanguageCode' => 2,
 	"SOUND FIDELITY: "	=> "Qualité sonore: ",	# 8 bit or 16 bit
 	"MUSIC VOLUME: "	=> "Volume musical: ",	# OFF or numeric
 	"EFFECTS VOLUME: "	=> "Volume effets : ",	# OFF or numeric
+	"MUSIC MODE: "		=> "Mode musical : ",
+	"ORIGINAL"			=> "Original",
+	"RANDOM"			=> "Aléatoire",
+	"LEVEL: "			=> "Niveau : ",
+	"NATURAL"			=> "Naturel",
+	"GOOD ONLY"			=> "Que les bons",
+	"EVIL ONLY"			=> "Que les mauvais",
+	"SELECT"			=> "Choisir",
+	"LEVEL NUMBER: "	=> "Numéro de niveau : ",
 	
 
 # Menu options
@@ -621,6 +648,15 @@ $::Spanish = { 'LanguageCode' => 1,
 	"SOUND FIDELITY: "	=> "FIDELIDAD DEL SONIDO: ",	# 8 bit or 16 bit
 	"MUSIC VOLUME: "	=> "VOLUMEN DE LA MUSICA: ",	# OFF or numeric
 	"EFFECTS VOLUME: "	=> "VOLUMEN DE LOS EFECTOS: ",	# OFF or numeric
+	"MUSIC MODE: "		=> "MODO MUSICAL: ",
+	"ORIGINAL"			=> "Original",
+	"RANDOM"			=> "Aleatorio",
+	"LEVEL: "			=> "NIVEL: ",
+	"NATURAL"			=> "Natural",
+	"GOOD ONLY"			=> "Solo buenos",
+	"EVIL ONLY"			=> "Solo malvados",
+	"SELECT"			=> "Elegir",
+	"LEVEL NUMBER: "	=> "Número de nivel: ",
 	
 
 # Menu options
@@ -810,6 +846,15 @@ $::Portuguese = { 'LanguageCode' => 4,
 	"SOUND FIDELITY: "	=> "FIDELIDADE DE SOM: ",# 8 bit or 16 bit
 	"MUSIC VOLUME: "	=> "VOLUME DA MÚSICA: ",	# OFF or numeric
 	"EFFECTS VOLUME: "	=> "VOLUME DOS EFEITOS: ",	# OFF or numeric
+	"MUSIC MODE: "		=> "MODO DE MUSICA: ",
+	"ORIGINAL"			=> "Original",
+	"RANDOM"			=> "Aleatorio",
+	"LEVEL: "			=> "NÍVEL: ",
+	"NATURAL"			=> "Natural",
+	"GOOD ONLY"			=> "Só os bons",
+	"EVIL ONLY"			=> "Só os maus",
+	"SELECT"			=> "Escolher",
+	"LEVEL NUMBER: "	=> "Número do nível: ",
 	
 
 # Menu options
