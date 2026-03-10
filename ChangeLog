@@ -1,3 +1,19 @@
+2026-03-10 19:36  kami
+
+	* src/AnimGif.cpp, src/AnimGif.h, src/Background.cpp, src/Background.h:
+	  Source: add animated GIF loader and multi-layer parallax background support.
+	  AnimGif.h / AnimGif.cpp: new module using giflib (DGifOpenFileName +
+	  DGifSlurp) to load all frames of an animated GIF. Correctly handles
+	  per-frame offsets, GIF disposal modes (DISPOSE_BACKGROUND, DISPOSE_PREVIOUS,
+	  DO_NOT_DISPOSE) and per-pixel transparency via GraphicsControlBlock.
+	  Uses SDL_DisplayFormatAlpha() to preserve the alpha channel so transparent
+	  areas composite correctly over the sky layer.
+	  Background.h: extend BackgroundLayer with m_apoFrames vector, m_iCurrentFrame
+	  and m_iFrameTimer for animation state. Add AdvanceAnimation(ticks) method.
+	  Background.cpp: detect .gif extension in Load(); call LoadAnimatedGIF() and
+	  fall back to static LoadBackground() for single-frame GIFs. AdvanceAnimation()
+	  cycles frames every N draw calls (~14 fps at normal game speed).
+
 2026-03-09 21:56  kami
 
 	* data/script/Translate.pl:

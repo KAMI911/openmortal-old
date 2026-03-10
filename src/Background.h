@@ -13,11 +13,24 @@
 #include <vector>
 struct SDL_Surface;
 
-/**
-\class CBackground
-\ingroup GameLogic
-\brief The CBackground class draws the multi-layered background of each arena.
+struct BackgroundLayer
+{
+	SDL_Surface*				m_poSurface;	// current frame (owned by m_apoFrames or standalone)
+	std::vector<SDL_Surface*>	m_apoFrames;	// all animation frames; empty = static layer
+	int							m_iCurrentFrame;
+	int							m_iFrameTimer;	// draw-call counter for animation pacing
+	int							m_iXOffset;
+	int							m_iYOffset;
+	double						m_dDistance;
 
+	BackgroundLayer()
+	: m_poSurface(NULL), m_iCurrentFrame(0), m_iFrameTimer(0),
+	  m_iXOffset(0), m_iYOffset(0), m_dDistance(1.0) {}
+};
+typedef std::vector<BackgroundLayer> LayerVector;
+typedef LayerVector::iterator LayerIterator;
+
+/*
 The backgrounds are identified by their number. Single-layer backgrounds do
 not have description files. Multi-layer backgrounds have a description file
 which has the following format:
@@ -29,39 +42,26 @@ Extra layers can be added to the background. These are for dead fighters in
 team game mode.
 */
 
-class CBackground
+class Background
 {
 public:
-	struct SBackgroundLayer
-	{
-		SDL_Surface*	m_poSurface;
-		int				m_iXOffset;
-		int				m_iYOffset;
-		double			m_dDistance;
-	};
-	
-private:
-	typedef std::vector<SBackgroundLayer> CLayerVector;
-	typedef CLayerVector::iterator CLayerIterator;
+	Background();
+	~Background();
 
-	void			Clear();
+	void		Clear();
+	void		Load( int a_iBackgroundNumber );
+	void		AddExtraLayer( const BackgroundLayer& a_roLayer );
+	void		DeleteExtraLayers();
 
-public:
-	CBackground();
-	~CBackground();
-
-	void			Load( int a_iBackgroundNumber );
-	void			AddExtraLayer( const SBackgroundLayer& a_roLayer );
-	void			DeleteExtraLayers();
-
-	bool			IsOK();
-	void			Draw( int a_iXPosition, int a_iYPosition, int a_iYOffset );
+	bool		IsOK();
+	void		Draw( int a_iXPosition, int a_iYPosition, int a_iYOffset );
+	void		AdvanceAnimation( int a_iTicksPerFrame = 6 );
 
 protected:
-	int				m_iNumber;
-	int				m_iFirstExtraLayer;
-	bool			m_bOK;
-	CLayerVector	m_aLayers;
+	int			m_iNumber;
+	int			m_iFirstExtraLayer;
+	bool		m_bOK;
+	LayerVector	m_aLayers;
 };
 
 #endif // __BACKGROUND_H
