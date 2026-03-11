@@ -1,3 +1,27 @@
+2026-03-11 22:04  kami
+
+	* src/Game.cpp, src/Game.h:
+	  Source: add level selector with five modes and Additional Settings submenu.
+	  State.h: add TLevelSelectEnum (NATURAL=0, RANDOM=1, GOOD=2, EVIL=3, SELECT=4)
+	  and m_iSelectedLevel (1–12). State::Load/Save persist LEVELSELECT= and
+	  SELECTEDLEVEL=.
+	  Game.h / Game.cpp: add static ResolveLevel() that picks the next background
+	  number according to the current mode:
+	  NATURAL  — sequential auto-increment (original behaviour).
+	  RANDOM   — rand() % 12 + 1.
+	  GOOD     — random from {1,2,5,6,7,10}.
+	  EVIL     — random from {3,4,8,9,11,12}.
+	  SELECT   — g_oState.m_iSelectedLevel.
+	  GetBackgroundNumber() now calls ResolveLevel(). The resolved level is
+	  cached in mg_iResolvedLevel and cleared after Game::Game() loads the
+	  background so each new game gets a fresh resolution.
+	  menu.h / menu.cpp: add MENU_ADDITIONAL_SETTINGS, MENU_LEVEL_SELECT and
+	  MENU_LEVEL_NUMBER. An 'ADDITIONAL SETTINGS' submenu entry is added to
+	  both the Multi Player menu and the Network Setup menu. The submenu
+	  contains the LEVEL: enum (five modes) and LEVEL NUMBER: (1–12, enabled
+	  only in SELECT mode). Options menu also includes these items for use
+	  mid-session (master-only in network games).
+
 2026-03-10 19:36  kami
 
 	* src/AnimGif.cpp, src/AnimGif.h, src/Background.cpp, src/Background.h:
