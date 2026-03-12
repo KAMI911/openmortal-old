@@ -13,8 +13,6 @@ env:
 jobs:
   build:
     runs-on: windows-latest
-    env:
-      DIST_FOLDER: ${{ runner.temp }}/distribution
     strategy:
       fail-fast: false
       matrix:
@@ -33,6 +31,7 @@ jobs:
 
       - name: Define paths
         run: |
+          echo "DIST_FOLDER=${{ runner.temp }}/distribution" >> $GITHUB_ENV
           echo "PLATFORM_BUILD_PATH=${{ runner.temp }}/distribution/windows-${{ matrix.PLATFORM }}_build" >> $GITHUB_ENV
           echo "PLATFORM_PACKAGE_PATH=${{ runner.temp }}/distribution/windows-${{ matrix.PLATFORM }}_package" >> $GITHUB_ENV
 
