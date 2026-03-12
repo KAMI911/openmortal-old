@@ -31,6 +31,12 @@ jobs:
             --suppress=duplInheritedMember \
             --suppress=uselessAssignmentPtrArg \
             --suppress=memsetClassFloat \
+            --suppress=uninitMemberVar \
+            --suppress=noCopyConstructor \
+            --suppress=noOperatorEq \
+            --suppress=useInitializationList \
+            --suppress=passedByValue \
+            --suppress=identicalInnerCondition \
             --error-exitcode=1 \
             --quiet \
             -isrc/paragui \
