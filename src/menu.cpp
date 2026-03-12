@@ -967,9 +967,7 @@ void Menu::ItemActivated( int a_iItemCode, MenuItem* a_poMenuItem )
 				poMenu->AddEnumMenuItem( "GAME SPEED: ", g_oState.m_iGameSpeed, g_ppcGameSpeed, g_piGameSpeed, MENU_GAME_SPEED );
 				poMenu->AddEnumMenuItem( "GAME TIME: ", g_oState.m_iGameTime, g_ppcGameTime, g_piGameTime, MENU_GAME_TIME );
 				poMenu->AddEnumMenuItem( "STAMINA: ", g_oState.m_iHitPoints, g_ppcHitPoints, g_piHitPoints, MENU_TOTAL_HIT_POINTS );
-				poMenu->AddEnumMenuItem( "LEVEL: ", g_oState.m_enLevelSelect, g_ppcLevelSelect, g_piLevelSelect, MENU_LEVEL_SELECT );
-				poMenu->AddEnumMenuItem( "LEVEL NUMBER: ", g_oState.m_iSelectedLevel, g_ppcLevelNumber, g_piLevelNumber, MENU_LEVEL_NUMBER )
-					->SetEnabled( g_oState.m_enLevelSelect == SState::Level_SELECT );
+				poMenu->AddMenuItem( "~ADDITIONAL SETTINGS", SDLK_a, MENU_ADDITIONAL_SETTINGS );
 			}
 			poMenu->AddMenuItem( "~SOUND", SDLK_s, MENU_SOUND );
 			poMenu->AddMenuItem( g_oState.m_bFullscreen ? "~FULLSCREEN ON" : "~FULLSCREEN OFF", SDLK_f, MENU_FULLSCREEN );
