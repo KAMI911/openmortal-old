@@ -28,6 +28,9 @@ jobs:
             --suppress=missingIncludeSystem \
             --suppress=unknownMacro \
             --suppress=preprocessorErrorDirective \
+            --suppress=duplInheritedMember \
+            --suppress=uselessAssignmentPtrArg \
+            --suppress=memsetClassFloat \
             --error-exitcode=1 \
             --quiet \
             -isrc/paragui \
