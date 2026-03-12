@@ -419,22 +419,24 @@ int DrawMainScreen()
 #endif
 	iNumFighterFiles = g_oBackend.GetPerlInt( "CppRetval" );
 	
+	bool bSkipped = false;
 	for ( i=0; i<iNumFighterFiles; ++i )
 	{
 		Uint32 tBefore = SDL_GetTicks();
 		g_oBackend.PerlEvalF( "LoadFighterFile(%d);", i );
 
-		if ( i < 15 ) {
+		if ( i < 15 && !bSkipped ) {
 			pack.Draw( i, x[i], y[i], false );
 			SDL_Flip( gamescreen );
 			Uint32 elapsed = SDL_GetTicks() - tBefore;
 			if ( elapsed < 250 )
-				if ( WaitSkippable( 250 - elapsed ) ) goto done;
+				if ( WaitSkippable( 250 - elapsed ) ) bSkipped = true;
 		}
 	}
-	
-	WaitSkippable( 5000 );	// Hold the completed screen for up to 5 seconds
-done:
+
+	if ( !bSkipped )
+		WaitSkippable( 5000 );	// Hold the completed screen for up to 5 seconds
+
     SDL_FreeSurface( background );
 	return 0;
 	
