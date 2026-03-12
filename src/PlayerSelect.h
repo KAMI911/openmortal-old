@@ -97,8 +97,8 @@ protected:
 //	FighterEnum GetFighterCell( int a_iIndex );
 
 protected:
-	PlayerInfo	m_aoPlayers[MAXPLAYERS];
-	int			m_aiFighterNameWidth[MAXPLAYERS];
+	PlayerInfo	m_aoPlayers[MSZ_MAXPLAYERS];
+	int			m_aiFighterNameWidth[MSZ_MAXPLAYERS];
 };
 
 

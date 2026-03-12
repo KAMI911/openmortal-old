@@ -10,6 +10,7 @@
 #ifndef MSZ_AUDIO_H
 #define MSZ_AUDIO_H
 
+#include <cstddef>
 
 class MszAudioPriv;
 
