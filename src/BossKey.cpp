@@ -569,8 +569,26 @@ static void DrawScrollBars(int W, int H, int Y_ROWS, int Y_TABS)
     VLine(W-SW, Y_ROWS, Y_TABS, 160, 160, 160);
     Fill(W-SW+1, Y_ROWS+1,      W-1, Y_ROWS+SW,   212, 208, 200);
     Button3D(W-SW+1, Y_ROWS+1,  W-1, Y_ROWS+SW);
+    // Up arrow triangle
+    {
+        Sint16 cx = (Sint16)(W - SW/2);
+        Sint16 cy = (Sint16)(Y_ROWS + SW/2);
+        HLine(cx,   cx,   cy-2, 80, 80, 80);
+        HLine(cx-1, cx+1, cy-1, 80, 80, 80);
+        HLine(cx-2, cx+2, cy,   80, 80, 80);
+        HLine(cx-3, cx+3, cy+1, 80, 80, 80);
+    }
     Fill(W-SW+1, Y_TABS-SW,     W-1, Y_TABS,       212, 208, 200);
     Button3D(W-SW+1, Y_TABS-SW, W-1, Y_TABS);
+    // Down arrow triangle
+    {
+        Sint16 cx = (Sint16)(W - SW/2);
+        Sint16 cy = (Sint16)(Y_TABS - SW/2);
+        HLine(cx-3, cx+3, cy-1, 80, 80, 80);
+        HLine(cx-2, cx+2, cy,   80, 80, 80);
+        HLine(cx-1, cx+1, cy+1, 80, 80, 80);
+        HLine(cx,   cx,   cy+2, 80, 80, 80);
+    }
     Fill(W-SW+2, Y_ROWS+SW+2,   W-2, Y_ROWS+SW+28, 212, 208, 200);
     Button3D(W-SW+1, Y_ROWS+SW+1, W-2, Y_ROWS+SW+29);
     // Horizontal
