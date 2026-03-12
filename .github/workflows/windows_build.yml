@@ -66,9 +66,7 @@ jobs:
       - name: Configure project
         shell: msys2 {0}
         run: |
-          # Use the pre-committed configure (correctly uses pkg-config for FreeType).
-          # Skipping autoreconf avoids MSYS2 picking up the legacy AC_CHECK_FT2 macro
-          # from acinclude.m4 which looks for the deprecated freetype-config script.
+          autoreconf -i -f
           ./configure --prefix=${{ matrix.PREFIX }} --host=${{ matrix.HOST }}
 
       - name: Build
