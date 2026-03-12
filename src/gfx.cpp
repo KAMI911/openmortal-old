@@ -441,7 +441,7 @@ bool SetVideoMode( bool a_bLarge, bool a_bFullScreen, int a_iAdditionalFlags )
 		iBpp = gamescreen->format->BitsPerPixel;
 	}
 
-	int iFlags = a_iAdditionalFlags;
+	int iFlags = a_iAdditionalFlags | SDL_HWSURFACE | SDL_DOUBLEBUF;
 	if ( a_bFullScreen )
 	{
 		iFlags |= SDL_FULLSCREEN;
