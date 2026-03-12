@@ -1,7 +1,7 @@
 dnl without this order in this file, autoconf will not work!
 dnl the argument is a source file out of your sources. But
 dnl acinclude.m4 makes the job for all programs ;-)
-AC_INIT([openmortal], [0.7.27], [], [openmortal])
+AC_INIT([openmortal], [0.7.28], [], [openmortal])
 AC_CONFIG_SRCDIR([acinclude.m4])
 
 dnl enable the following if you want to use autoconf/automake
