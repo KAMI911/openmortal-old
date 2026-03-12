@@ -175,7 +175,7 @@ public:
 
 		m_dX		= m_oRect.x + m_oRect.w / 2;
 		m_dY		= m_oRect.y + m_oRect.h / 2;
-		m_dSize		= MIN( m_oRect.w, m_oRect.h );
+		m_dSize		= omMIN( m_oRect.w, m_oRect.h );
 
 		m_dSpeedX	= 0.0;
 		m_dSpeedY	= - m_dY / 15;
@@ -183,7 +183,7 @@ public:
 
 		m_dTargetX	= m_oDstRect.x + m_oDstRect.w / 2;
 		m_dTargetY	= m_oDstRect.y + m_oDstRect.h / 2;
-		m_dTargetSize = MIN( m_oDstRect.w, m_oDstRect.h);
+		m_dTargetSize = omMIN( m_oDstRect.w, m_oDstRect.h);
 
 		m_iTotalTime = 70 + m_dY / 7.5;
 		m_iTime		= m_iTotalTime;
