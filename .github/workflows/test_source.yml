@@ -31,4 +31,5 @@ jobs:
             --error-exitcode=1 \
             --quiet \
             -isrc/paragui \
+            -isrc/sigc++ \
             src/
