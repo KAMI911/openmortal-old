@@ -9,11 +9,12 @@ on:
 
 env:
   VERSION: 0.7.2
-  DIST_FOLDER: ${{ runner.temp }}/distribution
 
 jobs:
   build:
     runs-on: windows-latest
+    env:
+      DIST_FOLDER: ${{ runner.temp }}/distribution
     strategy:
       fail-fast: false
       matrix:
