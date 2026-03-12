@@ -156,6 +156,7 @@ static int TxtAsc(sge_TTFont* f)
 }
 
 // Text centered in a box  (x1,y1)-(x2,y2), transparent bg
+// Note: sge_tt_textout takes a BASELINE y, so add ascent to the centering offset.
 static void TxtCenter(sge_TTFont* f, const char* s,
                       Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2,
                       Uint8 r, Uint8 g, Uint8 b)
@@ -166,7 +167,7 @@ static void TxtCenter(sge_TTFont* f, const char* s,
     int tw  = TxtW(f, s);
     int asc = TxtAsc(f);
     Sint16 tx = (Sint16)(x1 + (bw - tw) / 2);
-    Sint16 ty = (Sint16)(y1 + (bh - asc) / 2);
+    Sint16 ty = (Sint16)(y1 + (bh + asc) / 2);
     sge_tt_textout(gamescreen, f, s, tx, ty, r, g, b, 0, 0, 0, -1);
 }
 
@@ -177,7 +178,7 @@ static void TxtVCL(sge_TTFont* f, const char* s,
 {
     if (!f || !s || !*s) return;
     int asc = TxtAsc(f);
-    Sint16 ty = (Sint16)(y1 + (y2 - y1 - asc) / 2);
+    Sint16 ty = (Sint16)(y1 + (y2 - y1 + asc) / 2);
     sge_tt_textout(gamescreen, f, s, x, ty, r, g, b, 0, 0, 0, -1);
 }
 
@@ -190,7 +191,7 @@ static void TxtVCR(sge_TTFont* f, const char* s,
     int tw  = TxtW(f, s);
     int asc = TxtAsc(f);
     Sint16 tx = (Sint16)(xRight - tw - 3);
-    Sint16 ty = (Sint16)(y1 + (y2 - y1 - asc) / 2);
+    Sint16 ty = (Sint16)(y1 + (y2 - y1 + asc) / 2);
     sge_tt_textout(gamescreen, f, s, tx, ty, r, g, b, 0, 0, 0, -1);
 }
 
