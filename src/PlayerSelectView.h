@@ -76,7 +76,7 @@ protected:
 	int				m_iTime;
 	typedef std::list<IViewElement*> TViewElements;
 	TViewElements	m_apoElements;
-	CTeamDisplay*	m_apoTeamDisplays[MAXPLAYERS];
+	CTeamDisplay*	m_apoTeamDisplays[MSZ_MAXPLAYERS];
 };
 
 #endif // PLAYERSELECTVIEW_H

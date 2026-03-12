@@ -43,7 +43,7 @@ protected:
 	char				m_acChatMsg[256];
 	int					m_iNumberOfSelectableFighters;
 
-	bool				m_abPlayerActive[MAXPLAYERS];
+	bool				m_abPlayerActive[MSZ_MAXPLAYERS];
 
 	int					m_iGameSpeed;
 	int					m_iThisTick;
