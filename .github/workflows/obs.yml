@@ -7,10 +7,10 @@ on:
   workflow_dispatch:
 
 env:
-  OBS_PROJECT: home:kami:openmortal
+  OBS_PROJECT: home:kami
 
 jobs:
-  deploy:
+  deploy-openmortal-old:
     runs-on: ubuntu-latest
     env:
       DEBIAN_FRONTEND: noninteractive
@@ -41,17 +41,92 @@ jobs:
       - name: Create source tarball
         run: |
           mkdir -p dist
-          git archive --prefix=openmortal-${VERSION}/ HEAD | gzip > dist/openmortal-${VERSION}.tar.gz
+          git archive --prefix=openmortal-old-${VERSION}/ HEAD \
+            | gzip > dist/openmortal-old-${VERSION}.tar.gz
 
-      - name: Checkout OBS project
+      - name: Create OBS package if missing
         run: |
-          osc checkout ${{ env.OBS_PROJECT }} openmortal
+          osc meta pkg ${{ env.OBS_PROJECT }} openmortal-old 2>/dev/null || \
+          osc meta pkg -F - ${{ env.OBS_PROJECT }} openmortal-old <<'XMLEOF'
+          <package name="openmortal-old" project="home:kami">
+            <title>OpenMortal (SDL1 legacy branch)</title>
+            <description>OpenMortal is an open-source Mortal Kombat parody fighting game (SDL 1.x branch).</description>
+          </package>
+          XMLEOF
 
-      - name: Upload tarball and commit
+      - name: Checkout OBS package
+        run: osc checkout ${{ env.OBS_PROJECT }} openmortal-old
+
+      - name: Upload tarball and spec, then commit
+        run: |
+          set -e
+          cp dist/openmortal-old-${VERSION}.tar.gz ${{ env.OBS_PROJECT }}/openmortal-old/
+          cp openmortal-old.spec ${{ env.OBS_PROJECT }}/openmortal-old/
+          sed -i "s/^Version:.*/Version:        ${VERSION}/" \
+            ${{ env.OBS_PROJECT }}/openmortal-old/openmortal-old.spec
+          cd ${{ env.OBS_PROJECT }}/openmortal-old
+          osc addremove
+          osc commit -m "CI build ${VERSION}"
+
+  deploy-openmortal:
+    runs-on: ubuntu-latest
+    env:
+      DEBIAN_FRONTEND: noninteractive
+    steps:
+      - name: Check out openmortal repository
+        uses: actions/checkout@v4
+        with:
+          repository: KAMI911/openmortal
+          fetch-depth: 0
+
+      - name: Install osc
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends osc gzip make gcc
+
+      - name: Configure osc
+        env:
+          OBS_USER: ${{ secrets.OBS_USER }}
+          OBS_PASS: ${{ secrets.OBS_PASS }}
+        run: |
+          mkdir -p ~/.config/osc
+          printf '[general]\napiurl = https://api.opensuse.org\n[https://api.opensuse.org]\nuser = %s\npass = %s\n' \
+            "$OBS_USER" "$OBS_PASS" > ~/.config/osc/oscrc
+
+      - name: Set version
+        run: |
+          VERSION=${GITHUB_REF##refs/tags/}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Create source tarball
+        run: |
+          mkdir -p dist
+          git archive --prefix=openmortal-${VERSION}/ HEAD \
+            | gzip > dist/openmortal-${VERSION}.tar.gz
+
+      - name: Create OBS package if missing
+        run: |
+          osc meta pkg ${{ env.OBS_PROJECT }} openmortal 2>/dev/null || \
+          osc meta pkg -F - ${{ env.OBS_PROJECT }} openmortal <<'XMLEOF'
+          <package name="openmortal" project="home:kami">
+            <title>OpenMortal</title>
+            <description>OpenMortal is an open-source Mortal Kombat parody fighting game.</description>
+          </package>
+          XMLEOF
+
+      - name: Checkout OBS package
+        run: osc checkout ${{ env.OBS_PROJECT }} openmortal
+
+      - name: Upload tarball and spec, then commit
         run: |
           set -e
           cp dist/openmortal-${VERSION}.tar.gz ${{ env.OBS_PROJECT }}/openmortal/
+          # Use repo's own spec if present, otherwise use the one from OBS
+          if [ -f openmortal.spec ]; then
+            cp openmortal.spec ${{ env.OBS_PROJECT }}/openmortal/
+            sed -i "s/^Version:.*/Version:        ${VERSION}/" \
+              ${{ env.OBS_PROJECT }}/openmortal/openmortal.spec
+          fi
           cd ${{ env.OBS_PROJECT }}/openmortal
-          sed -i "s/^Version:.*/Version:        ${VERSION}/" openmortal.spec
           osc addremove
           osc commit -m "CI build ${VERSION}"

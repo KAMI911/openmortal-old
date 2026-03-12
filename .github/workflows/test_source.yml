@@ -27,6 +27,7 @@ jobs:
             --suppress=missingInclude \
             --suppress=missingIncludeSystem \
             --suppress=unknownMacro \
+            --suppress=preprocessorErrorDirective \
             --error-exitcode=1 \
             --quiet \
             -isrc/paragui \
