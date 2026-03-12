@@ -69,6 +69,18 @@ AC_ARG_ENABLE(thirdparty,
 esac],[thirdparty=true])
 AM_CONDITIONAL(THIRDPARTY, test x$thirdparty = xtrue)
 
+AC_ARG_ENABLE(boss-key,
+[  --disable-boss-key      Exclude the Shift+Esc fake-Excel boss key [default: enabled]],
+[case "${enableval}" in
+  yes) boss_key=true ;;
+  no)  boss_key=false ;;
+  *) AC_MSG_ERROR(bad value ${enableval} for --enable-boss-key) ;;
+esac],[boss_key=true])
+AM_CONDITIONAL(BOSS_KEY, test x$boss_key = xtrue)
+if test x$boss_key = xtrue; then
+  AC_DEFINE(MSZ_BOSS_KEY, 1, [Define to 1 to compile the Shift+Esc boss-key screen])
+fi
+
 
 
 

@@ -6,6 +6,8 @@
     email                : upi@apocalypse.rulez.org
  ***************************************************************************/
 
+#include "config.h"
+
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -14,6 +16,7 @@
 #include "Joystick.h"
 #include "SDL.h"
 #include "Event.h"
+#include "BossKey.h"
 
 
 SDL_Surface* gamescreen = NULL;
@@ -73,6 +76,15 @@ bool TranslateEvent( const SDL_Event* a_poInEvent, SMortalEvent* a_poOutEvent )
 	case SDL_KEYDOWN:
 	{
 		SDLKey enKey = a_poInEvent->key.keysym.sym;
+#ifdef MSZ_BOSS_KEY
+		if ( enKey == SDLK_ESCAPE &&
+		     (a_poInEvent->key.keysym.mod & (KMOD_LSHIFT | KMOD_RSHIFT)) )
+		{
+			ShowBossKey();
+			a_poOutEvent->m_enType = Me_NOTHING;
+			return false;
+		}
+#endif
 		if ( enKey == SDLK_ESCAPE )
 		{
 			a_poOutEvent->m_enType = Me_MENU;

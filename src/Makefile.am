@@ -9,10 +9,10 @@ openmortal_SOURCES = \
 	common.cpp        Joystick.cpp     PlayerSelectView.cpp        TextArea.cpp \
 	Demo.cpp          main.cpp         RlePack.cpp \
 	FighterStats.cpp  menu.cpp         sge_bm_text.cpp \
-	Jukebox.cpp       AnimGif.cpp
+	Jukebox.cpp       AnimGif.cpp      BossKey.cpp
 
 EXTRA_DIST = $(openmortal_SOURCES)\
-	Audio.h       Event.h         menu.h                    PlayerSelectView.h  sge_tt_text.h \
+	Audio.h       BossKey.h       Event.h         menu.h    PlayerSelectView.h  sge_tt_text.h \
 	Backend.h     FighterEnum.h   MortalNetwork.h           RlePack.h           State.h \
 	Background.h  FighterStats.h  MortalNetworkImpl.h       sge_bm_text.h       TextArea.h \
 	Chooser.h     FlyingChars.h   MszPerl.h                 sge_config.h \

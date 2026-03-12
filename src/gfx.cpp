@@ -10,6 +10,8 @@
 #include <malloc.h>
 
 
+#include "config.h"
+
 #include "SDL.h"
 #include "SDL_video.h"
 #include "SDL_image.h"
@@ -24,6 +26,7 @@
 #endif
 #include "State.h"
 #include "Event.h"
+#include "BossKey.h"
 
 
 int CSurfaceLocker::m_giLockCount = 0;
@@ -288,6 +291,14 @@ SDLKey GetKey( bool a_bTranslate )
 	{
 		if ( SDL_KEYDOWN == oSdlEvent.type )
 		{
+#ifdef MSZ_BOSS_KEY
+			if ( oSdlEvent.key.keysym.sym == SDLK_ESCAPE &&
+			     (oSdlEvent.key.keysym.mod & (KMOD_LSHIFT | KMOD_RSHIFT)) )
+			{
+				ShowBossKey();
+				continue;
+			}
+#endif
 			return oSdlEvent.key.keysym.sym;
 		}
 		if ( SDL_QUIT == oSdlEvent.type )
