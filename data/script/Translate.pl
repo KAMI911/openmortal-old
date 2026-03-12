@@ -198,6 +198,54 @@ and plunge humanity into a dark age of 5 working days and 1 holiday per week... 
 "Whenever EVIL looms on the horizon, the good guys are there to save the day. Son Goku, the protector of Earth and Humanity went to the rescue...
 
 Only to become ROADKILL on his way to the Mortal Szombat tournament! It was Cumi's first time behind the wheel, after all...\n\n\n\n\n\n\n\n\n",
+
+# Network
+
+	'Network Play Setup'		=> undef,
+	'Nickname: '				=> undef,
+	'Server name: '				=> undef,
+	'Network mode: '			=> undef,
+	'Connect to game'			=> undef,
+	'Create game'				=> undef,
+	'Connect to: '				=> undef,
+	'Cancel'					=> undef,
+	'Press Escape to abort'		=> undef,
+	'Press Escape for the menu'	=> undef,
+	'Connection closed.'		=> undef,
+	"Couldn't connect"			=> undef,
+	"Resolving hostname (%s)..."=> undef,
+	"Resolving host: "			=> undef,
+	"Couldn't resolve host."	=> undef,
+	"Connecting to"				=> undef,
+	"Waiting for connection..."	=> undef,
+	"Waiting for connection... (press any key to abort)" => undef,
+	"Connection established."	=> undef,
+	"You must have port 14882 open for this to work." => undef,
+	"The remote side has a different version of OpenMortal running." => undef,
+	"Life is good."				=> undef,
+	"Communication error. Disconnecting." => undef,
+	"Connection error: "		=> undef,
+	"Disconnected from MortalNet." => undef,
+
+# Game / Multi Player Settings
+
+	'Game Settings'				=> undef,
+	'Additional Settings'		=> undef,
+	'Multi Player'				=> undef,
+	'~GAME SETTINGS'			=> undef,
+	'~ADDITIONAL SETTINGS'		=> undef,
+	'~NETWORK GAME'				=> undef,
+	'START GAME'				=> undef,
+	'START NETWORK GAME!'		=> undef,
+	'Find an opponent on MortalNet' => undef,
+	'Team mode: '				=> undef,
+	'Team size: '				=> undef,
+	'Cloning allowed: '			=> undef,
+	'Good VS Evil'				=> undef,
+	'Custom teams'				=> undef,
+	'Yes'						=> undef,
+	'No'						=> undef,
+
 };
 
 
@@ -236,7 +284,7 @@ $::Hungarian = {  'LanguageCode' => 3,
 	"~SURRENDER GAME"	=> '~JÁTÉK FELADÁSA',
 	"~OPTIONS"			=> '~BEÁLLÍTÁSOK',
 	"~INFO"				=> '~INFORMÁCIÓK',
-	"QUIT"				=> 'QUIT',
+	"QUIT"				=> 'KILÉPÉS',
 	"~OK"				=> '~OKÉ',
 	"~LANGUAGE: "		=> '~NYELV: ',
 
@@ -393,6 +441,54 @@ hogy az emberiség az 5 munkanap és egy szünnapos hét sötét korába süllye
 "Whenever EVIL looms on the horizon, the good guys are there to save the day. Son Goku, the protector of Earth and Humanity went to the rescue...
 
 Only to become ROADKILL on his way to the Mortal Szombat tournament! It was Cumi's first time behind the wheel, after all...\n\n\n\n\n\n\n\n\n",
+
+# Network
+
+	'Network Play Setup'			=> 'Hálózati játék',
+	'Nickname: '					=> 'Becenév: ',
+	'Server name: '				=> 'Szerver neve: ',
+	'Network mode: '				=> 'Hálózati mód: ',
+	'Connect to game'				=> 'Csatlakozás játékhoz',
+	'Create game'					=> 'Játék indítása',
+	'Connect to: '				=> 'Csatlakozás: ',
+	'Cancel'						=> 'Mégse',
+	'Press Escape to abort'		=> 'Escape: megszakítás',
+	'Press Escape for the menu'	=> 'Escape: főmenü',
+	'Connection closed.'			=> 'A kapcsolat megszakadt.',
+	"Couldn't connect"				=> 'Nem sikerült csatlakozni',
+	"Resolving hostname (%s)..."	=> 'Gazdagép keresése (%s)...',
+	"Resolving host: "				=> 'Gazdagép keresése: ',
+	"Couldn't resolve host."		=> 'Nem sikerült a gazdagép feloldása.',
+	"Connecting to"					=> 'Csatlakozás:',
+	"Waiting for connection..."		=> 'Várakozás kapcsolatra...',
+	"Waiting for connection... (press any key to abort)" => 'Várakozás... (bármelyik gomb: megszakítás)',
+	"Connection established."		=> 'Kapcsolat felépítve.',
+	"You must have port 14882 open for this to work." => 'A 14882-es portnak nyitva kell lennie.',
+	"The remote side has a different version of OpenMortal running." => 'A másik játékos OpenMortal verziója eltér.',
+	"Life is good."					=> 'Minden rendben.',
+	"Communication error. Disconnecting." => 'Kommunikációs hiba. Lekapcsolódás.',
+	"Connection error: "			=> 'Kapcsolati hiba: ',
+	"Disconnected from MortalNet."	=> 'Lekapcsolódva a MortalNet-ről.',
+
+# Game / Multi Player Settings
+
+	'Game Settings'					=> 'Játékbeállítások',
+	'Additional Settings'			=> 'További beállítások',
+	'Multi Player'					=> 'Többjátékos',
+	'~GAME SETTINGS'				=> '~JÁTÉKBEÁLLÍTÁSOK',
+	'~ADDITIONAL SETTINGS'		=> '~TOVÁBBI BEÁLLÍTÁSOK',
+	'~NETWORK GAME'					=> '~HÁLÓZATI JÁTÉK',
+	'START GAME'					=> 'JÁTÉK INDÍTÁSA',
+	'START NETWORK GAME!'			=> 'HÁLÓZATI JÁTÉK INDÍTÁSA!',
+	'Find an opponent on MortalNet'	=> 'Ellenfél keresése a MortalNet-en',
+	'Team mode: '					=> 'Csapatmód: ',
+	'Team size: '					=> 'Csapatméret: ',
+	'Cloning allowed: '			=> 'Klónozás engedélyezve: ',
+	'Good VS Evil'					=> 'Jók vs Gonoszok',
+	'Custom teams'					=> 'Egyéni csapatok',
+	'Yes'							=> 'Igen',
+	'No'							=> 'Nem',
+
 };
 
 
@@ -588,6 +684,54 @@ et de plonger l'humanité dans un Moyen-Age de 5 jours de travail et 1 jour de v
 "Bien que le Mal lorgne l'horizon, les gentils doivent sauver le jour ! Son Goku, le protecteur de la Terre et de l'Humanité viennent à la rescousse...
 
 Seulement afin de devenir le TUEUR IMPITOYABLE sur le long chemin du tournoi Mortal Szombat ! C'était la première apparition de Cumi, après tout...\n\n\n\n\n\n\n\n\n",
+
+# Network
+
+	'Network Play Setup'			=> 'Configuration réseau',
+	'Nickname: '					=> 'Pseudo : ',
+	'Server name: '				=> 'Nom du serveur : ',
+	'Network mode: '				=> 'Mode réseau : ',
+	'Connect to game'				=> 'Rejoindre une partie',
+	'Create game'					=> 'Créer une partie',
+	'Connect to: '				=> 'Se connecter à : ',
+	'Cancel'						=> 'Annuler',
+	'Press Escape to abort'		=> 'Échap pour annuler',
+	'Press Escape for the menu'	=> 'Échap pour le menu',
+	'Connection closed.'			=> 'Connexion fermée.',
+	"Couldn't connect"				=> 'Connexion impossible',
+	"Resolving hostname (%s)..."	=> "Résolution du nom d'hôte (%s)...",
+	"Resolving host: "				=> "Résolution de l'hôte : ",
+	"Couldn't resolve host."		=> "Impossible de résoudre l'hôte.",
+	"Connecting to"					=> 'Connexion à',
+	"Waiting for connection..."		=> 'En attente de connexion...',
+	"Waiting for connection... (press any key to abort)" => 'En attente... (appuyez sur une touche pour annuler)',
+	"Connection established."		=> 'Connexion établie.',
+	"You must have port 14882 open for this to work." => 'Le port 14882 doit être ouvert.',
+	"The remote side has a different version of OpenMortal running." => "L'autre joueur utilise une version différente d'OpenMortal.",
+	"Life is good."					=> 'Tout va bien.',
+	"Communication error. Disconnecting." => 'Erreur de communication. Déconnexion.',
+	"Connection error: "			=> 'Erreur de connexion : ',
+	"Disconnected from MortalNet."	=> 'Déconnecté de MortalNet.',
+
+# Game / Multi Player Settings
+
+	'Game Settings'					=> 'Paramètres de jeu',
+	'Additional Settings'			=> 'Paramètres supplémentaires',
+	'Multi Player'					=> 'Multijoueur',
+	'~GAME SETTINGS'				=> '~PARAMÈTRES DE JEU',
+	'~ADDITIONAL SETTINGS'		=> '~PARAMÈTRES SUPPLÉMENTAIRES',
+	'~NETWORK GAME'					=> '~JEU EN RÉSEAU',
+	'START GAME'					=> 'LANCER LE JEU',
+	'START NETWORK GAME!'			=> 'LANCER LE JEU EN RÉSEAU !',
+	'Find an opponent on MortalNet'	=> 'Trouver un adversaire sur MortalNet',
+	'Team mode: '					=> 'Mode équipe : ',
+	'Team size: '					=> "Taille d'équipe : ",
+	'Cloning allowed: '			=> 'Clonage autorisé : ',
+	'Good VS Evil'					=> 'Bons VS Méchants',
+	'Custom teams'					=> 'Équipes personnalisées',
+	'Yes'							=> 'Oui',
+	'No'							=> 'Non',
+
 };
 
 
@@ -786,6 +930,54 @@ y plagar la humanidad en una epoca oscura de 5 dias de trabajo y uno de descanso
 "Whenever EVIL looms on the horizon, the good guys are there to save the day. Son Goku, the protector of Earth and Humanity went to the rescue...
 
 Only to become ROADKILL on his way to the Mortal Szombat tournament! It was Cumi's first time behind the wheel, after all...\n\n\n\n\n\n\n\n\n",
+
+# Network
+
+	'Network Play Setup'			=> 'Configuración de red',
+	'Nickname: '					=> 'Apodo: ',
+	'Server name: '				=> 'Nombre del servidor: ',
+	'Network mode: '				=> 'Modo de red: ',
+	'Connect to game'				=> 'Conectarse al juego',
+	'Create game'					=> 'Crear juego',
+	'Connect to: '				=> 'Conectar a: ',
+	'Cancel'						=> 'Cancelar',
+	'Press Escape to abort'		=> 'Escape para cancelar',
+	'Press Escape for the menu'	=> 'Escape para el menú',
+	'Connection closed.'			=> 'Conexión cerrada.',
+	"Couldn't connect"				=> 'No se pudo conectar',
+	"Resolving hostname (%s)..."	=> 'Resolviendo nombre de host (%s)...',
+	"Resolving host: "				=> 'Resolviendo host: ',
+	"Couldn't resolve host."		=> 'No se pudo resolver el host.',
+	"Connecting to"					=> 'Conectando a',
+	"Waiting for connection..."		=> 'Esperando conexión...',
+	"Waiting for connection... (press any key to abort)" => 'Esperando... (cualquier tecla para cancelar)',
+	"Connection established."		=> 'Conexión establecida.',
+	"You must have port 14882 open for this to work." => 'El puerto 14882 debe estar abierto.',
+	"The remote side has a different version of OpenMortal running." => 'El otro jugador tiene una versión diferente de OpenMortal.',
+	"Life is good."					=> 'Todo en orden.',
+	"Communication error. Disconnecting." => 'Error de comunicación. Desconectando.',
+	"Connection error: "			=> 'Error de conexión: ',
+	"Disconnected from MortalNet."	=> 'Desconectado de MortalNet.',
+
+# Game / Multi Player Settings
+
+	'Game Settings'					=> 'Configuración del juego',
+	'Additional Settings'			=> 'Configuración adicional',
+	'Multi Player'					=> 'Multijugador',
+	'~GAME SETTINGS'				=> '~CONFIGURACIÓN DEL JUEGO',
+	'~ADDITIONAL SETTINGS'		=> '~CONFIGURACIÓN ADICIONAL',
+	'~NETWORK GAME'					=> '~JUEGO EN RED',
+	'START GAME'					=> 'INICIAR JUEGO',
+	'START NETWORK GAME!'			=> '¡INICIAR JUEGO EN RED!',
+	'Find an opponent on MortalNet'	=> 'Buscar adversario en MortalNet',
+	'Team mode: '					=> 'Modo equipo: ',
+	'Team size: '					=> 'Tamaño del equipo: ',
+	'Cloning allowed: '			=> 'Clonación permitida: ',
+	'Good VS Evil'					=> 'Buenos VS Malos',
+	'Custom teams'					=> 'Equipos personalizados',
+	'Yes'							=> 'Sí',
+	'No'							=> 'No',
+
 };
 
 
@@ -983,6 +1175,54 @@ condenando a humanidade a uma era sombria, com 5 dias úteis e apenas 1 dia de f
 "Sempre que o Mal surge no horizonte, os heróis estão lá para salvar o dia. Son Goku, o protetor da Terra e da Humanidade, veio então para nos salvar...
 
 Apenas para ser MORTO ATROPELADO em seu caminho para o torneio de Mortal Szombat! Bem, afinal era o primeiro dia de direção de Cumi...\n\n\n\n\n\n\n\n\n",
+
+# Network
+
+	'Network Play Setup'			=> 'Configuração de rede',
+	'Nickname: '					=> 'Apelido: ',
+	'Server name: '				=> 'Nome do servidor: ',
+	'Network mode: '				=> 'Modo de rede: ',
+	'Connect to game'				=> 'Conectar ao jogo',
+	'Create game'					=> 'Criar jogo',
+	'Connect to: '				=> 'Conectar a: ',
+	'Cancel'						=> 'Cancelar',
+	'Press Escape to abort'		=> 'Escape para cancelar',
+	'Press Escape for the menu'	=> 'Escape para o menu',
+	'Connection closed.'			=> 'Conexão encerrada.',
+	"Couldn't connect"				=> 'Não foi possível conectar',
+	"Resolving hostname (%s)..."	=> 'Resolvendo nome do host (%s)...',
+	"Resolving host: "				=> 'Resolvendo host: ',
+	"Couldn't resolve host."		=> 'Não foi possível resolver o host.',
+	"Connecting to"					=> 'Conectando a',
+	"Waiting for connection..."		=> 'Aguardando conexão...',
+	"Waiting for connection... (press any key to abort)" => 'Aguardando... (qualquer tecla para cancelar)',
+	"Connection established."		=> 'Conexão estabelecida.',
+	"You must have port 14882 open for this to work." => 'A porta 14882 deve estar aberta.',
+	"The remote side has a different version of OpenMortal running." => 'O outro lado usa uma versão diferente do OpenMortal.',
+	"Life is good."					=> 'Tudo certo.',
+	"Communication error. Disconnecting." => 'Erro de comunicação. Desconectando.',
+	"Connection error: "			=> 'Erro de conexão: ',
+	"Disconnected from MortalNet."	=> 'Desconectado da MortalNet.',
+
+# Game / Multi Player Settings
+
+	'Game Settings'					=> 'Configurações do jogo',
+	'Additional Settings'			=> 'Configurações adicionais',
+	'Multi Player'					=> 'Multijogador',
+	'~GAME SETTINGS'				=> '~CONFIGURAÇÕES DO JOGO',
+	'~ADDITIONAL SETTINGS'		=> '~CONFIGURAÇÕES ADICIONAIS',
+	'~NETWORK GAME'					=> '~JOGO EM REDE',
+	'START GAME'					=> 'INICIAR JOGO',
+	'START NETWORK GAME!'			=> 'INICIAR JOGO EM REDE!',
+	'Find an opponent on MortalNet'	=> 'Encontrar adversário no MortalNet',
+	'Team mode: '					=> 'Modo de equipe: ',
+	'Team size: '					=> 'Tamanho da equipe: ',
+	'Cloning allowed: '			=> 'Clonagem permitida: ',
+	'Good VS Evil'					=> 'Bons VS Maus',
+	'Custom teams'					=> 'Equipes personalizadas',
+	'Yes'							=> 'Sim',
+	'No'							=> 'Não',
+
 };
 
 
