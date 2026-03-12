@@ -11,7 +11,9 @@
 #include "common.h"
 
 #ifdef _WIN32
+#undef DATADIR                // DATADIR conflicts with windows.h internals
 #include <windows.h>
+#define DATADIR "../data"
 #else
 #include <dirent.h>
 #endif
