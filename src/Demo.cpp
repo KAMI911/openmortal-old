@@ -327,7 +327,7 @@ public:
 		m_iTimeLeft = 50;
 		m_poBackground = LoadBackground( "Mortal.jpg", 240 );
 		
-		DrawTextMSZ( "Version " VERSION "  � 2003-2004 by UPi", inkFont, 320, 430, UseShadow | AlignHCenter, C_WHITE, m_poBackground, false );
+		DrawTextMSZ( "Version " VERSION "  © 2003-2004 by UPi", inkFont, 320, 430, UseShadow | AlignHCenter, C_WHITE, m_poBackground, false );
 		
 		std::string sStaffFilename = MSZ_DATADIR;
 		sStaffFilename += "/characters/staff.dat";
