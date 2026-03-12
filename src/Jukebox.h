@@ -16,7 +16,7 @@
 \brief Music jukebox for OpenMortal.
 \ingroup Media
 
-Scans DATADIR/sound/music/ at startup and groups tracker module files by
+Scans OM_DATADIR/sound/music/ at startup and groups tracker module files by
 their numeric prefix:
   - 00_*.mod/s3m/xm  ->  menu music  (played during demo/lobby)
   - NN_*.mod/s3m/xm  ->  level music for level N  (N = 01..12)

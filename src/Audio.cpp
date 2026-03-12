@@ -53,7 +53,7 @@ MszAudio::MszAudio()
 	m_poPriv = new MszAudioPriv;
 	m_poPriv->m_bAudioOk = false;
 	m_poPriv->m_iNumChannels = 0;
-	m_poPriv->m_sSoundDir = DATADIR;
+	m_poPriv->m_sSoundDir = OM_DATADIR;
 	m_poPriv->m_sSoundDir += "/sound/";
 	
 	SDL_version compile_version;
@@ -240,7 +240,7 @@ void MszAudio::LoadMusic( const char* a_pcFilename, const char* a_pcMusicName )
 	CHECKOK;
 
 	std::string sMusicName( a_pcMusicName ? a_pcMusicName : a_pcFilename );
-	std::string sMusicFile = DATADIR;
+	std::string sMusicFile = OM_DATADIR;
 	sMusicFile += "/sound/";
 	sMusicFile += a_pcFilename;
 

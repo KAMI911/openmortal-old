@@ -167,7 +167,7 @@ RlePack* PlayerSelect::LoadFighter( FighterEnum m_enFighter )		// static
 	g_oBackend.PerlEvalF( "GetFighterStats(%d);", m_enFighter );
 	s = g_oBackend.GetPerlString( "Datafile" );
 
-	snprintf( a_pcFilename, FILENAME_MAX+1, "%s/characters/%s", DATADIR, s );
+	snprintf( a_pcFilename, FILENAME_MAX+1, "%s/characters/%s", OM_DATADIR, s );
 
 	RlePack* pack = new RlePack( a_pcFilename, COLORSPERPLAYER );
 	if ( pack->Count() <= 0 )

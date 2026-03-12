@@ -154,7 +154,7 @@ bool Backend::Construct()
 	perl_bgx = NULL;
 	perl_doodad_x = NULL;
 	
-	std::string sFileName = DATADIR;
+	std::string sFileName = OM_DATADIR;
 	sFileName += "/script";
 
 #ifndef _WIN32

@@ -29,7 +29,7 @@ public:
 
 
 CMortalNetUI::CMortalNetUI() :
-	m_oFont(DATADIR "/fonts/bradybun.ttf", 24)
+	m_oFont(OM_DATADIR "/fonts/bradybun.ttf", 24)
 {
 	m_poConsole= NULL;
 	m_poInputLine= NULL;

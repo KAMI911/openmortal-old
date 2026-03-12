@@ -122,7 +122,7 @@ FighterStatsDemo::FighterStatsDemo( FighterEnum a_iFighter )
 	}
 	else
 	{
-		std::string sStaffFilename = DATADIR;
+		std::string sStaffFilename = OM_DATADIR;
 		sStaffFilename += "/characters/staff.dat";
 		m_poStaff = new RlePack( sStaffFilename.c_str(), 255 );
 	}

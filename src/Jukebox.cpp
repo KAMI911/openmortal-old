@@ -11,9 +11,7 @@
 #include "common.h"
 
 #ifdef _WIN32
-#undef DATADIR                // DATADIR conflicts with windows.h internals
 #include <windows.h>
-#define DATADIR "../data"
 #else
 #include <dirent.h>
 #endif
@@ -44,7 +42,7 @@ static bool IsMusicFile( const char* a_pcName )
 
 void Jukebox::ScanMusicDir()
 {
-    std::string sMusicDir = DATADIR;
+    std::string sMusicDir = OM_DATADIR;
     sMusicDir += "/sound/music";
 
 #ifdef _WIN32
