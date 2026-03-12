@@ -343,30 +343,30 @@ static void DrawStdToolbar(int W, int Y_STDBAR, int Y_FMTBAR)
     Sint16 x = 2;
     Sint16 y = (Sint16)(Y_STDBAR + 1);
 
-    TbBtn(x, y, "N",  30,  30, 200); x += 21;
-    TbBtn(x, y, "O", 200, 150,   0); x += 21;
-    TbBtn(x, y, "S",   0,   0, 180); x += 21;
+    TbBtn(x, y, "N",  30,  30, 200); x += 21;   // New
+    TbBtn(x, y, "O", 200, 150,   0); x += 21;   // Open
+    TbBtn(x, y, "S",   0,   0, 180); x += 21;   // Save
     x += 4; TbSep(x, y+2, y+15); x += 6;
-    TbBtn(x, y, "P",  40,  40,  40); x += 21;
-    TbBtn(x, y, "pv", 40,  40,  40); x += 21;
+    TbBtn(x, y, "P",  40,  40,  40); x += 21;   // Print
+    TbBtn(x, y, "Q",  40,  40,  40); x += 21;   // Print Preview (magnifier)
     x += 4; TbSep(x, y+2, y+15); x += 6;
-    TbBtn(x, y, "sp", 180,  0,   0); x += 21;
+    TbBtn(x, y, "Abc",180,  0,   0); x += 21;   // Spelling
     x += 4; TbSep(x, y+2, y+15); x += 6;
-    TbBtn(x, y, "X",  80,  80,  80); x += 21;
-    TbBtn(x, y, "C",  80,  80,  80); x += 21;
-    TbBtn(x, y, "V",  80,  80,  80); x += 21;
-    TbBtn(x, y, "fp", 200, 150,   0); x += 21;
+    TbBtn(x, y, "X",  80,  80,  80); x += 21;   // Cut
+    TbBtn(x, y, "C",  80,  80,  80); x += 21;   // Copy
+    TbBtn(x, y, "V",  80,  80,  80); x += 21;   // Paste
+    TbBtn(x, y, "F",  200,150,   0); x += 21;   // Format Painter
     x += 4; TbSep(x, y+2, y+15); x += 6;
-    TbBtn(x, y, "<Z", 30,  30, 180); x += 21;
-    TbBtn(x, y, "Y>", 30,  30, 180); x += 21;
+    TbBtn(x, y, "<",  30,  30, 180); x += 21;   // Undo
+    TbBtn(x, y, ">",  30,  30, 180); x += 21;   // Redo
     x += 4; TbSep(x, y+2, y+15); x += 6;
-    TbBtn(x, y, "HL",  0,   0, 200); x += 21;
-    TbBtn(x, y, "E",  180,  0,   0); x += 21;
-    TbBtn(x, y, "AZ",  40, 40,  40); x += 21;
-    TbBtn(x, y, "ZA",  40, 40,  40); x += 21;
+    TbBtn(x, y, "@",   0,   0, 200); x += 21;   // Hyperlink
+    TbBtn(x, y, "=",  180,  0,   0); x += 21;   // AutoSum (Sigma)
+    TbBtn(x, y, "Az",  40, 40,  40); x += 21;   // Sort A-Z
+    TbBtn(x, y, "Za",  40, 40,  40); x += 21;   // Sort Z-A
     x += 4; TbSep(x, y+2, y+15); x += 6;
-    TbBtn(x, y, "Ch", 180, 80,   0); x += 21;
-    TbBtn(x, y, "Dr", 200, 150,  0); x += 21;
+    TbBtn(x, y, "ch", 180, 80,   0); x += 21;   // Chart Wizard
+    TbBtn(x, y, "dr", 200,150,   0); x += 21;   // Drawing
     x += 4; TbSep(x, y+2, y+15); x += 6;
 
     // Zoom dropdown (right side)
@@ -396,28 +396,28 @@ static void DrawFmtToolbar(int W, int Y_FMTBAR, int Y_FORMULA)
 
     Sint16 x = 166;
     x += 4; TbSep(x, y+2, y+15); x += 6;
-    TbBtn(x, y, "B",   0,   0,   0); x += 21;
-    TbBtn(x, y, "I",   0,   0,   0); x += 21;
-    TbBtn(x, y, "U",   0,   0,   0); x += 21;
+    TbBtn(x, y, "B",   0,   0,   0); x += 21;   // Bold
+    TbBtn(x, y, "I",   0,   0,   0); x += 21;   // Italic
+    TbBtn(x, y, "U",   0,   0,   0); x += 21;   // Underline
     x += 4; TbSep(x, y+2, y+15); x += 6;
-    TbBtn(x, y, "L",  40,  40,  40); x += 21;
-    TbBtn(x, y, "C",  40,  40,  40); x += 21;
-    TbBtn(x, y, "R",  40,  40,  40); x += 21;
-    TbBtn(x, y, "][",  40, 40,  40); x += 21;
+    TbBtn(x, y, "L",  40,  40,  40); x += 21;   // Align Left
+    TbBtn(x, y, "C",  40,  40,  40); x += 21;   // Center
+    TbBtn(x, y, "R",  40,  40,  40); x += 21;   // Align Right
+    TbBtn(x, y, "M",  40,  40,  40); x += 21;   // Merge & Center
     x += 4; TbSep(x, y+2, y+15); x += 6;
-    TbBtn(x, y, "$",   0, 128,   0); x += 21;
-    TbBtn(x, y, "%",   0,   0, 128); x += 21;
-    TbBtn(x, y, ",",  80,  80,  80); x += 21;
+    TbBtn(x, y, "$",   0, 128,   0); x += 21;   // Currency
+    TbBtn(x, y, "%",   0,   0, 128); x += 21;   // Percent
+    TbBtn(x, y, ",",  80,  80,  80); x += 21;   // Thousands separator
     x += 4; TbSep(x, y+2, y+15); x += 6;
-    TbBtn(x, y, "+0", 80,  80,  80); x += 21;
-    TbBtn(x, y, "-0", 80,  80,  80); x += 21;
+    TbBtn(x, y, ".0", 80,  80,  80); x += 21;   // Increase decimal
+    TbBtn(x, y, "0.", 80,  80,  80); x += 21;   // Decrease decimal
     x += 4; TbSep(x, y+2, y+15); x += 6;
-    TbBtn(x, y, ">>", 80,  80,  80); x += 21;
-    TbBtn(x, y, "<<", 80,  80,  80); x += 21;
+    TbBtn(x, y, "|>", 80,  80,  80); x += 21;   // Increase indent
+    TbBtn(x, y, "<|", 80,  80,  80); x += 21;   // Decrease indent
     x += 4; TbSep(x, y+2, y+15); x += 6;
-    TbBtn(x, y, "[_]", 40, 40,  40); x += 21;
-    TbBtn(x, y, "A.",  200, 50, 50); x += 21;
-    TbBtn(x, y, "A_",  200, 50, 50);
+    TbBtn(x, y, "#",  40,  40,  40); x += 21;   // Borders
+    TbBtn(x, y, "a",  200, 50,  50); x += 21;   // Fill color  (a with bg)
+    TbBtn(x, y, "A",  200, 50,  50);             // Font color  (A underlined)
 }
 
 // ---------------------------------------------------------------------------
