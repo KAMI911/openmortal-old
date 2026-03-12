@@ -329,6 +329,33 @@ int init2()
 
 
 
+// Wait up to a_iMs milliseconds, returning true if F1/Esc was pressed.
+static bool WaitSkippable( Uint32 a_iMs )
+{
+	Uint32 tEnd = SDL_GetTicks() + a_iMs;
+	SDL_Event oEv;
+	while ( SDL_GetTicks() < tEnd )
+	{
+		while ( SDL_PollEvent( &oEv ) )
+		{
+			if ( oEv.type == SDL_KEYDOWN )
+			{
+				SDLKey k = oEv.key.keysym.sym;
+				if ( k == SDLK_F1 || k == SDLK_ESCAPE )
+					return true;
+			}
+			else if ( oEv.type == SDL_QUIT )
+			{
+				g_oState.m_bQuitFlag = true;
+				return true;
+			}
+		}
+		SDL_Delay( 20 );
+	}
+	return false;
+}
+
+
 int DrawMainScreen()
 {
 	SDL_Surface* background = LoadBackground( "Mortal.jpg", 240 );
@@ -394,14 +421,20 @@ int DrawMainScreen()
 	
 	for ( i=0; i<iNumFighterFiles; ++i )
 	{
+		Uint32 tBefore = SDL_GetTicks();
 		g_oBackend.PerlEvalF( "LoadFighterFile(%d);", i );
-		
+
 		if ( i < 15 ) {
 			pack.Draw( i, x[i], y[i], false );
 			SDL_Flip( gamescreen );
+			Uint32 elapsed = SDL_GetTicks() - tBefore;
+			if ( elapsed < 250 )
+				if ( WaitSkippable( 250 - elapsed ) ) goto done;
 		}
 	}
 	
+	WaitSkippable( 5000 );	// Hold the completed screen for up to 5 seconds
+done:
     SDL_FreeSurface( background );
 	return 0;
 	

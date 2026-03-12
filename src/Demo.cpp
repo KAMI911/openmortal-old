@@ -324,7 +324,7 @@ public:
 	MainScreenDemo()
 	{
 		i = 0;
-		m_iTimeLeft = 50;
+		m_iTimeLeft = 42;
 		m_poBackground = LoadBackground( "Mortal.jpg", 240 );
 		
 		DrawTextMSZ( "Version " VERSION "  © 2003-2004 by UPi", inkFont, 320, 430, UseShadow | AlignHCenter, C_WHITE, m_poBackground, false );
@@ -384,7 +384,7 @@ public:
 			}
 			SDL_Flip( gamescreen );
 			++i;
-			m_iTimeLeft += 20;
+			m_iTimeLeft += 42;
 			if ( i >= 14 )
 			{
 				m_iTimeLeft += 50;
