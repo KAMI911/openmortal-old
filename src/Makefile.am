@@ -21,7 +21,7 @@ EXTRA_DIST = $(openmortal_SOURCES)\
 	DrawRle.h     Joystick.h      PlayerSelect.h            sge_surface.h \
 	Jukebox.h     AnimGif.h
 
-AM_CXXFLAGS = -DMSZ_DATADIR=\"${pkgdatadir}\" -Wall
+AM_CXXFLAGS = -DMSZ_DATADIR=\"${pkgdatadir}\" -DMSZ_USES_UTF8 -Wall
 
 # set the include path found by configure
 #INCLUDES= $(all_includes)

@@ -593,7 +593,7 @@ void COnlineChat::DrawNickList()
 		++it , y += sge_TTF_FontHeight( chatFont ) )
 	{
 		int iColor = (it->first) == g_oState.m_acNick ? C_LIGHTCYAN : C_WHITE;
-		sge_tt_textout( m_poScreen, chatFont, (it->first).c_str(), oNickListRect.x, y, iColor, C_BLACK, 255 );
+		sge_tt_textout_UTF8( m_poScreen, chatFont, (it->first).c_str(), oNickListRect.x, y, iColor, C_BLACK, 255 );
 	}
 
 	SDL_UpdateRect( m_poScreen, oNickListRect.x, oNickListRect.y, oNickListRect.w, oNickListRect.h );

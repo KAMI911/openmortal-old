@@ -2,7 +2,8 @@
 
 fontsdatadir	= $(pkgdatadir)/fonts
 fontsdata_DATA	= \
-aardvark.ttf bradybun.ttf deadgrit.ttf thin.ttf \
+deadgrit.ttf \
+RubikWetPaint-Regular.ttf RubikGlitch-Regular.ttf comic-neue-bold.otf dejavu-thin.ttf \
 brandybun3.png glossyfont.png CreditsFont2.png \
 fangfont.png gooddogc.ttf impactfont2.png \
 manslem.ttf

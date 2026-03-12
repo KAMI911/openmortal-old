@@ -294,13 +294,13 @@ int init()
 
 	sge_TTF_AAOff();
 	
-	inkFont = LoadTTF( "aardvark.ttf", 20 );
+	inkFont = LoadTTF( "RubikWetPaint-Regular.ttf", 20 );	// aardvark.ttf (no UTF-8)
 	if ( !inkFont ) return -1;
-	impactFont = LoadTTF( "bradybun.ttf", 20 );	// gooddogc.ttf, 20
+	impactFont = LoadTTF( "comic-neue-bold.otf", 20 );	// bradybun.ttf (no UTF-8)
 	if ( !impactFont ) return -1;
-	titleFont = LoadTTF( "deadgrit.ttf", 48 );		// deadgrit.ttf, 48
+	titleFont = LoadTTF( "RubikGlitch-Regular.ttf", 48 );	// deadgrit.ttf (no UTF-8)
 	if ( !titleFont ) return -1;
-	chatFont = LoadTTF( "thin.ttf", 20 );		// deadgrit.ttf, 48
+	chatFont = LoadTTF( "dejavu-thin.ttf", 20 );	// thin.ttf (no UTF-8)
 	if ( !chatFont ) return -1;
 
 	fastFont = LoadBMPFont( "brandybun3.png" );

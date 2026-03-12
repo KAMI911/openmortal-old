@@ -1,5 +1,5 @@
 use strict;
-use bytes;
+use utf8;
 
 =comment
 
@@ -7,7 +7,6 @@ Translate.pl attempts to load all of the translations into one file. A
 translation is simply a hash from English to the other language.
 
 =cut
-
 
 
 
@@ -213,145 +212,145 @@ $::Hungarian = {  'LanguageCode' => 3,
 
 # In-game text
 
-	'MAX COMBO!!!'		=> "MAX KOMB”!!!",
-	'%d-hit combo!'		=> '%dX kombÛ',
-	'%d%% damage'		=> '%d%% sebzÈs',
+	'MAX COMBO!!!'		=> "MAX KOMB√ì!!!",
+	'%d-hit combo!'		=> '%dX komb√≥',
+	'%d%% damage'		=> '%d%% sebz√©s',
 	'Round %d'			=> '%d. menet',
 	'REW'				=> 'VISSZA',
 	'REPLAY'			=> undef,
-	'DEMO'				=> 'DEM”',
-	'Press F1 to skip...'=> 'F1 gomb: tov·bb',
-	'HURRY UP!'			=> 'GYER‹NK M¡R!',
+	'DEMO'				=> 'DEM√ì',
+	'Press F1 to skip...'=> 'F1 gomb: tov√°bb',
+	'HURRY UP!'			=> 'GYER√úNK M√ÅR!',
 	'TIME IS UP!'		=> 'NA ENNYI!',
 
-	'Final Judgement'	=> 'VÈgsı ÕtÈlet',
-	'Continue?'			=> 'Tov·bb?',
-	'SPLAT!'			=> 'FR÷CCS!',
-	'Choose A Fighter Dammit' => 'V·lassz J·tÈkost, Baszki',
+	'Final Judgement'	=> 'V√©gs≈ë √çt√©let',
+	'Continue?'			=> 'Tov√°bb?',
+	'SPLAT!'			=> 'FR√ñCCS!',
+	'Choose A Fighter Dammit' => 'V√°lassz J√°t√©kost, Baszki',
 
 # Menu items
 
-	"Main Menu"			=> 'F’MEN‹',
-	"~SINGLE PLAYER GAME"=> '~EGYSZEM…LYES J¡T…K',
-	"~MULTI PLAYER GAME"=> '~K…TSZEM…LYES J¡T…K',
-	"~SURRENDER GAME"	=> '~J¡T…K FELAD¡SA',
-	"~OPTIONS"			=> '~BE¡LLÕT¡SOK',
-	"~INFO"				=> '~INFORM¡CI”K',
+	"Main Menu"			=> 'F≈êMEN√ú',
+	"~SINGLE PLAYER GAME"=> '~EGYSZEM√âLYES J√ÅT√âK',
+	"~MULTI PLAYER GAME"=> '~K√âTSZEM√âLYES J√ÅT√âK',
+	"~SURRENDER GAME"	=> '~J√ÅT√âK FELAD√ÅSA',
+	"~OPTIONS"			=> '~BE√ÅLL√çT√ÅSOK',
+	"~INFO"				=> '~INFORM√ÅCI√ìK',
 	"QUIT"				=> 'QUIT',
-	"~OK"				=> '~OK…',
+	"~OK"				=> '~OK√â',
 	"~LANGUAGE: "		=> '~NYELV: ',
 
-	"Options"			=> 'Be·llÌt·sok',
-	"~FULLSCREEN ON"	=> 'Teljes kÈpernyı',
-	"~FULLSCREEN OFF"	=> 'Ablakos megjelenÌtÈs',
-	"GAME SPEED: "		=> 'J·tÈk sebessÈg: ',
-	"GAME TIME: "		=> 'J·tÈkidı: ',
-	"STAMINA: "			=> '¡llÛkÈpessÈg: ',
+	"Options"			=> 'Be√°ll√≠t√°sok',
+	"~FULLSCREEN ON"	=> 'Teljes k√©perny≈ë',
+	"~FULLSCREEN OFF"	=> 'Ablakos megjelen√≠t√©s',
+	"GAME SPEED: "		=> 'J√°t√©k sebess√©g: ',
+	"GAME TIME: "		=> 'J√°t√©kid≈ë: ',
+	"STAMINA: "			=> '√Åll√≥k√©pess√©g: ',
 	"~SOUND"			=> '~HANG',
-	"~RIGHT PLAYER KEYS"=> '~Jobb j·tÈkos gombjai',
-	"~LEFT PLAYER KEYS"	=> '~Bal j·tÈkos gombjai',
+	"~RIGHT PLAYER KEYS"=> '~Jobb j√°t√©kos gombjai',
+	"~LEFT PLAYER KEYS"	=> '~Bal j√°t√©kos gombjai',
 
 	"Sound"				=> 'Hangok',
-	"CHANNELS: "		=> 'Csatorn·k: ',
-	"SOUND QUALITY: "	=> 'HangminısÈg: ',
-	"SOUND FIDELITY: "	=> 'Hangpontoss·g: ',
+	"CHANNELS: "		=> 'Csatorn√°k: ',
+	"SOUND QUALITY: "	=> 'Hangmin≈ës√©g: ',
+	"SOUND FIDELITY: "	=> 'Hangpontoss√°g: ',
 	"MUSIC VOLUME: "	=> 'Zene hangereje: ',
 	"EFFECTS VOLUME: "	=> 'Zajok hangereje: ',
-	"MUSIC MODE: "		=> 'Zene mÛd: ',
+	"MUSIC MODE: "		=> 'Zene m√≥d: ',
 	"ORIGINAL"			=> 'Eredeti',
-	"RANDOM"			=> 'VÈletlenszer˚',
-	"LEVEL: "			=> 'P·lya: ',
-	"NATURAL"			=> 'TermÈszetes',
-	"GOOD ONLY"			=> 'Csak jÛk',
+	"RANDOM"			=> 'V√©letlenszer≈±',
+	"LEVEL: "			=> 'P√°lya: ',
+	"NATURAL"			=> 'Term√©szetes',
+	"GOOD ONLY"			=> 'Csak j√≥k',
 	"EVIL ONLY"			=> 'Csak gonoszok',
-	"SELECT"			=> 'V·laszt',
-	"LEVEL NUMBER: "	=> 'P·lya sz·ma: ',
+	"SELECT"			=> 'V√°laszt',
+	"LEVEL NUMBER: "	=> 'P√°lya sz√°ma: ',
 
 
 # Menu options
 
-	"BABY"				=> 'CSECSEM’',
-	"VERY LOW"			=> 'NAGYON GY…R',
-	"LOW"				=> 'GY…R',
-	"NORMAL"			=> 'NORM¡LIS',
-	"HIGH"				=> 'KEM…NY',
-	"VERY HIGH"			=> 'NAGYON KEM…NY',
-	"NEAR IMMORTAL"		=> 'TERMIN¡TOR',
+	"BABY"				=> 'CSECSEM≈ê',
+	"VERY LOW"			=> 'NAGYON GY√âR',
+	"LOW"				=> 'GY√âR',
+	"NORMAL"			=> 'NORM√ÅLIS',
+	"HIGH"				=> 'KEM√âNY',
+	"VERY HIGH"			=> 'NAGYON KEM√âNY',
+	"NEAR IMMORTAL"		=> 'TERMIN√ÅTOR',
 
 	"SNAIL RACE"		=> 'CSIGAVERSENY',
-	"SLOW"				=> 'LASS⁄',
-	"NORMAL"			=> 'NORM¡L',
-	"TURBO"				=> 'TURB”',
+	"SLOW"				=> 'LASS√ö',
+	"NORMAL"			=> 'NORM√ÅL',
+	"TURBO"				=> 'TURB√ì',
 	"KUNG-FU MOVIE"		=> 'KUNG-FU FILM',
 
-	"MONO"				=> 'MON”',
-	"STEREO"			=> 'SZTERE”',
+	"MONO"				=> 'MON√ì',
+	"STEREO"			=> 'SZTERE√ì',
 
 	"LOW"				=> 'ALACSONY',
-	"MEDIUM"			=> 'K÷ZEPES',
+	"MEDIUM"			=> 'K√ñZEPES',
 	"HIGH"				=> 'MAGAS',
 
 	"OFF"				=> 'NINCS',
 
 # Key configuration
 
-	'%s player-\'%s\'?'	=> '%s j·tÈkos - \'%s\'?',
+	'%s player-\'%s\'?'	=> '%s j√°t√©kos - \'%s\'?',
 	'Left'				=> 'Bal',
 	'Right'				=> 'Jobb',
 	"up",				=> 'fel',
 	"down",				=> 'le',
 	"left",				=> 'balra',
 	"right",			=> 'jobbra',
-	"block",			=> 'vÈdÈs',
-	"low punch",		=> 'alsÛ ¸tÈs',
-	"high punch",		=> 'felsı ¸tÈs',
-	"low kick",			=> 'alsÛ r˙g·s',
-	"high kick"			=> 'felsı r˙g·s',
-	'Thanks!'			=> 'Kˆszi!',
+	"block",			=> 'v√©d√©s',
+	"low punch",		=> 'als√≥ √ºt√©s',
+	"high punch",		=> 'fels≈ë √ºt√©s',
+	"low kick",			=> 'als√≥ r√∫g√°s',
+	"high kick"			=> 'fels≈ë r√∫g√°s',
+	'Thanks!'			=> 'K√∂szi!',
 
 # Demo screens,
 
 	'Fighter Stats'		=> 'Harcos Adatai',
-	'Unfortunately this fighter is not yet playable.' => 'Sajnos ı mÈg nem j·tszhatÛ.',
+	'Unfortunately this fighter is not yet playable.' => 'Sajnos ≈ë m√©g nem j√°tszhat√≥.',
 	'KEYS'				=> 'GOMBOK',
-	'Name: '			=> 'NÈv: ',
+	'Name: '			=> 'N√©v: ',
 	'Team: '			=> 'Csapat: ',
-	'Style: '			=> 'StÌlus: ',
+	'Style: '			=> 'St√≠lus: ',
 	'Age: '				=> 'Kor: ',
-	'Weight: '			=> 'S˙ly: ',
-	'Height: '			=> 'Magass·g: ',
-	'Shoe size: '		=> 'CipımÈret: ',
+	'Weight: '			=> 'S√∫ly: ',
+	'Height: '			=> 'Magass√°g: ',
+	'Shoe size: '		=> 'Cip≈ëm√©ret: ',
 
-	"Credits"			=> 'KÈszÌtettÈk',
+	"Credits"			=> 'K√©sz√≠tett√©k',
 	"CreditsText1"		=>
-"A Mort·l Szombat Elkˆvetıi
+"A Mort√°l Szombat Elk√∂vet≈ëi
 
 
--- A MORT¡L SZOMBAT CSAPAT --
+-- A MORT√ÅL SZOMBAT CSAPAT --
 
 
 PROGRAM - UPi
 ZENE - Purple Motion
 ZENE - XTD / Mystic
 GRAFIKA - UPi
-NÈmet fordÌt·s - ??
-Francia fordÌt·s - Vampyre
-Spanyol fordÌt·s - EdispeR
+N√©met ford√≠t√°s - ??
+Francia ford√≠t√°s - Vampyre
+Spanyol ford√≠t√°s - EdispeR
 
--- SZEREPL’K --
+-- SZEREPL≈êK --
 
 Boxer - Zoli
-Cumi - Mint ˆnmaga
-Descant - Mint ˆnmaga
-F˚rÈszes ’r¸lt - Ambrus
-Grizli - Mint ˆnmaga
-Kinga - Mint ˆnmaga
-Macy - Mint ˆnmaga
-Misi - Mint ˆnmaga
+Cumi - Mint √∂nmaga
+Descant - Mint √∂nmaga
+F≈±r√©szes ≈êr√ºlt - Ambrus
+Grizli - Mint √∂nmaga
+Kinga - Mint √∂nmaga
+Macy - Mint √∂nmaga
+Misi - Mint √∂nmaga
 Rising-san - Surba
-Sirpi - Mint ˆnmaga
+Sirpi - Mint √∂nmaga
 Taka Ito - Bence
-TˆkÈletlen Katona - Dani
+T√∂k√©letlen Katona - Dani
 Watasiwa Baka Janajo - Ulmar
 Black Dark Evil Mage - UPi
 
@@ -361,7 +360,7 @@ sourceforge.net
 apocalypse.rulez.org
 freshmeat.net
 
-A Mort·l Szombat Copyright 2003, A Mort·l Szombat Csapat
+A Mort√°l Szombat Copyright 2003, A Mort√°l Szombat Csapat
 Distributed under the GNU General Public Licence Version 2\n\n",
 
 	'CreditsText2'		=>
@@ -381,14 +380,14 @@ and
 Degec Entertainment\n\n",
 
 	'Story1Text'		=>
-"Mi, a Gonosz Gyilkos Fekete Ellenszenves SˆtÈt(elmÈj˚) T˚zm·gusok istenei nem t˚rhetj¸k tov·bb a gonosztevÈs hi·ny·t.
+"Mi, a Gonosz Gyilkos Fekete Ellenszenves S√∂t√©t(elm√©j≈±) T≈±zm√°gusok istenei nem t≈±rhetj√ºk tov√°bb a gonosztev√©s hi√°ny√°t.
 
-Egy k¸ldetÈst adunk nekik amelyik olyan ˆrdˆgien gonosz, amilyet a vil·g mÈg sosem l·tott!
+Egy k√ºldet√©st adunk nekik amelyik olyan √∂rd√∂gien gonosz, amilyet a vil√°g m√©g sosem l√°tott!
 
-MÈltatlan alattvalÛink parancsa:
-ELPUSZTÕTANI
+M√©ltatlan alattval√≥ink parancsa:
+ELPUSZT√çTANI
 A SZOMBATOT
-hogy az emberisÈg az 5 munkanap Ès egy sz¸nnapos hÈt sˆtÈt kor·ba s¸llyedjen... ÷R÷KRE!\n\n\n\n\n\n\n\n\n",
+hogy az emberis√©g az 5 munkanap √©s egy sz√ºnnapos h√©t s√∂t√©t kor√°ba s√ºllyedjen... √ñR√ñKRE!\n\n\n\n\n\n\n\n\n",
 
 	'Story2Text',		=>
 "Whenever EVIL looms on the horizon, the good guys are there to save the day. Son Goku, the protector of Earth and Humanity went to the rescue...
@@ -435,11 +434,11 @@ $::French = { 'LanguageCode' => 2,
 	"~LANGUAGE: "		=> "LANGUE: ",
 
 	"Options"			=> "Options",
-	"~FULLSCREEN ON"	=> "Plein Ècran ON",
-	"~FULLSCREEN OFF"	=> "Plein Ècran OFF",
+	"~FULLSCREEN ON"	=> "Plein √©cran ON",
+	"~FULLSCREEN OFF"	=> "Plein √©cran OFF",
 	"GAME SPEED: "		=> "Vitesse de jeu: ",
 	"GAME TIME: "		=> "Temps de jeu: ",
-	"STAMINA: "			=> "VitalitÈ: ",
+	"STAMINA: "			=> "Vitalit√©: ",
 	"~SOUND"			=> "SON",
 	"~RIGHT PLAYER KEYS"=> "Touches joueur droite",
 	"~LEFT PLAYER KEYS"	=> "Touches joueur gauche",
@@ -447,18 +446,18 @@ $::French = { 'LanguageCode' => 2,
 	"Sound"				=> 'Son',
 	"CHANNELS: "		=> "CANAUX: ",	# Mono / Stereo
 	"SOUND QUALITY: "	=> "Echantillonage: ",	# KHz of playback rate
-	"SOUND FIDELITY: "	=> "QualitÈ sonore: ",	# 8 bit or 16 bit
+	"SOUND FIDELITY: "	=> "Qualit√© sonore: ",	# 8 bit or 16 bit
 	"MUSIC VOLUME: "	=> "Volume musical: ",	# OFF or numeric
 	"EFFECTS VOLUME: "	=> "Volume effets : ",	# OFF or numeric
 	"MUSIC MODE: "		=> "Mode musical : ",
 	"ORIGINAL"			=> "Original",
-	"RANDOM"			=> "AlÈatoire",
+	"RANDOM"			=> "Al√©atoire",
 	"LEVEL: "			=> "Niveau : ",
 	"NATURAL"			=> "Naturel",
 	"GOOD ONLY"			=> "Que les bons",
 	"EVIL ONLY"			=> "Que les mauvais",
 	"SELECT"			=> "Choisir",
-	"LEVEL NUMBER: "	=> "NumÈro de niveau : ",
+	"LEVEL NUMBER: "	=> "Num√©ro de niveau : ",
 	
 
 # Menu options
@@ -517,7 +516,7 @@ $::French = { 'LanguageCode' => 2,
 	'Height: '			=> 'Taille: ',
 	'Shoe size: '		=> 'Pointure: ',
 	
-	"Credits"			=> "CrÈdits",
+	"Credits"			=> "Cr√©dits",
 	"CreditsText1"		=>
 "OPENMORTAL CREDITS
 
@@ -537,15 +536,15 @@ Portuguese translation - Vinicius Fortuna
 -- Acteurs --
 
 Boxer - Zoli
-Cumi - Dans son rÙle
-Descant - Dans son rÙle
+Cumi - Dans son r√¥le
+Descant - Dans son r√¥le
 Fureszes Orult - Ambrus
-Grizli - Dans son rÙle
-Kinga - Dans son rÙle
-Macy - Dans son rÙle
-Misi - Dans son rÙle
+Grizli - Dans son r√¥le
+Kinga - Dans son r√¥le
+Macy - Dans son r√¥le
+Misi - Dans son r√¥le
 Rising-san - Surba
-Sirpi - Dans son rÙle
+Sirpi - Dans son r√¥le
 Taka Ito - Bence
 Tokeletlen Katona - Dani
 Watasiwa Baka Janajo - Ulmar
@@ -558,37 +557,37 @@ apocalypse.rulez.org
 freshmeat.net
 
 OpenMortal est un Copyright 2003 de l'Equipe OpenMortal \
-DistribuÈ sous Licence GNU General Public Licence Version 2\n\n",
+Distribu√© sous Licence GNU General Public Licence Version 2\n\n",
 
 	'CreditsText2'		=>
-'Merci ‡ Midway de ne pas nous harceler avec des trucs lÈgaux (jusqu\'ici), bien que '.
-'nous avons s˚rement violÈ au moins 50 de leurs brevets, copyrights internationaux, et marques dÈposÈes.
+'Merci √† Midway de ne pas nous harceler avec des trucs l√©gaux (jusqu\'ici), bien que '.
+'nous avons s√ªrement viol√© au moins 50 de leurs brevets, copyrights internationaux, et marques d√©pos√©es.
 
 
-OpenMortal a besoin de votre aide ! Si vous pouvez contribuer ‡ la musique, graphiques, programmation amÈliorÈe, '.
-'personnages supplÈmentaires, du fric, de la biËre, des pizzas, ou toute autre forme de nourriture, SVP, envoyez-nous un email '.
-'‡ upi@apocalypse.rulez.org! La mÍme adresse accepte actuellement les commentaires et '.
+OpenMortal a besoin de votre aide ! Si vous pouvez contribuer √† la musique, graphiques, programmation am√©lior√©e, '.
+'personnages suppl√©mentaires, du fric, de la bi√®re, des pizzas, ou toute autre forme de nourriture, SVP, envoyez-nous un email '.
+'√† upi@apocalypse.rulez.org! La m√™me adresse accepte actuellement les commentaires et '.
 "les emails de fans aussi (astuce, astuce !).\n\n",
 
 	'CreditsText3'		=>
-"Soyez certains de vÈrifier les autres programmes de
+"Soyez certains de v√©rifier les autres programmes de
 Apocalypse Production
 et
 Degec Entertainment\n\n",
 
 	'Story1Text'		=>
-"Nous, les Dieux des Diaboliques Tueurs Noirs Antipathiques Faibles (humour) Mages de Feu, ne tolÈrons plus longtemps le manque de faiseurs de mal.
+"Nous, les Dieux des Diaboliques Tueurs Noirs Antipathiques Faibles (humour) Mages de Feu, ne tol√©rons plus longtemps le manque de faiseurs de mal.
 
-Nous les avons une fois de plus envoyÈs dans un mission si diabolique, si Luciferatique que le monde ne sera plus jamais le mÍme!
+Nous les avons une fois de plus envoy√©s dans un mission si diabolique, si Luciferatique que le monde ne sera plus jamais le m√™me!
 
-Nous ordonnons ‡ nos disciples indignes de
+Nous ordonnons √† nos disciples indignes de
 DETRUIRE LE SAMEDI
-et de plonger l'humanitÈ dans un Moyen-Age de 5 jours de travail et 1 jour de vacances par semaine... A TOUT JAMAIS!\n\n\n\n\n\n\n\n\n",
+et de plonger l'humanit√© dans un Moyen-Age de 5 jours de travail et 1 jour de vacances par semaine... A TOUT JAMAIS!\n\n\n\n\n\n\n\n\n",
 
 	'Story2Text',		=>
-"Bien que le Mal lorgne l'horizon, les gentils doivent sauver le jour ! Son Goku, le protecteur de la Terre et de l'HumanitÈ viennent ‡ la rescousse...
+"Bien que le Mal lorgne l'horizon, les gentils doivent sauver le jour ! Son Goku, le protecteur de la Terre et de l'Humanit√© viennent √† la rescousse...
 
-Seulement afin de devenir le TUEUR IMPITOYABLE sur le long chemin du tournoi Mortal Szombat ! C'Ètait la premiËre apparition de Cumi, aprËs tout...\n\n\n\n\n\n\n\n\n",
+Seulement afin de devenir le TUEUR IMPITOYABLE sur le long chemin du tournoi Mortal Szombat ! C'√©tait la premi√®re apparition de Cumi, apr√®s tout...\n\n\n\n\n\n\n\n\n",
 };
 
 
@@ -606,7 +605,7 @@ $::Spanish = { 'LanguageCode' => 1,
 
 	'MAX COMBO!!!'		=> 'MAX COMBO!!!',
 	'%d-hit combo!'		=> '%d-hit combo!',		# e.g. 3-hit combo!
-	'%d%% damage'		=> '%d%% daÒo',		# e.g. 30% damage
+	'%d%% damage'		=> '%d%% da√±o',		# e.g. 30% damage
 	'Round %d'			=> 'Round %d',
 	'REW'				=> 'RETROCEDER',
 	'REPLAY'			=> 'REPRODUCIR',
@@ -656,7 +655,7 @@ $::Spanish = { 'LanguageCode' => 1,
 	"GOOD ONLY"			=> "Solo buenos",
 	"EVIL ONLY"			=> "Solo malvados",
 	"SELECT"			=> "Elegir",
-	"LEVEL NUMBER: "	=> "N˙mero de nivel: ",
+	"LEVEL NUMBER: "	=> "N√∫mero de nivel: ",
 	
 
 # Menu options
@@ -697,15 +696,15 @@ $::Spanish = { 'LanguageCode' => 1,
 	"left",				=> "izquierda",
 	"right",			=> "derecha",
 	"block",			=> "bloquear",
-	"low punch",		=> "puÒo bajo",
-	"high punch",		=> "puÒo alto",
+	"low punch",		=> "pu√±o bajo",
+	"high punch",		=> "pu√±o alto",
 	"low kick",			=> "patada baja",
 	"high kick"			=> "patada alta",
 	'Thanks!'			=> 'Gracias!',
 	
 # Demo screens,
 
-	'Fighter Stats'		=> 'EstadÌsticas del Peleador',
+	'Fighter Stats'		=> 'Estad√≠sticas del Peleador',
 	'Unfortunately this fighter is not yet playable.' => 'Desafortunadamente este jugador no esta habilitado.',
 	'Name: '			=> 'Nombre: ',
 	'Team: '			=> 'Equipo: ',
@@ -713,7 +712,7 @@ $::Spanish = { 'LanguageCode' => 1,
 	'Age: '				=> 'Edad: ',
 	'Weight: '			=> 'Peso: ',
 	'Height: '			=> 'Altura: ',
-	'Shoe size: '		=> 'TamaÒo de zapato: ',
+	'Shoe size: '		=> 'Tama√±o de zapato: ',
 
 	"Credits"			=> "Creditos",
 	"CreditsText1"		=>
@@ -762,9 +761,9 @@ Distribuido bajo la GNU General Public Licence Version 2\n\n",
 'Gracias a Midway por no  aplastarnos con su equipo legal'.
 'Seguramente nosotros violamos al menos 50 de sus patentes, marcas registradas internacionales y trademarks registradas .
 
-OpenMortal necesita de tu ayuda! Si tu puedes contribuir con musica, imagenes, improvisaciÛn de codigo, '.
+OpenMortal necesita de tu ayuda! Si tu puedes contribuir con musica, imagenes, improvisaci√≥n de codigo, '.
 'caracteres adicionales, dinero, cerveza, pizza o cualquier otra cosa consumible, por favor escribenos '.
-'a upi@apocalypse.rulez.org! La misma direcciÛn esta actualmente aceptando comentarios y '.
+'a upi@apocalypse.rulez.org! La misma direcci√≥n esta actualmente aceptando comentarios y '.
 "tambien emails de fans (hint, hint!).\n\n",
 
 	'CreditsText3'		=>
@@ -776,7 +775,7 @@ Degec Entertainment\n\n",
 	'Story1Text'		=>
 "Nosotros, los Dioses del Endemoniado Negro Antipatico Asesino  Dim no tolero mas lo endemoniado.
 
-Enviamos a ellos en una misiÛn tan diabÛlica, tan endemoniada que el mundo nunca ser· el mismo de nuevo!
+Enviamos a ellos en una misi√≥n tan diab√≥lica, tan endemoniada que el mundo nunca ser√° el mismo de nuevo!
 
 Ordenamos a nuestros indignos seguidores a 
 
@@ -802,7 +801,7 @@ $::Portuguese = { 'LanguageCode' => 4,
 
 # In-game text
 
-	'MAX COMBO!!!'		=> 'COMBO M¡XIMO!!!',
+	'MAX COMBO!!!'		=> 'COMBO M√ÅXIMO!!!',
 	'%d-hit combo!'		=> 'Combo de %d golpes!',  
 	'%d%% damage'		=> 'Dano de %d%%',		
 	'Round %d'		=> 'Round %d',
@@ -824,18 +823,18 @@ $::Portuguese = { 'LanguageCode' => 4,
 	"~SINGLE PLAYER GAME"		=> "JOGO ~INDIVIDUAL",
 	"~MULTI PLAYER GAME"		=> "JOGO ~MULTIPLAYER" ,
 	"~SURRENDER GAME"		=> "~Entregar-se",
-	"~OPTIONS"			=> "~OP«’ES",
-	"~INFO"				=> "IN~FORMA«’ES",
+	"~OPTIONS"			=> "~OP√á√ïES",
+	"~INFO"				=> "IN~FORMA√á√ïES",
 	"QUIT"				=> "SAIR",
 	"~OK"				=> "~OK",
-	"~LANGUAGE: "			=> "~LÌngua: ",
+	"~LANGUAGE: "			=> "~L√≠ngua: ",
 
-	"Options"			=> "OpÁıes",
+	"Options"			=> "Op√ß√µes",
 	"~FULLSCREEN ON"		=> "TELA CHEIA ATIVADA",
 	"~FULLSCREEN OFF"		=> "TELA CHEIA DESATIVADA",
 	"GAME SPEED: "			=> "VELOCIDADE DE JOGO: ",
 	"GAME TIME: "			=> "TEMPO DE JOGO: ",
-	"STAMINA: "			=> "RESIST NCIA: ",
+	"STAMINA: "			=> "RESIST√äNCIA: ",
 	"~SOUND"			=> "~AUDIO",
 	"~RIGHT PLAYER KEYS"		=> "TECLAS, JOGADOR DA ~DIREITA",
 	"~LEFT PLAYER KEYS"		=> "TECLAS, JOGADOR DA ~ESQUERDA",
@@ -844,22 +843,22 @@ $::Portuguese = { 'LanguageCode' => 4,
 	"CHANNELS: "		=> "CANAIS: ",	# Mono / Stereo
 	"SOUND QUALITY: "	=> "QUALIDADE DE SOM: ",	# KHz of playback rate
 	"SOUND FIDELITY: "	=> "FIDELIDADE DE SOM: ",# 8 bit or 16 bit
-	"MUSIC VOLUME: "	=> "VOLUME DA M⁄SICA: ",	# OFF or numeric
+	"MUSIC VOLUME: "	=> "VOLUME DA M√öSICA: ",	# OFF or numeric
 	"EFFECTS VOLUME: "	=> "VOLUME DOS EFEITOS: ",	# OFF or numeric
 	"MUSIC MODE: "		=> "MODO DE MUSICA: ",
 	"ORIGINAL"			=> "Original",
 	"RANDOM"			=> "Aleatorio",
-	"LEVEL: "			=> "NÕVEL: ",
+	"LEVEL: "			=> "N√çVEL: ",
 	"NATURAL"			=> "Natural",
-	"GOOD ONLY"			=> "SÛ os bons",
-	"EVIL ONLY"			=> "SÛ os maus",
+	"GOOD ONLY"			=> "S√≥ os bons",
+	"EVIL ONLY"			=> "S√≥ os maus",
 	"SELECT"			=> "Escolher",
-	"LEVEL NUMBER: "	=> "N˙mero do nÌvel: ",
+	"LEVEL NUMBER: "	=> "N√∫mero do n√≠vel: ",
 	
 
 # Menu options
 
-	"BABY"				=> "BEB ",
+	"BABY"				=> "BEB√ä",
 	"VERY LOW"			=> "MUITO BAIXA",
 	"LOW"				=> "BAIXA",
 	"NORMAL"			=> "NORMAL",
@@ -875,12 +874,12 @@ $::Portuguese = { 'LanguageCode' => 4,
 
 	# Sound / Channels
 	"MONO"				=> "MONO",
-	"STEREO"			=> "EST…REO",
+	"STEREO"			=> "EST√âREO",
 
 	# Sound / Mixing rate settings
 	# CLASHES WITH MENU OPTIONS!!!
 	"LOW"				=> "BAIXA",
-	"MEDIUM"			=> "M…DIA",
+	"MEDIUM"			=> "M√âDIA",
 	"HIGH"				=> "ALTA",
 	
 	# Sound volume
@@ -904,32 +903,32 @@ $::Portuguese = { 'LanguageCode' => 4,
 	
 # Demo screens,
 
-	'Fighter Stats'		=> 'Ficha TÈcnica',
-	'Unfortunately this fighter is not yet playable.' => 'Infelizmente ainda n„o È possÌvel jogar com esse lutador',
+	'Fighter Stats'		=> 'Ficha T√©cnica',
+	'Unfortunately this fighter is not yet playable.' => 'Infelizmente ainda n√£o √© poss√≠vel jogar com esse lutador',
 	'Name: '			=> 'Nome: ',
 	'Team: '			=> 'Time: ',
 	'Style: '			=> 'Estilo: ',
 	'Age: '				=> 'Idade: ',
 	'Weight: '			=> 'Peso: ',
 	'Height: '			=> 'Altura: ',
-	'Shoe size: '		=> 'CalÁado: ',
+	'Shoe size: '		=> 'Cal√ßado: ',
 	
-	"Credits"			=> 'CrÈditos',
+	"Credits"			=> 'Cr√©ditos',
 	"CreditsText1"		=>
-"CR…DITOS DE OPENMORTAL
+"CR√âDITOS DE OPENMORTAL
 
 
 -- EQUIPE OPENMORTAL --
 
 
 PROGRAMADOR - UPi
-M⁄SICA - Purple Motion
-M⁄SICA - XTD / Mystic
-GR¡FICOS - UPi
-TraduÁ„o para o Alem„o - ??
-TraduÁ„o para o FrancÍs - Vampyre
-TraduÁ„o para o Espanhol - EdsipeR
-TraduÁ„o para o PortuguÍs - Vinicius Fortuna
+M√öSICA - Purple Motion
+M√öSICA - XTD / Mystic
+GR√ÅFICOS - UPi
+Tradu√ß√£o para o Alem√£o - ??
+Tradu√ß√£o para o Franc√™s - Vampyre
+Tradu√ß√£o para o Espanhol - EdsipeR
+Tradu√ß√£o para o Portugu√™s - Vinicius Fortuna
 
 -- ELENCO --
 
@@ -954,36 +953,36 @@ sourceforge.net
 apocalypse.rulez.org
 freshmeat.net
 
-OpenMortal È marca registrada de 2003 da Equipe OpenMortal
-DistribuÌdo segundo a LicenÁa P˙blica Geral GNU Vers„o 2\n\n",
+OpenMortal √© marca registrada de 2003 da Equipe OpenMortal
+Distribu√≠do segundo a Licen√ßa P√∫blica Geral GNU Vers√£o 2\n\n",
 
 	'CreditsText2'		=>
-'Obrigado ‡ Midway por n„o nos ameaÁar com assuntos legais atÈ agora, apesar '.
-'de nÛs certamente termos violado pelo menos umas 50 de suas patentes, direitos de cÛpia internacionais e marcas registradas.
+'Obrigado √† Midway por n√£o nos amea√ßar com assuntos legais at√© agora, apesar '.
+'de n√≥s certamente termos violado pelo menos umas 50 de suas patentes, direitos de c√≥pia internacionais e marcas registradas.
 
 
-OpenMortal precisa de sua ajuda! Se vocÍ puder contribuir com m˙sicas, gr·icos, cÛdigos aperfeiÁoados, '.
-'personagens extras, dinheiro, cerveja, pizza ou qualquer outro bem-de-consumo, por favor escreva para nÛs em upi@apocalypse.rulez.org! '.
-"Atualmente o mesmo endereÁo tambÈm est· aceitando coment·rios e mensagens de f„s.\n\n",
+OpenMortal precisa de sua ajuda! Se voc√™ puder contribuir com m√∫sicas, gr√°icos, c√≥digos aperfei√ßoados, '.
+'personagens extras, dinheiro, cerveja, pizza ou qualquer outro bem-de-consumo, por favor escreva para n√≥s em upi@apocalypse.rulez.org! '.
+"Atualmente o mesmo endere√ßo tamb√©m est√° aceitando coment√°rios e mensagens de f√£s.\n\n",
 
 	'CreditsText3'		=>
-"N„o se esqueÁa de dar uma olhada nos outros produtos da
+"N√£o se esque√ßa de dar uma olhada nos outros produtos da
 Apocalypse Production
 e da Degec Entertainment\n\n",
 
 	'Story1Text'		=>
-"NÛs, os Deuses dos Magos de Fogo Malignos Assassinos Sombrios Antip·ticos Est˙pidos n„o mais toleramos a falta de maldade no mundo.
+"N√≥s, os Deuses dos Magos de Fogo Malignos Assassinos Sombrios Antip√°ticos Est√∫pidos n√£o mais toleramos a falta de maldade no mundo.
 
-NÛs os mandamos em uma miss„o t„o diabÛlica, t„o maligna, que o mundo nunca mais ser· o mesmo!
+N√≥s os mandamos em uma miss√£o t√£o diab√≥lica, t√£o maligna, que o mundo nunca mais ser√° o mesmo!
 
-NÛs ordenamos nossos indignos seguidores que
-DESTUÕSSEM O S¡BADO,
-condenando a humanidade a uma era sombria, com 5 dias ˙teis e apenas 1 dia de folga por semana... PARA SEMPRE!\n\n\n\n\n\n\n\n\n",
+N√≥s ordenamos nossos indignos seguidores que
+DESTU√çSSEM O S√ÅBADO,
+condenando a humanidade a uma era sombria, com 5 dias √∫teis e apenas 1 dia de folga por semana... PARA SEMPRE!\n\n\n\n\n\n\n\n\n",
 
 	'Story2Text',		=>
-"Sempre que o Mal surge no horizonte, os herÛis est„o l· para salvar o dia. Son Goku, o protetor da Terra e da Humanidade, veio ent„o para nos salvar...
+"Sempre que o Mal surge no horizonte, os her√≥is est√£o l√° para salvar o dia. Son Goku, o protetor da Terra e da Humanidade, veio ent√£o para nos salvar...
 
-Apenas para ser MORTO ATROPELADO em seu caminho para o torneio de Mortal Szombat! Bem, afinal era o primeiro dia de direÁ„o de Cumi...\n\n\n\n\n\n\n\n\n",
+Apenas para ser MORTO ATROPELADO em seu caminho para o torneio de Mortal Szombat! Bem, afinal era o primeiro dia de dire√ß√£o de Cumi...\n\n\n\n\n\n\n\n\n",
 };
 
 

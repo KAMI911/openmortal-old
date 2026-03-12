@@ -190,7 +190,9 @@ void DrawGradientText( const char* text, _sge_TTFont* font, int y, SDL_Surface* 
 
 	// 1. CREATE OFFSCREEN SURFACE
 	
-	SDL_Rect size = sge_TTF_TextSize( font, (char*)text );
+	int _tw, _th;
+	sge_TTF_SizeText( font, text, &_tw, &_th );
+	SDL_Rect size; size.w = _tw; size.h = _th;
 	size.w += 2;
 	size.h += 2;
 	size.x = 320 - size.w / 2;
@@ -227,7 +229,7 @@ void DrawGradientText( const char* text, _sge_TTFont* font, int y, SDL_Surface* 
 	// 3. DRAW TEXT, APPLY BORDER, APPLY GRADIENT.
 
 	int y1 = sge_TTF_FontAscent(font);
-	sge_tt_textout( surface, font, text,
+	sge_tt_textout_UTF8( surface, font, text,
 		1, y1, 255, 0, 255);
 
 

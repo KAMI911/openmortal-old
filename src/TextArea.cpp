@@ -158,7 +158,7 @@ void CTextArea::Redraw()
 		}
 
 		// Print the current text
-		sge_tt_textout( m_poScreen, m_poFont, itString->c_str(), x, yPos + sge_TTF_FontAscent(m_poFont), *itColors, C_BLACK, 255 );
+		sge_tt_textout_UTF8( m_poScreen, m_poFont, itString->c_str(), x, yPos + sge_TTF_FontAscent(m_poFont), *itColors, C_BLACK, 255 );
 		++itString;
 		++itColors;
 	}
