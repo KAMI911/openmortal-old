@@ -21,13 +21,13 @@
 //#include "SDL_video.h"
 
 
-#define MORTALNETSERVER		"apocalypse.game-host.org"
-#define MORTALNETWORKPORT	0x3A23
+#define MSZ_CHAT_SERVER		"apocalypse.game-host.org"
+#define MSZ_CHAT_PORT	0x3A23
 
 // Layout
 
-#define READLINE_Y			440
-#define NICKLIST_X			500
+#define MSZ_READLINE_Y			440
+#define MSZ_NICKLIST_X			500
 
 void MortalNetworkResetMessages( bool a_bClear );
 void MortalNetworkMessage( const char* format, ... );
@@ -239,7 +239,7 @@ COnlineChat::~COnlineChat()
 
 
 
-#define CHECKCONNECTION if ( m_poSocket == NULL ) return;
+#define MSZ_CHECKCONNECTION if ( m_poSocket == NULL ) return;
 
 
 bool COnlineChat::Start()
@@ -249,14 +249,14 @@ bool COnlineChat::Start()
 		return true;		// Already connected.
 	}
 	
-#define RETURNNOERROR {								\
+#define MSZ_RETURNNOERROR {								\
 		debug( "%s\n", m_sLastError.c_str() );		\
 		return false; }
-#define RETURNWITHERROR {							\
+#define MSZ_RETURNWITHERROR {							\
 		m_sLastError = SDLNet_GetError();			\
 		debug( "%s\n", m_sLastError.c_str() );		\
 		return false; }
-#define RETURNWITHADDITIONALERROR {					\
+#define MSZ_RETURNWITHADDITIONALERROR {					\
 		m_sLastError += SDLNet_GetError();			\
 		debug( "%s\n", m_sLastError.c_str() );		\
 		return false; }
@@ -271,14 +271,14 @@ bool COnlineChat::Start()
 	SDL_Flip( m_poScreen );
 
 	MortalNetworkResetMessages( false );
-	MortalNetworkMessage( Translate("Resolving hostname (%s)..."), MORTALNETSERVER );
+	MortalNetworkMessage( Translate("Resolving hostname (%s)..."), MSZ_CHAT_SERVER );
 	
 	IPaddress oAddress;
-	int iResult = SDLNet_ResolveHost( &oAddress, MORTALNETSERVER, MORTALNETWORKPORT );
+	int iResult = SDLNet_ResolveHost( &oAddress, MSZ_CHAT_SERVER, MSZ_CHAT_PORT );
 	if ( iResult )
 	{
 		m_sLastError = Translate( "Couldn't resolve host." );
-		RETURNNOERROR;
+		MSZ_RETURNNOERROR;
 	}
 	debug( "IP Address of server is 0x%x\n", oAddress.host );
 
@@ -297,7 +297,7 @@ bool COnlineChat::Start()
 	}
 	if ( NULL == m_poSocket )
 	{
-		RETURNWITHERROR;
+		MSZ_RETURNWITHERROR;
 	}
 	
 	// CONNECTION ESTABLISHED. SEND INTRO PACKETS
@@ -353,7 +353,7 @@ void COnlineChat::Stop()
 
 void COnlineChat::SendRawData( char a_cID, const std::string& a_rsData )
 {
-	CHECKCONNECTION;
+	MSZ_CHECKCONNECTION;
 	
 	SDLNet_TCP_Send( m_poSocket, &a_cID, 1 );
 	SDLNet_TCP_Send( m_poSocket, (void*) a_rsData.c_str(), a_rsData.length() );
@@ -365,7 +365,7 @@ void COnlineChat::SendRawData( char a_cID, const std::string& a_rsData )
 
 void COnlineChat::Update()
 {
-	CHECKCONNECTION;
+	MSZ_CHECKCONNECTION;
 	
 	// 1. CHECK FOR STUFF TO READ
 	
@@ -437,7 +437,7 @@ void COnlineChat::Update()
 				ReceiveUser( m_acIncomingBuffer[iOffset], m_acIncomingBuffer + iOffset + 1 ); bRedraw = true; break;
 		}
 		
-		CHECKCONNECTION;
+		MSZ_CHECKCONNECTION;
 		
 		iOffset = pcLineEnd - m_acIncomingBuffer + 1;
 	}
@@ -573,10 +573,10 @@ void COnlineChat::Redraw()
 void COnlineChat::DrawNickList()
 {
 	SDL_Rect oNickListRect;
-	oNickListRect.x = NICKLIST_X;
+	oNickListRect.x = MSZ_NICKLIST_X;
 	oNickListRect.y = 10;
 	oNickListRect.w = gamescreen->w - oNickListRect.x - 10;
-	oNickListRect.h = READLINE_Y - oNickListRect.y - 10;
+	oNickListRect.h = MSZ_READLINE_Y - oNickListRect.y - 10;
 
 	SDL_Rect oOldClipRect;
 	SDL_GetClipRect( m_poScreen, &oOldClipRect );
@@ -624,11 +624,11 @@ void COnlineChat::DoOnlineChat()
 	SDL_BlitSurface( m_poBackground, NULL, m_poScreen, NULL );
 	SDL_Flip( m_poScreen );
 
-	m_poTextArea = new CTextArea( m_poScreen, chatFont, 10, 10, NICKLIST_X-20, READLINE_Y-20 );
+	m_poTextArea = new CTextArea( m_poScreen, chatFont, 10, 10, MSZ_NICKLIST_X-20, MSZ_READLINE_Y-20 );
 	m_poTextArea->TintBackground( C_DARKGRAY, 128 );
 	m_poReadline = new CReadline( m_poScreen, chatFont,
 		acMsg, 0, 255,
-		10, READLINE_Y + sge_TTF_FontAscent(chatFont), 620, C_LIGHTCYAN, C_BLACK, 255 );
+		10, MSZ_READLINE_Y + sge_TTF_FontAscent(chatFont), 620, C_LIGHTCYAN, C_BLACK, 255 );
 
 	while (1)
 	{

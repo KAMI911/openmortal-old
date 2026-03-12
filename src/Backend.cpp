@@ -31,8 +31,8 @@ Backend				g_oBackend;
 
 SV
 	*perl_bgx, *perl_bgy,
-	*perl_px[MAXPLAYERS], *perl_py[MAXPLAYERS], *perl_pf[MAXPLAYERS], 
-	*perl_ph[MAXPLAYERS], *perl_phreal[MAXPLAYERS],
+	*perl_px[MSZ_MAXPLAYERS], *perl_py[MSZ_MAXPLAYERS], *perl_pf[MSZ_MAXPLAYERS], 
+	*perl_ph[MSZ_MAXPLAYERS], *perl_phreal[MSZ_MAXPLAYERS],
 	*perl_gametick, *perl_over, *perl_ko;
 
 SV
@@ -123,7 +123,7 @@ Backend::Backend()
 {
 	m_iBgX = m_iBgY = 0;
 	m_iNumDoodads = m_iNumSounds = 0;
-	for ( int i=0; i<MAXPLAYERS; ++i )
+	for ( int i=0; i<MSZ_MAXPLAYERS; ++i )
 	{
 		m_aoPlayers[i].m_iX = m_aoPlayers[i].m_iY = 0;
 		m_aoPlayers[i].m_iFrame = 0;
@@ -154,7 +154,7 @@ bool Backend::Construct()
 	perl_bgx = NULL;
 	perl_doodad_x = NULL;
 	
-	std::string sFileName = OM_DATADIR;
+	std::string sFileName = MSZ_DATADIR;
 	sFileName += "/script";
 
 #ifndef _WIN32
@@ -306,7 +306,7 @@ void Backend::ReadFromPerl()
 
 		char acVarName[128];
 
-		for ( i=0; i<MAXPLAYERS; ++i )
+		for ( i=0; i<MSZ_MAXPLAYERS; ++i )
 		{
 			sprintf( acVarName, "p%dx", i+1 );
 			perl_px[i] = get_sv(acVarName, TRUE);
@@ -349,7 +349,7 @@ void Backend::ReadFromPerl()
 		perl_doodad_text = get_sv("doodad_text", TRUE);
 	}
 	
-	for ( m_iNumDoodads=0; m_iNumDoodads<MAXDOODADS; ++m_iNumDoodads )
+	for ( m_iNumDoodads=0; m_iNumDoodads<MSZ_MAXDOODADS; ++m_iNumDoodads )
 	{
 		PERLEVAL("GetNextDoodadData();");
 		
@@ -386,7 +386,7 @@ void Backend::ReadFromPerl()
 		perl_sound = get_sv("sound", TRUE);
 	}
 	
-	for ( m_iNumSounds=0; m_iNumSounds<MAXSOUNDS; ++m_iNumSounds )
+	for ( m_iNumSounds=0; m_iNumSounds<MSZ_MAXSOUNDS; ++m_iNumSounds )
 	{
 		PERLEVAL("GetNextSoundData();");
 		const char* pcSound = SvPV_nolen(perl_sound);
@@ -485,7 +485,7 @@ void Backend::ReadFromString( const char* a_pcBuffer )
 		&m_aoPlayers[1].m_iX, &m_aoPlayers[1].m_iY, &m_aoPlayers[1].m_iFrame, &m_aoPlayers[1].m_iHitPoints,
 		&m_iNumDoodads, &iTotal );
 	
-	if ( m_iNumDoodads > MAXDOODADS )
+	if ( m_iNumDoodads > MSZ_MAXDOODADS )
 	{
 		m_iNumDoodads = m_iNumSounds = 0;
 		return;
@@ -507,7 +507,7 @@ void Backend::ReadFromString( const char* a_pcBuffer )
 	iNumMatches += sscanf( a_pcBuffer + iTotal, "%d%n",
 		&m_iNumSounds, &iOffset );
 		
-	if ( m_iNumSounds > MAXSOUNDS )
+	if ( m_iNumSounds > MSZ_MAXSOUNDS )
 	{
 		m_iNumSounds = 0;
 		return;

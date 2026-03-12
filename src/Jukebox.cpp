@@ -42,7 +42,7 @@ static bool IsMusicFile( const char* a_pcName )
 
 void Jukebox::ScanMusicDir()
 {
-    std::string sMusicDir = OM_DATADIR;
+    std::string sMusicDir = MSZ_DATADIR;
     sMusicDir += "/sound/music";
 
 #ifdef _WIN32

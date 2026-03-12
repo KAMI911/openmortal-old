@@ -26,7 +26,7 @@ CChooser::CChooser()
 {
 	m_iNumberOfFighters = -1;
 	m_poScreen = NULL;
-	for ( int i=0; i<MAXPLAYERS; ++i )
+	for ( int i=0; i<MSZ_MAXPLAYERS; ++i )
 	{
 		m_abRectangleVisible[i] = false;
 		m_aiPlayerPosition[i] = 0;
@@ -83,7 +83,7 @@ void CChooser::Init()
 		g_oBackend.PerlEvalF( "GetFighterStats(%d);", enFighter );
 		s = g_oBackend.GetPerlString( "Portrait" );
 		
-		snprintf( pcFilename, FILENAME_MAX+1, "%s/characters/%s", OM_DATADIR, s );
+		snprintf( pcFilename, FILENAME_MAX+1, "%s/characters/%s", MSZ_DATADIR, s );
 		
 		m_apoPortraits[i] = IMG_Load( pcFilename );
 		if ( m_apoPortraits[i] ) SDL_SetColorKey( m_apoPortraits[i], 0, 0 );
@@ -96,14 +96,14 @@ void CChooser::Init()
 	
 	Resize( 158, 74, 483, 479 );
 
-	for ( i=0; i<MAXPLAYERS; ++i )
+	for ( i=0; i<MSZ_MAXPLAYERS; ++i )
 	{
 		m_aiPlayerPosition[i] = FighterToPosition( g_oPlayerSelect.GetPlayerInfo(i).m_enFighter );
 	}
 }
 
 
-#define LINEWIDTH 5
+#define MSZ_LINEWIDTH 5
 
 void CChooser::Draw()
 {
@@ -161,8 +161,8 @@ void CChooser::Resize( int a_x1, int a_y1, int a_x2, int a_y2 )
 	Init();
 	x1 = a_x1;
 	y1 = a_y1;
-	x2 = a_x2 + LINEWIDTH;
-	y2 = a_y2 + LINEWIDTH;
+	x2 = a_x2 + MSZ_LINEWIDTH;
+	y2 = a_y2 + MSZ_LINEWIDTH;
 	m_iRows = 1;
 	m_iCols = 1;
 
@@ -369,10 +369,10 @@ SDL_Rect CChooser::GetRect( int a_iPosition )
 
 	int iRow = a_iPosition / m_iCols;
 	int iCol = a_iPosition % m_iCols;
-	oRect.x = (x2-x1-LINEWIDTH) * iCol / m_iCols + LINEWIDTH + x1;
-	oRect.y = (y2-y1-LINEWIDTH) * iRow / m_iRows + LINEWIDTH + y1;
-	oRect.w = (x2-x1-LINEWIDTH) * (iCol+1) / m_iCols + LINEWIDTH + x1 - oRect.x;
-	oRect.h = (y2-y1-LINEWIDTH) * (iRow+1) / m_iRows + LINEWIDTH + y1 - oRect.y;
+	oRect.x = (x2-x1-MSZ_LINEWIDTH) * iCol / m_iCols + MSZ_LINEWIDTH + x1;
+	oRect.y = (y2-y1-MSZ_LINEWIDTH) * iRow / m_iRows + MSZ_LINEWIDTH + y1;
+	oRect.w = (x2-x1-MSZ_LINEWIDTH) * (iCol+1) / m_iCols + MSZ_LINEWIDTH + x1 - oRect.x;
+	oRect.h = (y2-y1-MSZ_LINEWIDTH) * (iRow+1) / m_iRows + MSZ_LINEWIDTH + y1 - oRect.y;
 	
 	return oRect;
 }
@@ -398,8 +398,8 @@ void CChooser::ClearRectangle( int a_iPlayer )
 void CChooser::DrawRectangle( int a_iPosition, Uint32 a_iColor )
 {
 	SDL_Rect oRect = GetRect( a_iPosition );
-	oRect.x -= LINEWIDTH - 1;
-	oRect.y -= LINEWIDTH - 1;
+	oRect.x -= MSZ_LINEWIDTH - 1;
+	oRect.y -= MSZ_LINEWIDTH - 1;
 
 /*	===1====
 	|      |
@@ -408,8 +408,8 @@ void CChooser::DrawRectangle( int a_iPosition, Uint32 a_iColor )
 	===2====	*/
 
 	SDL_Rect r = oRect;
-	r.h = LINEWIDTH;
-	r.w += LINEWIDTH;
+	r.h = MSZ_LINEWIDTH;
+	r.w += MSZ_LINEWIDTH;
 	SDL_Rect r1 = r;
 	SDL_FillRect( m_poScreen, &r1, a_iColor );
 	
@@ -418,7 +418,7 @@ void CChooser::DrawRectangle( int a_iPosition, Uint32 a_iColor )
 	SDL_FillRect( m_poScreen, &r1, a_iColor );
 
 	r.y = oRect.y;
-	r.w = LINEWIDTH;
+	r.w = MSZ_LINEWIDTH;
 	r.h = oRect.h;
 	r1 = r;
 	SDL_FillRect( m_poScreen, &r1, a_iColor );

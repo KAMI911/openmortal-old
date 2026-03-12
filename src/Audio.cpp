@@ -43,8 +43,8 @@ public:
 
 
 
-#define SELF (*m_poPriv)
-#define CHECKOK if ( ! m_poPriv->m_bAudioOk ) return;
+#define MSZ_SELF (*m_poPriv)
+#define MSZ_CHECKOK if ( ! m_poPriv->m_bAudioOk ) return;
 
 
 MszAudio::MszAudio()
@@ -53,7 +53,7 @@ MszAudio::MszAudio()
 	m_poPriv = new MszAudioPriv;
 	m_poPriv->m_bAudioOk = false;
 	m_poPriv->m_iNumChannels = 0;
-	m_poPriv->m_sSoundDir = OM_DATADIR;
+	m_poPriv->m_sSoundDir = MSZ_DATADIR;
 	m_poPriv->m_sSoundDir += "/sound/";
 	
 	SDL_version compile_version;
@@ -69,11 +69,11 @@ MszAudio::MszAudio()
 		2 /*stereo*/, 1024*2 /*chunksize*/ ) < 0 )
 	{
 		debug("Mix_OpenAudio: %s\n", Mix_GetError());
-		SELF.m_bAudioOk = false;
+		MSZ_SELF.m_bAudioOk = false;
 	}
 	else
 	{
-		SELF.m_bAudioOk = true;
+		MSZ_SELF.m_bAudioOk = true;
 	}
 
 	m_poPriv->m_iNumChannels = Mix_AllocateChannels(10);
@@ -91,7 +91,7 @@ MszAudio::~MszAudio()
 
 void MszAudio::LoadSampleMap()
 {
-	CHECKOK;
+	MSZ_CHECKOK;
 	
 	std::string sFilename = m_poPriv->m_sSoundDir + "soundmap.txt";
 	std::ifstream oInput( sFilename.c_str() );
@@ -148,7 +148,7 @@ void MszAudio::LoadSampleMap()
 
 void MszAudio::LoadSample( const char* a_pcFilename, const char* a_pcSampleName )
 {
-	CHECKOK;
+	MSZ_CHECKOK;
 
 	std::string sSampleName( a_pcSampleName ? a_pcSampleName : a_pcFilename );
 	std::string sSampleFile = m_poPriv->m_sSoundDir + a_pcFilename;
@@ -237,10 +237,10 @@ void MszAudio::PlayFile( const char* a_pcFileName )
 
 void MszAudio::LoadMusic( const char* a_pcFilename, const char* a_pcMusicName )
 {
-	CHECKOK;
+	MSZ_CHECKOK;
 
 	std::string sMusicName( a_pcMusicName ? a_pcMusicName : a_pcFilename );
-	std::string sMusicFile = OM_DATADIR;
+	std::string sMusicFile = MSZ_DATADIR;
 	sMusicFile += "/sound/";
 	sMusicFile += a_pcFilename;
 

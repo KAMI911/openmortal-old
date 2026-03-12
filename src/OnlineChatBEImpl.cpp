@@ -14,8 +14,8 @@
 #include "common.h"
 
 
-#define MORTALNETSERVER		"apocalypse.game-host.org"
-#define MORTALNETWORKPORT	0x3A23
+#define MSZ_CHAT_SERVER		"apocalypse.game-host.org"
+#define MSZ_CHAT_PORT	0x3A23
 
 IOnlineChatBE* g_poChatBE = NULL;
 
@@ -76,12 +76,12 @@ void COnlineChatBEImpl::internalConnect()
 {
 	m_enConnectionState = CS_Connecting;
 	
-	// 1. RESOLVE MORTALNETSERVER
+	// 1. RESOLVE MSZ_CHAT_SERVER
 	
-	notifyConnectionState( std::string(Translate("Resolving host: ")) + MORTALNETSERVER );
+	notifyConnectionState( std::string(Translate("Resolving host: ")) + MSZ_CHAT_SERVER );
 	
 	IPaddress oAddress;
-	int iResult = SDLNet_ResolveHost( &oAddress, MORTALNETSERVER, MORTALNETWORKPORT );
+	int iResult = SDLNet_ResolveHost( &oAddress, MSZ_CHAT_SERVER, MSZ_CHAT_PORT );
 	if ( iResult )
 	{
 		notifyConnectionState( Translate("Couldn't resolve host.") );

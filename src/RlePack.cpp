@@ -18,7 +18,7 @@
 
 
 /// Sanity: This is the maximal number of entries in a .DAT file.
-#define MAXDATACOUNT	65530
+#define MSZ_MAXDATACOUNT	65530
 
 
 inline void ChangeEndian32( Uint32& a_riArg )
@@ -201,7 +201,7 @@ int RlePack::LoadFile( const char* a_pcFilename, int a_iNumColors )
 	ChangeEndian32( poHeader->iDatacount );
 	debug( "File '%s' contains %d entries.\n", a_pcFilename, poHeader->iDatacount );
 	
-	if (poHeader->iDatacount>MAXDATACOUNT) poHeader->iDatacount = MAXDATACOUNT;		// Sanity
+	if (poHeader->iDatacount>MSZ_MAXDATACOUNT) poHeader->iDatacount = MSZ_MAXDATACOUNT;		// Sanity
 	
 	p->m_iArraysize = poHeader->iDatacount;
 	p->m_pSprites = new RLE_SPRITE*[ poHeader->iDatacount ];

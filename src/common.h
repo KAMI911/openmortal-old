@@ -14,18 +14,18 @@
 #include "SDL_types.h"
 #endif
 
-#define MAXPLAYERS 4
+#define MSZ_MAXPLAYERS 4
 
 
 void debug( const char* format, ... );
-#ifndef omABS
-#define omABS(A) ( (A>=0) ? (A) : -(A) )
+#ifndef MSZ_ABS
+#define MSZ_ABS(A) ( (A>=0) ? (A) : -(A) )
 #endif
-#ifndef omMAX
-#define omMAX(A,B) ( (A) > (B) ? (A) : (B) )
+#ifndef MSZ_MAX
+#define MSZ_MAX(A,B) ( (A) > (B) ? (A) : (B) )
 #endif
-#ifndef omMIN
-#define omMIN(A,B) ( (A) < (B) ? (A) : (B) )
+#ifndef MSZ_MIN
+#define MSZ_MIN(A,B) ( (A) < (B) ? (A) : (B) )
 #endif
 
 // -----------------------------------------------------------------------

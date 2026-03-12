@@ -31,9 +31,6 @@
 #include "Event.h"
 
 
-#ifndef NULL
-#define NULL 0
-#endif
 
 
 /***************************************************************************
@@ -52,7 +49,7 @@ PlayerSelect g_oPlayerSelect;
 
 PlayerSelect::PlayerSelect()
 {
-	for ( int i=0; i<MAXPLAYERS; ++i )
+	for ( int i=0; i<MSZ_MAXPLAYERS; ++i )
 	{
 		m_aoPlayers[i].m_enFighter = UNKNOWN;
 		m_aoPlayers[i].m_enTint = NO_TINT;
@@ -167,9 +164,9 @@ RlePack* PlayerSelect::LoadFighter( FighterEnum m_enFighter )		// static
 	g_oBackend.PerlEvalF( "GetFighterStats(%d);", m_enFighter );
 	s = g_oBackend.GetPerlString( "Datafile" );
 
-	snprintf( a_pcFilename, FILENAME_MAX+1, "%s/characters/%s", OM_DATADIR, s );
+	snprintf( a_pcFilename, FILENAME_MAX+1, "%s/characters/%s", MSZ_DATADIR, s );
 
-	RlePack* pack = new RlePack( a_pcFilename, COLORSPERPLAYER );
+	RlePack* pack = new RlePack( a_pcFilename, MSZ_COLORSPERPLAYER );
 	if ( pack->Count() <= 0 )
 	{
 		debug( "Couldn't load RlePack: '%s'\n", a_pcFilename );
@@ -202,7 +199,7 @@ void PlayerSelect::SetPlayer( int a_iPlayer, FighterEnum a_enFighter )
 		return;
 	}
 
-	int iOffset = COLOROFFSETPLAYER1 + a_iPlayer*64;
+	int iOffset = MSZ_COLOROFFSETPLAYER1 + a_iPlayer*64;
 	RlePack* poPack = LoadFighter( a_enFighter );
 
 	if ( NULL == poPack )
@@ -742,7 +739,7 @@ void PlayerSelect::DoPlayerSelect()
 			if ( g_oBackend.m_aoPlayers[i].m_iFrame )
 			{
 				m_aoPlayers[i].m_poPack->Draw(
-					omABS(g_oBackend.m_aoPlayers[i].m_iFrame)-1,
+					MSZ_ABS(g_oBackend.m_aoPlayers[i].m_iFrame)-1,
 					g_oBackend.m_aoPlayers[i].m_iX, g_oBackend.m_aoPlayers[i].m_iY + iYOffset,
 					g_oBackend.m_aoPlayers[i].m_iFrame < 0 );
 			}

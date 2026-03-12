@@ -13,8 +13,8 @@
 #include "config.h"
 
 
-#define MORTALNETWORKPORT 0x3A22
-#define MAXSTRINGLENGTH 900
+#define MSZ_GAME_PORT 0x3A22
+#define MSZ_MAXSTRINGLENGTH 900
 
 
 // Some graphics routines, defined in menu.cpp
@@ -79,14 +79,14 @@ CMortalNetworkImpl::~CMortalNetworkImpl()
 
 bool CMortalNetworkImpl::Start( const char* a_pcServerName )
 {
-#define RETURNNOERROR {								\
+#define MSZ_RETURNNOERROR {								\
 		debug( "%s\n", m_sLastError.c_str() );		\
 		return false; }
-#define RETURNWITHERROR {							\
+#define MSZ_RETURNWITHERROR {							\
 		m_sLastError = SDLNet_GetError();			\
 		debug( "%s\n", m_sLastError.c_str() );		\
 		return false; }
-#define RETURNWITHADDITIONALERROR {					\
+#define MSZ_RETURNWITHADDITIONALERROR {					\
 		m_sLastError += SDLNet_GetError();			\
 		debug( "%s\n", m_sLastError.c_str() );		\
 		return false; }
@@ -104,11 +104,11 @@ bool CMortalNetworkImpl::Start( const char* a_pcServerName )
 		MortalNetworkMessage( Translate("Resolving hostname (%s)..."), a_pcServerName );
 	}
 
-	int iResult = SDLNet_ResolveHost( &oAddress, (char*) a_pcServerName, MORTALNETWORKPORT );
+	int iResult = SDLNet_ResolveHost( &oAddress, (char*) a_pcServerName, MSZ_GAME_PORT );
 	if ( iResult )
 	{
 		m_sLastError = Translate( "Couldn't resolve host." );
-		RETURNNOERROR;
+		MSZ_RETURNNOERROR;
 	}
 	debug( "IP Address of server is 0x%x\n", oAddress.host );
 	
@@ -116,7 +116,7 @@ bool CMortalNetworkImpl::Start( const char* a_pcServerName )
 	{
 		Uint32 ipaddr=SDL_SwapBE32(oAddress.host);
 		MortalNetworkMessage("Connecting to %d.%d.%d.%d port %d",
-			ipaddr>>24, (ipaddr>>16)&0xff, (ipaddr>>8)&0xff, ipaddr&0xff, MORTALNETWORKPORT );
+			ipaddr>>24, (ipaddr>>16)&0xff, (ipaddr>>8)&0xff, ipaddr&0xff, MSZ_GAME_PORT );
 	}
 	
 	if ( !a_pcServerName )
@@ -124,7 +124,7 @@ bool CMortalNetworkImpl::Start( const char* a_pcServerName )
 		// SERVER-MODE CONNECTION
 		
 		m_poSocket = SDLNet_TCP_Open( &oAddress );
-		if ( NULL == m_poSocket ) RETURNWITHERROR;
+		if ( NULL == m_poSocket ) MSZ_RETURNWITHERROR;
 		
 		// Wait for connection ...
 		MortalNetworkMessage ( Translate("Waiting for connection... (press any key to abort)") );
@@ -151,11 +151,11 @@ bool CMortalNetworkImpl::Start( const char* a_pcServerName )
 
 		if ( !poRemoteAddress )
 		{
-			RETURNWITHERROR;
+			MSZ_RETURNWITHERROR;
 		}
 		Uint32 ipaddr=SDL_SwapBE32(poRemoteAddress->host);
 		MortalNetworkMessage("Accepted connection from %d.%d.%d.%d port %d",
-			ipaddr>>24, (ipaddr>>16)&0xff, (ipaddr>>8)&0xff, ipaddr&0xff, MORTALNETWORKPORT);
+			ipaddr>>24, (ipaddr>>16)&0xff, (ipaddr>>8)&0xff, ipaddr&0xff, MSZ_GAME_PORT);
 
 		// Set the client socket as our socket, and drop the server socket.
 
@@ -176,7 +176,7 @@ bool CMortalNetworkImpl::Start( const char* a_pcServerName )
 		}
 		if ( NULL == m_poSocket )
 		{
-			RETURNWITHERROR;
+			MSZ_RETURNWITHERROR;
 		}
 	}
 
@@ -200,20 +200,20 @@ bool CMortalNetworkImpl::Start( const char* a_pcServerName )
 
 	if ( iRetval < (int) sizeof( oIntroPackage ) )
 	{
-		RETURNWITHERROR;
+		MSZ_RETURNWITHERROR;
 	}
 
 	iRetval = SDLNet_TCP_Recv( m_poSocket, &oRemotePackage, sizeof( oRemotePackage ) );
 	if ( iRetval <= 0 )
 	{
-		RETURNWITHERROR;
+		MSZ_RETURNWITHERROR;
 	}
 	if ( iRetval < (int) sizeof( oRemotePackage )
 		|| oRemotePackage.cID != 'I'
 		|| strncmp( oRemotePackage.acVersion, VERSION, 9 ) )
 	{
 		m_sLastError = Translate( "The remote side has a different version of OpenMortal running." );
-		RETURNNOERROR;
+		MSZ_RETURNNOERROR;
 	}
 	
 	MortalNetworkMessage( Translate("Life is good.") );
@@ -266,21 +266,21 @@ bool CMortalNetworkImpl::IsConnectionAlive()
 
 
 
-#define DISCONNECTONCOMMUNICATIONERROR { 									\
+#define MSZ_DISCONNECT_ON_ERROR { 									\
 		m_sLastError = Translate("Communication error. Disconnecting.");	\
 		Stop();																\
 		return; }
-#define DISCONNECTWITH(A) { 												\
+#define MSZ_DISCONNECT_WITH(A) { 												\
 		m_sLastError = Translate("Communication error. Disconnecting.");	\
 		Stop();																\
 		return(A); }
 
-#define CHECKCONNECTION if ( NS_DISCONNECTED == m_enState ) return;
+#define MSZ_CHECKCONNECTION if ( NS_DISCONNECTED == m_enState ) return;
 
 
 void CMortalNetworkImpl::Update()
 {
-	CHECKCONNECTION;
+	MSZ_CHECKCONNECTION;
 
 	// 1. CHECK FOR STUFF TO READ
 	
@@ -321,7 +321,7 @@ void CMortalNetworkImpl::Update()
 		if ( iLengthOfPackage > 1000 )
 		{
 			debug( "Maximum package size exceeded.\n" );
-			DISCONNECTONCOMMUNICATIONERROR;
+			MSZ_DISCONNECT_ON_ERROR;
 		}
 //		debug( "Receiving stuff.. %c type, %d package length, offset %d in buffer, %d bytes in buffer\n",
 //			m_acIncomingBuffer[iOffset], iLengthOfPackage, iOffset, m_iIncomingBufferSize );
@@ -353,7 +353,7 @@ void CMortalNetworkImpl::Update()
 			default:
 			{
 				debug( "Bad ID: %c (%d)\n", m_acIncomingBuffer[iOffset], m_acIncomingBuffer[iOffset] );
-				DISCONNECTONCOMMUNICATIONERROR;
+				MSZ_DISCONNECT_ON_ERROR;
 			}
 		}
 
@@ -388,7 +388,7 @@ bool CMortalNetworkImpl::IsMaster()
 
 void CMortalNetworkImpl::ReceiveRemoteUserName( void* a_pData, int a_iLength )
 {
-	if ( a_iLength < 1 || a_iLength > MAXSTRINGLENGTH ) DISCONNECTONCOMMUNICATIONERROR;
+	if ( a_iLength < 1 || a_iLength > MSZ_MAXSTRINGLENGTH ) MSZ_DISCONNECT_ON_ERROR;
 
 	char* acData = (char*) a_pData;
 	acData[ a_iLength-1 ] = 0;	// Last char should be 0, just making sure..
@@ -419,7 +419,7 @@ This is followed by as many bytes as the Length is.
 */
 void CMortalNetworkImpl::SendRawData( char a_cID, const void* a_pData, int a_iLength )
 {
-	CHECKCONNECTION;
+	MSZ_CHECKCONNECTION;
 
 	int iPacketLength = a_iLength + 4;
 	
@@ -434,7 +434,7 @@ void CMortalNetworkImpl::SendRawData( char a_cID, const void* a_pData, int a_iLe
 	}
 	
 	int iRetval = SDLNet_TCP_Send( m_poSocket, pcBuffer, iPacketLength );
-	if ( iRetval != iPacketLength ) DISCONNECTONCOMMUNICATIONERROR;
+	if ( iRetval != iPacketLength ) MSZ_DISCONNECT_ON_ERROR;
 
 	delete [] pcBuffer;
 }
@@ -447,20 +447,20 @@ void CMortalNetworkImpl::SendRawData( char a_cID, const void* a_pData, int a_iLe
 
 void CMortalNetworkImpl::SendMsg( const char* a_pcMsg )
 {
-	CHECKCONNECTION;
+	MSZ_CHECKCONNECTION;
 	
 	int iMsgLen = strlen( a_pcMsg ) + 1;
-	if ( iMsgLen > MAXSTRINGLENGTH )
+	if ( iMsgLen > MSZ_MAXSTRINGLENGTH )
 	{
 		// Will not be 0 terminated if exceeds length!
-		iMsgLen = MAXSTRINGLENGTH;
+		iMsgLen = MSZ_MAXSTRINGLENGTH;
 	}
 	SendRawData( 'M', a_pcMsg, iMsgLen );
 }
 
 void CMortalNetworkImpl::ReceiveMsg( void* a_pData, int a_iLength )
 {
-	if ( a_iLength < 1 || a_iLength > MAXSTRINGLENGTH ) DISCONNECTONCOMMUNICATIONERROR;
+	if ( a_iLength < 1 || a_iLength > MSZ_MAXSTRINGLENGTH ) MSZ_DISCONNECT_ON_ERROR;
 	
 	char* pcData = (char*) a_pData;
 	pcData[ a_iLength-1 ] = 0;	// Last char should be 0, just making sure..
@@ -551,7 +551,7 @@ bool CMortalNetworkImpl::IsRemoteFighterAvailable( FighterEnum a_enFighter )
 
 void CMortalNetworkImpl::ReceiveRemoteFighterQuery( void* a_pData, int a_iLength )
 {
-	if ( a_iLength != sizeof(Uint32) ) DISCONNECTONCOMMUNICATIONERROR;
+	if ( a_iLength != sizeof(Uint32) ) MSZ_DISCONNECT_ON_ERROR;
 	FighterEnum iFighter = (FighterEnum) SDL_SwapBE32( *((Uint32*)a_pData) );
 
 	bool bAvailable = g_oPlayerSelect.IsLocalFighterAvailable( iFighter );
@@ -564,7 +564,7 @@ void CMortalNetworkImpl::ReceiveRemoteFighterQuery( void* a_pData, int a_iLength
 
 void CMortalNetworkImpl::ReceiveRemoteFighterAvailable( void* a_pData, int a_iLength )
 {
-	if ( a_iLength != sizeof(Uint32) ) DISCONNECTONCOMMUNICATIONERROR;
+	if ( a_iLength != sizeof(Uint32) ) MSZ_DISCONNECT_ON_ERROR;
 	Uint32 iFighter = SDL_SwapBE32( *((Uint32*)a_pData) );
 	debug( "ReceiveRemoteFighterAvailable: %d\n", iFighter );
 	if ( iFighter >= 100000 )
@@ -584,7 +584,7 @@ void CMortalNetworkImpl::ReceiveRemoteFighterAvailable( void* a_pData, int a_iLe
 
 void CMortalNetworkImpl::SendFighter( FighterEnum a_enFighter )
 {
-	CHECKCONNECTION;
+	MSZ_CHECKCONNECTION;
 
 	Uint32 iFighter = SDL_SwapBE32( a_enFighter );
 	SendRawData( 'F', &iFighter, sizeof (iFighter) );
@@ -593,7 +593,7 @@ void CMortalNetworkImpl::SendFighter( FighterEnum a_enFighter )
 void CMortalNetworkImpl::ReceiveFighter( void* a_pcData, int a_iLength )
 {
 	Uint32 iFighter;
-	if ( a_iLength != sizeof(iFighter) ) DISCONNECTONCOMMUNICATIONERROR;
+	if ( a_iLength != sizeof(iFighter) ) MSZ_DISCONNECT_ON_ERROR;
 	iFighter = *((Uint32*)a_pcData);
 	
 	m_enRemoteFighter = (FighterEnum) SDL_SwapBE32( iFighter );
@@ -610,14 +610,14 @@ FighterEnum CMortalNetworkImpl::GetRemoteFighter()
 
 void CMortalNetworkImpl::SendReady()
 {
-	CHECKCONNECTION;
+	MSZ_CHECKCONNECTION;
 
 	SendRawData( 'R', NULL, 0 );
 }
 
 void CMortalNetworkImpl::ReceiveReady( void* a_pData, int a_iLength )
 {
-	if ( a_iLength != 0 ) DISCONNECTONCOMMUNICATIONERROR;
+	if ( a_iLength != 0 ) MSZ_DISCONNECT_ON_ERROR;
 	m_bRemoteReady = true;
 }
 
@@ -630,7 +630,7 @@ bool CMortalNetworkImpl::IsRemoteSideReady()
 
 void CMortalNetworkImpl::SendGameParams( int a_iGameSpeed, int a_iGameTime, int a_iHitPoints, int a_iBackgroundNumber )
 {
-	CHECKCONNECTION;
+	MSZ_CHECKCONNECTION;
 	if ( (int)m_oGameParams.iGameSpeed == a_iGameSpeed
 		&& (int)m_oGameParams.iGameTime == a_iGameTime
 		&& (int)m_oGameParams.iHitPoints == a_iHitPoints
@@ -655,7 +655,7 @@ void CMortalNetworkImpl::SendGameParams( int a_iGameSpeed, int a_iGameTime, int 
 
 void CMortalNetworkImpl::ReceiveGameParams( void* a_pData, int a_iLength )
 {
-	if ( a_iLength != sizeof(SGameParams) ) DISCONNECTONCOMMUNICATIONERROR;
+	if ( a_iLength != sizeof(SGameParams) ) MSZ_DISCONNECT_ON_ERROR;
 
 	SGameParams* poPackage = (SGameParams*) a_pData;
 	if ( m_oGameParams.iGameSpeed != SDL_SwapBE32( poPackage->iGameSpeed ) )
@@ -752,20 +752,20 @@ bool CMortalNetworkImpl::SynchStartRound()
 
 void CMortalNetworkImpl::SendGameData( const char* a_pcGameData )
 {
-	CHECKCONNECTION;
+	MSZ_CHECKCONNECTION;
 	
 	int iMsgLen = strlen( a_pcGameData ) + 1;
-	if ( iMsgLen > MAXSTRINGLENGTH )
+	if ( iMsgLen > MSZ_MAXSTRINGLENGTH )
 	{
 		// Will not be 0 terminated if exceeds length!
-		iMsgLen = MAXSTRINGLENGTH;
+		iMsgLen = MSZ_MAXSTRINGLENGTH;
 	}
 	SendRawData( 'G', a_pcGameData, iMsgLen );
 }
 
 void CMortalNetworkImpl::ReceiveGameData( void* a_pData, int a_iLength )
 {
-	if ( a_iLength < 1 || a_iLength > MAXSTRINGLENGTH ) DISCONNECTONCOMMUNICATIONERROR;
+	if ( a_iLength < 1 || a_iLength > MSZ_MAXSTRINGLENGTH ) MSZ_DISCONNECT_ON_ERROR;
 
 	char* pcData = (char*) a_pData;
 	pcData[ a_iLength-1 ] = 0;	// Last char should be 0, just making sure..
@@ -793,7 +793,7 @@ struct SKeystrokePackage
 
 void CMortalNetworkImpl::SendKeystroke( int a_iTime, int a_iKey, bool a_bPressed )
 {
-	CHECKCONNECTION;
+	MSZ_CHECKCONNECTION;
 	
 	SKeystrokePackage oPackage;
 	oPackage.iTime = SDL_SwapBE32( a_iTime );
@@ -805,7 +805,7 @@ void CMortalNetworkImpl::SendKeystroke( int a_iTime, int a_iKey, bool a_bPressed
 
 void CMortalNetworkImpl::ReceiveKeystroke( void* a_pData, int a_iLength )
 {
-	if ( a_iLength != (int)sizeof(SKeystrokePackage) ) DISCONNECTONCOMMUNICATIONERROR;
+	if ( a_iLength != (int)sizeof(SKeystrokePackage) ) MSZ_DISCONNECT_ON_ERROR;
 	SKeystrokePackage* poPackage = (SKeystrokePackage*) a_pData;
 
 	m_aiKeyTimes.push_back( SDL_SwapBE32(poPackage->iTime) );
@@ -839,7 +839,7 @@ struct SGameTickPackage
 
 void CMortalNetworkImpl::SendGameTick( int a_iGameTick )
 {
-	CHECKCONNECTION;
+	MSZ_CHECKCONNECTION;
 
 	if ( a_iGameTick < 0 ) a_iGameTick = 0;
 	
@@ -851,7 +851,7 @@ void CMortalNetworkImpl::SendGameTick( int a_iGameTick )
 
 void CMortalNetworkImpl::ReceiveGameTick( void* a_pData, int a_iLength )
 {
-	if ( a_iLength != sizeof(SGameTickPackage) ) DISCONNECTONCOMMUNICATIONERROR;
+	if ( a_iLength != sizeof(SGameTickPackage) ) MSZ_DISCONNECT_ON_ERROR;
 	SGameTickPackage* poPackage = (SGameTickPackage*) a_pData;
 
 	m_iGameTick  = SDL_SwapBE32( poPackage->iGameTick );
@@ -868,14 +868,14 @@ int CMortalNetworkImpl::GetGameTick()
 
 void CMortalNetworkImpl::SendHurryup( int a_iHurryUpCode )
 {
-	CHECKCONNECTION;
+	MSZ_CHECKCONNECTION;
 	int iPackage = SDL_SwapBE32( a_iHurryUpCode );
 	SendRawData( 'H', &iPackage, sizeof(int) );
 }
 
 void CMortalNetworkImpl::ReceiveHurryup( void* a_pData, int a_iLength )
 {
-	if ( a_iLength != sizeof(int) ) DISCONNECTONCOMMUNICATIONERROR;
+	if ( a_iLength != sizeof(int) ) MSZ_DISCONNECT_ON_ERROR;
 	m_iHurryupCode = SDL_SwapBE32( *((int*)a_pData) );
 }
 
@@ -897,7 +897,7 @@ struct SRoundOrder
 
 void CMortalNetworkImpl::SendRoundOver( int a_iWhoWon, bool a_bGameOver )
 {
-	CHECKCONNECTION;
+	MSZ_CHECKCONNECTION;
 	SRoundOrder oPackage;
 
 	oPackage.iWhoWon = a_iWhoWon;
@@ -914,7 +914,7 @@ void CMortalNetworkImpl::SendRoundOver( int a_iWhoWon, bool a_bGameOver )
 
 void CMortalNetworkImpl::ReceiveRoundOver( void* a_pData, int a_iLength )
 {
-	if ( a_iLength != sizeof(SRoundOrder) ) DISCONNECTONCOMMUNICATIONERROR;
+	if ( a_iLength != sizeof(SRoundOrder) ) MSZ_DISCONNECT_ON_ERROR;
 	SRoundOrder* poPackage = (SRoundOrder*) a_pData;
 	m_iWhoWon = poPackage->iWhoWon;
 	m_bGameOver = poPackage->bGameOver;

@@ -55,7 +55,7 @@ From   To   Num   Desc
 
 */
 
-#define MAXFRAMESKIP 5
+#define MSZ_MAXFRAMESKIP 5
 
 
 
@@ -424,7 +424,7 @@ void Game::AddBodyToBackground( int a_iPlayer )
 	oLayer.m_iXOffset = roPlayer.m_iX + g_oBackend.m_iBgX;
 	oLayer.m_iYOffset = roPlayer.m_iY;
 	oLayer.m_dDistance = 1.0;
-	oLayer.m_poSurface = poPack->CreateSurface( omABS(roPlayer.m_iFrame)-1, roPlayer.m_iFrame<0 );
+	oLayer.m_poSurface = poPack->CreateSurface( MSZ_ABS(roPlayer.m_iFrame)-1, roPlayer.m_iFrame<0 );
 
 	m_poBackground->AddExtraLayer( oLayer );
 }
@@ -576,8 +576,8 @@ void Game::Draw()
 			continue;
 		
 		RlePack* poPack = g_oPlayerSelect.GetPlayerInfo(i).m_poPack;
-		int w = poPack->GetWidth( omABS(iFrame)-1 );
-		int h = poPack->GetHeight( omABS(iFrame)-1 );
+		int w = poPack->GetWidth( MSZ_ABS(iFrame)-1 );
+		int h = poPack->GetHeight( MSZ_ABS(iFrame)-1 );
 		
 		h = GROUNDZERO - ( h + roPlayer.m_iY );	// Distance of feet from ground
 		if ( h < 0 ) h = 0;
@@ -606,7 +606,7 @@ void Game::Draw()
 			continue;
 
 		RlePack* poPack = g_oPlayerSelect.GetPlayerInfo(i).m_poPack;
-		poPack->Draw( omABS(iFrame)-1, roPlayer.m_iX, roPlayer.m_iY + m_iYOffset, iFrame<0 );
+		poPack->Draw( MSZ_ABS(iFrame)-1, roPlayer.m_iX, roPlayer.m_iY + m_iYOffset, iFrame<0 );
 	}
 	
 	if ( m_bDebug )
@@ -964,7 +964,7 @@ void Game::DoOneRound()
 
 	int iTeamSize = (SState::Team_ONE_VS_ONE==g_oState.m_enTeamMode) ? 
 		1 : g_oPlayerSelect.GetPlayerInfo(0).m_aenTeam.size();
-	int aiTeamNumber[MAXPLAYERS];
+	int aiTeamNumber[MSZ_MAXPLAYERS];
 
 	for ( int i=0; i<g_oState.m_iNumPlayers; ++i )
 	{
@@ -1025,7 +1025,7 @@ void Game::DoOneRound()
 		// 2. Advance as many ticks as necessary..
 
 		int iNumTicks = iThisTick - iLastTick;
-		if ( iNumTicks > MAXFRAMESKIP ) iNumTicks = MAXFRAMESKIP;		
+		if ( iNumTicks > MSZ_MAXFRAMESKIP ) iNumTicks = MSZ_MAXFRAMESKIP;		
 		Advance( iNumTicks );
 		dGameTime -= iNumTicks * iGameSpeed;
 

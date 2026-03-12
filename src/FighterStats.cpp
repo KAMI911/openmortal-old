@@ -32,15 +32,15 @@ extern PerlInterpreter*	my_perl;
 
 
 
-#define LEFTMARGIN		160
-#define TOPMARGIN		70
-#define RIGHTMARGIN		630
-#define LINEHEIGHT		35
-#define GAPWIDTH		20
-#define DESCMARGIN		50
+#define MSZ_LEFTMARGIN		160
+#define MSZ_TOPMARGIN		70
+#define MSZ_RIGHTMARGIN		630
+#define MSZ_LINEHEIGHT		35
+#define MSZ_GAPWIDTH		20
+#define MSZ_DESCMARGIN		50
 
 
-#define LEFTMARGIN2		((LEFTMARGIN+RIGHTMARGIN+GAPWIDTH)/2)
+#define MSZ_LEFTMARGIN2		((MSZ_LEFTMARGIN+MSZ_RIGHTMARGIN+MSZ_GAPWIDTH)/2)
 
 /*
 void DrawMultiLineText( const char* text, _sge_TTFont* font, int x, int y,
@@ -122,14 +122,14 @@ FighterStatsDemo::FighterStatsDemo( FighterEnum a_iFighter )
 	}
 	else
 	{
-		std::string sStaffFilename = OM_DATADIR;
+		std::string sStaffFilename = MSZ_DATADIR;
 		sStaffFilename += "/characters/staff.dat";
 		m_poStaff = new RlePack( sStaffFilename.c_str(), 255 );
 	}
 
 	g_oBackend.PerlEvalF("GetFighterStats(%d);", m_enFighter );
 	_sge_TTFont* font = impactFont;
-	int y = TOPMARGIN;
+	int y = MSZ_TOPMARGIN;
 
 
 	AV *StatTags = get_av( "StatTags", FALSE );
@@ -137,43 +137,43 @@ FighterStatsDemo::FighterStatsDemo( FighterEnum a_iFighter )
 	char *s, *sTag;
 
 	s = SvPV_nolen(get_sv("Name", FALSE));
-	DrawTextMSZ( s, inkFont, (LEFTMARGIN + RIGHTMARGIN)/2, y, AlignHCenter, C_WHITE, m_poBackground );
+	DrawTextMSZ( s, inkFont, (MSZ_LEFTMARGIN + MSZ_RIGHTMARGIN)/2, y, AlignHCenter, C_WHITE, m_poBackground );
 	y+= 10;
 
 	s = SvPV_nolen(get_sv("Team", FALSE ));
 	sTag = SvPV_nolen( *av_fetch( StatTags, 1, false ) );
-	int i = DrawTextMSZ( sTag, font, LEFTMARGIN, y+=LINEHEIGHT, 0, C_YELLOW, m_poBackground );
-	DrawTextMSZ( s, font, LEFTMARGIN+i, y, 0, C_ORANGE, m_poBackground, false );
+	int i = DrawTextMSZ( sTag, font, MSZ_LEFTMARGIN, y+=MSZ_LINEHEIGHT, 0, C_YELLOW, m_poBackground );
+	DrawTextMSZ( s, font, MSZ_LEFTMARGIN+i, y, 0, C_ORANGE, m_poBackground, false );
 
 	s = SvPV_nolen(get_sv("Style", FALSE ));
 	sTag = SvPV_nolen( *av_fetch( StatTags, 2, false ) );
-	i = DrawTextMSZ( sTag, font, LEFTMARGIN2, y, 0, C_YELLOW, m_poBackground );
-	DrawTextMSZ( s, font, LEFTMARGIN2+i, y, 0, C_ORANGE, m_poBackground, false );
+	i = DrawTextMSZ( sTag, font, MSZ_LEFTMARGIN2, y, 0, C_YELLOW, m_poBackground );
+	DrawTextMSZ( s, font, MSZ_LEFTMARGIN2+i, y, 0, C_ORANGE, m_poBackground, false );
 
 	s = SvPV_nolen(get_sv("Age", FALSE ));
 	sTag = SvPV_nolen( *av_fetch( StatTags, 3, false ) );
-	i = DrawTextMSZ( sTag, font, LEFTMARGIN, y+=LINEHEIGHT, 0, C_YELLOW, m_poBackground );
-	DrawTextMSZ( s, font, LEFTMARGIN+i, y, 0, C_ORANGE, m_poBackground, false );
+	i = DrawTextMSZ( sTag, font, MSZ_LEFTMARGIN, y+=MSZ_LINEHEIGHT, 0, C_YELLOW, m_poBackground );
+	DrawTextMSZ( s, font, MSZ_LEFTMARGIN+i, y, 0, C_ORANGE, m_poBackground, false );
 
 	s = SvPV_nolen(get_sv("Weight", FALSE ));
 	sTag = SvPV_nolen( *av_fetch( StatTags, 4, false ) );
-	i = DrawTextMSZ( sTag, font, LEFTMARGIN2, y, 0, C_YELLOW, m_poBackground );
-	DrawTextMSZ( s, font, LEFTMARGIN2+i, y, 0, C_ORANGE, m_poBackground, false );
+	i = DrawTextMSZ( sTag, font, MSZ_LEFTMARGIN2, y, 0, C_YELLOW, m_poBackground );
+	DrawTextMSZ( s, font, MSZ_LEFTMARGIN2+i, y, 0, C_ORANGE, m_poBackground, false );
 
 	s = SvPV_nolen(get_sv("Height", FALSE ));
 	sTag = SvPV_nolen( *av_fetch( StatTags, 5, false ) );
-	i = DrawTextMSZ( sTag, font, LEFTMARGIN, y+=LINEHEIGHT, 0, C_YELLOW, m_poBackground );
-	DrawTextMSZ( s, font, LEFTMARGIN+i, y, 0, C_ORANGE, m_poBackground, false );
+	i = DrawTextMSZ( sTag, font, MSZ_LEFTMARGIN, y+=MSZ_LINEHEIGHT, 0, C_YELLOW, m_poBackground );
+	DrawTextMSZ( s, font, MSZ_LEFTMARGIN+i, y, 0, C_ORANGE, m_poBackground, false );
 
 	s = SvPV_nolen(get_sv("Shoe", FALSE ));
 	sTag = SvPV_nolen( *av_fetch( StatTags, 6, false ) );
-	i = DrawTextMSZ( sTag, font, LEFTMARGIN2, y, 0, C_YELLOW, m_poBackground );
-	DrawTextMSZ( s, font, LEFTMARGIN2+i, y, 0, C_ORANGE, m_poBackground, false );
+	i = DrawTextMSZ( sTag, font, MSZ_LEFTMARGIN2, y, 0, C_YELLOW, m_poBackground );
+	DrawTextMSZ( s, font, MSZ_LEFTMARGIN2+i, y, 0, C_ORANGE, m_poBackground, false );
 
 	m_sStory = SvPV_nolen(get_sv("Story", FALSE ));
 	SDL_Rect oFlyingRect;
-	oFlyingRect.x = LEFTMARGIN; 
-	oFlyingRect.y = y+DESCMARGIN;
+	oFlyingRect.x = MSZ_LEFTMARGIN; 
+	oFlyingRect.y = y+MSZ_DESCMARGIN;
 	oFlyingRect.w = gamescreen->w - oFlyingRect.x - 20;
 	oFlyingRect.h = gamescreen->h - oFlyingRect.y - 10;
 	m_poFlyingChars = new FlyingChars( creditsFont, oFlyingRect );
@@ -225,7 +225,7 @@ int FighterStatsDemo::Advance( int a_iNumFrames, bool a_bFlip )
 		int p1x = SvIV(get_sv("p1x", TRUE));
 		int p1y = SvIV(get_sv("p1y", TRUE));
 		int p1f = SvIV(get_sv("p1f", TRUE));
-		if (p1f) g_oPlayerSelect.GetPlayerInfo(0).m_poPack->Draw( omABS(p1f)-1, p1x, p1y, p1f<0 );
+		if (p1f) g_oPlayerSelect.GetPlayerInfo(0).m_poPack->Draw( MSZ_ABS(p1f)-1, p1x, p1y, p1f<0 );
 	}
 	else
 	{

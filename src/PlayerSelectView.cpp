@@ -175,7 +175,7 @@ public:
 
 		m_dX		= m_oRect.x + m_oRect.w / 2;
 		m_dY		= m_oRect.y + m_oRect.h / 2;
-		m_dSize		= omMIN( m_oRect.w, m_oRect.h );
+		m_dSize		= MSZ_MIN( m_oRect.w, m_oRect.h );
 
 		m_dSpeedX	= 0.0;
 		m_dSpeedY	= - m_dY / 15;
@@ -183,7 +183,7 @@ public:
 
 		m_dTargetX	= m_oDstRect.x + m_oDstRect.w / 2;
 		m_dTargetY	= m_oDstRect.y + m_oDstRect.h / 2;
-		m_dTargetSize = omMIN( m_oDstRect.w, m_oDstRect.h);
+		m_dTargetSize = MSZ_MIN( m_oDstRect.w, m_oDstRect.h);
 
 		m_iTotalTime = 70 + m_dY / 7.5;
 		m_iTime		= m_iTotalTime;
@@ -312,7 +312,7 @@ public:
 	CTeamFlashViewElement( CPlayerSelectView* a_poView, int a_iPriority )
 		: IViewElement( a_poView, a_iPriority )
 	{
-		for ( int i=0; i<MAXPLAYERS; ++i )
+		for ( int i=0; i<MSZ_MAXPLAYERS; ++i )
 		{
 			m_bActive[i] = false;
 		}
@@ -356,7 +356,7 @@ public:
 
 protected:
 	int		m_iCycle;
-	bool	m_bActive[MAXPLAYERS];
+	bool	m_bActive[MSZ_MAXPLAYERS];
 };
 
 
@@ -378,7 +378,7 @@ CPlayerSelectView::CPlayerSelectView( bool a_bNetworkGame, bool a_bTeamMode )
 	m_iTime = 0;
 
 	int i;
-	for ( i=0; i<MAXPLAYERS; ++i ) m_apoTeamDisplays[i] = NULL;
+	for ( i=0; i<MSZ_MAXPLAYERS; ++i ) m_apoTeamDisplays[i] = NULL;
 
 	SDL_FillRect( gamescreen, NULL, C_BLACK );
 	SDL_Flip( gamescreen );
@@ -536,7 +536,7 @@ void CPlayerSelectView::Draw()
 		if ( g_oBackend.m_aoPlayers[i].m_iFrame )
 		{
 			roPlayerInfo.m_poPack->Draw(
-				omABS(g_oBackend.m_aoPlayers[i].m_iFrame)-1,
+				MSZ_ABS(g_oBackend.m_aoPlayers[i].m_iFrame)-1,
 				g_oBackend.m_aoPlayers[i].m_iX, g_oBackend.m_aoPlayers[i].m_iY + m_iFighterYOffset,
 				g_oBackend.m_aoPlayers[i].m_iFrame < 0 );
 		}

@@ -60,9 +60,9 @@ protected:
 	SDL_Surface*	m_poScreen;
 	FighterEnum		m_aenFighters[100];
 	SDL_Surface*	m_apoPortraits[100];
-	bool			m_abRectangleVisible[MAXPLAYERS];
-	int				m_aiPlayerPosition[MAXPLAYERS];
-	Uint32			m_aiColors[MAXPLAYERS];
+	bool			m_abRectangleVisible[MSZ_MAXPLAYERS];
+	int				m_aiPlayerPosition[MSZ_MAXPLAYERS];
+	Uint32			m_aiColors[MSZ_MAXPLAYERS];
 	
 	int				x1, y1, x2, y2;
 	

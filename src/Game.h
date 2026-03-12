@@ -125,11 +125,11 @@ protected:
 	Background*			m_poBackground;
 	SDL_Surface*		m_poDoodads;
 
-	int					m_aiHitPointDisplayX[MAXPLAYERS];
-	int					m_aiHitPointDisplayY[MAXPLAYERS];
-	bool				m_abHitPointDisplayLeft[MAXPLAYERS];
+	int					m_aiHitPointDisplayX[MSZ_MAXPLAYERS];
+	int					m_aiHitPointDisplayY[MSZ_MAXPLAYERS];
+	bool				m_abHitPointDisplayLeft[MSZ_MAXPLAYERS];
 	
-	int					m_aiRoundsWonByPlayer[MAXPLAYERS];
+	int					m_aiRoundsWonByPlayer[MSZ_MAXPLAYERS];
 	int					m_iNumberOfRounds;
 	int					m_iFrame;
 	int					m_iGameTime;

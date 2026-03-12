@@ -10,8 +10,7 @@
 #ifndef STATE_H
 #define STATE_H
 
-
-#define MAXPLAYERS 4
+#include "common.h"
 
 /**
 \ingroup GameLogic
@@ -93,7 +92,7 @@ struct SState
 	} m_enLevelSelect;
 	int		m_iSelectedLevel;	///< Level number when m_enLevelSelect == Level_SELECT
 
-	int		m_aiPlayerKeys[MAXPLAYERS][9];	// Player keysyms
+	int		m_aiPlayerKeys[MSZ_MAXPLAYERS][9];	// Player keysyms
 	char	m_acLanguage[10];	// Language ID (en,hu,fr,es,..)
 	int		m_iLanguageCode;	// Non-persistend language code (set by backend based on the language)
 	

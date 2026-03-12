@@ -79,7 +79,7 @@ void Background::Load( int a_iBackgroundNumber )
 	char acFilename[FILENAME_MAX+1];
 
 	// 1. Try loading a description-based background.
-	snprintf( acFilename, sizeof(acFilename), "%s/gfx/level%d.desc", OM_DATADIR, a_iBackgroundNumber );
+	snprintf( acFilename, sizeof(acFilename), "%s/gfx/level%d.desc", MSZ_DATADIR, a_iBackgroundNumber );
 	std::ifstream oInput( acFilename );
 	if ( !oInput.is_open() )
 	{
@@ -123,7 +123,7 @@ void Background::Load( int a_iBackgroundNumber )
 		if ( iDot != std::string::npos && sFilename.substr(iDot) == ".gif" )
 		{
 			char acGifPath[FILENAME_MAX+1];
-			snprintf( acGifPath, sizeof(acGifPath), "%s/gfx/%s", OM_DATADIR, sFilename.c_str() );
+			snprintf( acGifPath, sizeof(acGifPath), "%s/gfx/%s", MSZ_DATADIR, sFilename.c_str() );
 			oLayer.m_apoFrames = LoadAnimatedGIF( acGifPath );
 			if ( oLayer.m_apoFrames.size() > 1 )
 			{

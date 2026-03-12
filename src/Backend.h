@@ -16,8 +16,8 @@
 class RlePack;
 
 
-#define MAXDOODADS 20
-#define MAXSOUNDS 20
+#define MSZ_MAXDOODADS 20
+#define MSZ_MAXSOUNDS 20
 
 
 /**
@@ -87,16 +87,16 @@ public:
 	struct SPlayer
 	{
 		int m_iX, m_iY, m_iFrame, m_iHitPoints, m_iRealHitPoints;
-	}				m_aoPlayers[MAXPLAYERS];
+	}				m_aoPlayers[MSZ_MAXPLAYERS];
 	
 	struct SDoodad
 	{
 		int m_iX, m_iY, m_iType, m_iFrame;
 		int m_iDir, m_iGfxOwner;
 		std::string m_sText;
-	}				m_aoDoodads[ MAXDOODADS ];
+	}				m_aoDoodads[ MSZ_MAXDOODADS ];
 
-	std::string		m_asSounds[ MAXSOUNDS ];
+	std::string		m_asSounds[ MSZ_MAXSOUNDS ];
 };
 
 extern Backend g_oBackend;

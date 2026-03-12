@@ -114,7 +114,7 @@ SState::SState()
 	m_enLevelSelect = Level_NATURAL;
 	m_iSelectedLevel = 1;
 
-	static const int aiDefaultKeys[MAXPLAYERS][9] = {
+	static const int aiDefaultKeys[MSZ_MAXPLAYERS][9] = {
   		{ SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_PAGEDOWN,
             SDLK_DELETE, SDLK_INSERT, SDLK_END, SDLK_HOME },
   		{ SDLK_w, SDLK_s, SDLK_a, SDLK_d, SDLK_x,
@@ -125,7 +125,7 @@ SState::SState()
 			SDLK_F7, SDLK_F8, SDLK_F9, SDLK_F10 },
 	};
 
-	for ( int i=0; i<MAXPLAYERS; ++i )
+	for ( int i=0; i<MSZ_MAXPLAYERS; ++i )
 		for ( int j=0; j<9; ++j )
 			m_aiPlayerKeys[i][j] = aiDefaultKeys[i][j];
 
@@ -327,7 +327,7 @@ void SState::Load()
 	poSv = get_sv("NICK", FALSE); if (poSv) { strncpy( m_acNick, SvPV_nolen( poSv ), 127 ); m_acNick[127] = 0; }
 	
 	char pcBuffer[1024];
-	for ( int i=0; i<MAXPLAYERS; ++i )
+	for ( int i=0; i<MSZ_MAXPLAYERS; ++i )
 	{
 		for ( int j=0; j<9; ++j )
 		{
@@ -376,7 +376,7 @@ void SState::Save()
 	oStream << "SERVER=" << m_bServer << '\n';
 	oStream << "NICK=" << m_acNick << '\n';
 	
-	for ( int i=0; i<MAXPLAYERS; ++i )
+	for ( int i=0; i<MSZ_MAXPLAYERS; ++i )
 	{
 		for ( int j=0; j<9; ++j )
 		{

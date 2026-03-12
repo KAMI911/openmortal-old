@@ -11,11 +11,6 @@
 #define MSZ_AUDIO_H
 
 
-#ifndef NULL
-#define NULL 0
-#endif
-
-
 class MszAudioPriv;
 
 /**

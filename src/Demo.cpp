@@ -329,7 +329,7 @@ public:
 		
 		DrawTextMSZ( "Version " VERSION "  � 2003-2004 by UPi", inkFont, 320, 430, UseShadow | AlignHCenter, C_WHITE, m_poBackground, false );
 		
-		std::string sStaffFilename = OM_DATADIR;
+		std::string sStaffFilename = MSZ_DATADIR;
 		sStaffFilename += "/characters/staff.dat";
 		m_poPack = new RlePack( sStaffFilename.c_str(), 255 );
 		m_poPack->ApplyPalette();
@@ -428,9 +428,9 @@ void DoReplayDemo()
 	char acFilename[1024];
 #if defined (MACOSX)
 	//[segabor] path fix.
-	sprintf( acFilename, "%s/demo%d.om", OM_DATADIR, aiOrder[iNext] );
+	sprintf( acFilename, "%s/demo%d.om", MSZ_DATADIR, aiOrder[iNext] );
 #else
-	sprintf( acFilename, OM_DATADIR "/demo%d.om", aiOrder[iNext] );
+	sprintf( acFilename, MSZ_DATADIR "/demo%d.om", aiOrder[iNext] );
 #endif
 	//	DoGame( acFilename, true, false );
 	
