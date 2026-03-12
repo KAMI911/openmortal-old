@@ -29,4 +29,5 @@ jobs:
             --suppress=unknownMacro \
             --error-exitcode=1 \
             --quiet \
+            -isrc/paragui \
             src/

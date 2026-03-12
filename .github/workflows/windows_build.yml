@@ -1,4 +1,4 @@
-name: Windows Build (MSYS2 / MinGW64 / MinGW)
+name: Windows Build (MSYS2 / MinGW64 / CLANG32)
 
 on:
   push:
@@ -18,11 +18,15 @@ jobs:
       matrix:
         include:
           - PLATFORM: x86
-            MSYS_TARGET: i686
-            MSYSTEM: MINGW32
+            MSYS_TARGET: clang-i686
+            MSYSTEM: CLANG32
+            PREFIX: /clang32
+            HOST: i686-w64-mingw32
           - PLATFORM: x86-64
             MSYS_TARGET: x86_64
             MSYSTEM: MINGW64
+            PREFIX: /mingw64
+            HOST: x86_64-w64-mingw32
 
     name: Build ${{ matrix.PLATFORM }}
     steps:
@@ -62,15 +66,8 @@ jobs:
       - name: Configure project
         shell: msys2 {0}
         run: |
-          if [ "${{ matrix.PLATFORM }}" = "x86-64" ]; then
-            PREFIX=/mingw64
-            HOST=x86_64-w64-mingw32
-          else
-            PREFIX=/mingw32
-            HOST=i686-w64-mingw32
-          fi
           autoreconf -i -f
-          ./configure --prefix=$PREFIX --host=$HOST
+          ./configure --prefix=${{ matrix.PREFIX }} --host=${{ matrix.HOST }}
 
       - name: Build
         shell: msys2 {0}
@@ -83,11 +80,7 @@ jobs:
       - name: Package
         shell: msys2 {0}
         run: |
-          if [ "${{ matrix.PLATFORM }}" = "x86-64" ]; then
-            PREFIX=/mingw64
-          else
-            PREFIX=/mingw32
-          fi
+          PREFIX=${{ matrix.PREFIX }}
           mkdir -p ${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_package/${PREFIX}/bin
           mkdir -p ${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_package/${PREFIX}/share/openmortal
           cp -a ${DIST_FOLDER}/windows-${{ matrix.PLATFORM }}_build/${PREFIX}/share \
