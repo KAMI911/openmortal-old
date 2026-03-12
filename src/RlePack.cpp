@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <vector>
 
 #include "SDL.h"
 #include "gfx.h"
@@ -109,6 +110,19 @@ struct RlePack_P
 	void			draw_rle_sprite_v_flip24( RLE_SPRITE* a_poSprite, int a_dx, int a_dy );
 	void			draw_rle_sprite32( RLE_SPRITE* a_poSprite, int a_dx, int a_dy );
 	void			draw_rle_sprite_v_flip32( RLE_SPRITE* a_poSprite, int a_dx, int a_dy );
+
+	std::vector<SDL_Surface*>	m_apCache;
+	std::vector<SDL_Surface*>	m_apCacheFlipped;
+
+	void ClearSurfaceCache()
+	{
+		for ( int i = 0; i < (int)m_apCache.size(); ++i )
+			if ( m_apCache[i] ) { SDL_FreeSurface( m_apCache[i] ); m_apCache[i] = NULL; }
+		for ( int i = 0; i < (int)m_apCacheFlipped.size(); ++i )
+			if ( m_apCacheFlipped[i] ) { SDL_FreeSurface( m_apCacheFlipped[i] ); m_apCacheFlipped[i] = NULL; }
+		m_apCache.clear();
+		m_apCacheFlipped.clear();
+	}
 };
 
 
@@ -142,6 +156,7 @@ RlePack::~RlePack()
 		p->m_pSprites = NULL;
 	}
 	
+	p->ClearSurfaceCache();
 	free( p->m_pData );
 	delete( p );
 	p = NULL;
@@ -150,10 +165,14 @@ RlePack::~RlePack()
 
 void RlePack::Clear()
 {
-	if ( p && p->m_pSprites )
+	if ( p )
 	{
-		delete[] p->m_pSprites;
-		p->m_pSprites = NULL;
+		p->ClearSurfaceCache();
+		if ( p->m_pSprites )
+		{
+			delete[] p->m_pSprites;
+			p->m_pSprites = NULL;
+		}
 	}
 }
 
@@ -533,6 +552,7 @@ void RlePack::ApplyPalette()
 			p->m_aiRGBPalette[i] = SDL_MapRGB( gamescreen->format, roColor.r, roColor.g, roColor.b );
 		}
 	}
+	p->ClearSurfaceCache();
 }
 
 
@@ -612,20 +632,45 @@ void RlePack::Draw( int a_iIndex, int a_iX, int a_iY, bool a_bFlipped )
 {
 	if ( (a_iIndex<0) || (a_iIndex>=p->m_iCount) )
 		return;
-	
+
 	RLE_SPRITE* poSprite = p->m_pSprites[a_iIndex];
 	if (!poSprite)
 		return;
-	
+
+	// Use cached SDL_Surface for 16/32bpp — avoids per-frame RLE decode.
+	// bBuilding guards against re-entry: CreateSurface() calls Draw() internally.
+	static bool bBuilding = false;
+	if ( !bBuilding && gamescreen->format->BitsPerPixel != 8 )
+	{
+		std::vector<SDL_Surface*>& rCache = a_bFlipped ? p->m_apCacheFlipped : p->m_apCache;
+		if ( a_iIndex >= (int)rCache.size() )
+			rCache.resize( a_iIndex + 1, NULL );
+		SDL_Surface*& rSurf = rCache[a_iIndex];
+		if ( !rSurf )
+		{
+			bBuilding = true;
+			rSurf = CreateSurface( a_iIndex, a_bFlipped );
+			bBuilding = false;
+		}
+		if ( rSurf )
+		{
+			SDL_Rect oDest;
+			oDest.x = a_iX; oDest.y = a_iY;
+			oDest.w = rSurf->w; oDest.h = rSurf->h;
+			SDL_BlitSurface( rSurf, NULL, gamescreen, &oDest );
+			return;
+		}
+	}
+
 	CSurfaceLocker oLock;
 
 	if ( a_bFlipped )
 	{
 		switch (gamescreen->format->BitsPerPixel)
 		{
-		case 8: 
+		case 8:
 			p->draw_rle_sprite_v_flip8( poSprite, a_iX, a_iY ); break;
-		case 15: 
+		case 15:
 		case 16:
 			p->draw_rle_sprite_v_flip16( poSprite, a_iX, a_iY ); break;
 		case 32:
@@ -638,7 +683,7 @@ void RlePack::Draw( int a_iIndex, int a_iX, int a_iY, bool a_bFlipped )
 		{
 		case 8:
 			p->draw_rle_sprite8( poSprite, a_iX, a_iY ); break;
-		case 15: 
+		case 15:
 		case 16:
 			p->draw_rle_sprite16( poSprite, a_iX, a_iY ); break;
 		case 32:
