@@ -1,16 +1,17 @@
 dnl without this order in this file, autoconf will not work!
 dnl the argument is a source file out of your sources. But
 dnl acinclude.m4 makes the job for all programs ;-)
-AC_INIT(acinclude.m4)
+AC_INIT([openmortal], [0.7.26], [], [openmortal])
+AC_CONFIG_SRCDIR([acinclude.m4])
 
-dnl enable the following if you want to use autoconf/automake 
+dnl enable the following if you want to use autoconf/automake
 dnl framework from a certain directory (like kde-common)
 dnl AC_CONFIG_AUX_DIR(admin)
 
-AC_CANONICAL_SYSTEM
+AC_CANONICAL_TARGET
 AC_ARG_PROGRAM
 
-AM_INIT_AUTOMAKE(openmortal, 0.7.26)
+AM_INIT_AUTOMAKE([foreign])
 
 AC_PREFIX_DEFAULT(/usr/local)
 if test "x$prefix" = "xNONE"; then
@@ -20,7 +21,7 @@ fi
 
 dnl without this order in this file, automake will be confused!
 dnl 
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 
 AC_C_CONST
 AC_PROG_CXX

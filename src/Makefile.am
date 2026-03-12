@@ -21,7 +21,7 @@ EXTRA_DIST = $(openmortal_SOURCES)\
 	DrawRle.h     Joystick.h      PlayerSelect.h            sge_surface.h \
 	Jukebox.h     AnimGif.h
 
-CXXFLAGS= @CXXFLAGS@ -DDATADIR=\"${pkgdatadir}\" -Wall
+AM_CXXFLAGS = -DDATADIR=\"${pkgdatadir}\" -Wall
 
 # set the include path found by configure
 #INCLUDES= $(all_includes)
