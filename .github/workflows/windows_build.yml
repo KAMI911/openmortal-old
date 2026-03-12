@@ -1,4 +1,4 @@
-name: Windows Build (MSYS2 / MinGW64 / UCRT64)
+name: Windows Build (MSYS2 / MinGW32 / MinGW64 / UCRT64 / CLANG32 / CLANG64 / CLANGARM64)
 
 on:
   push:
@@ -17,18 +17,45 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - PLATFORM: mingw32
+            MSYS_TARGET: i686
+            MSYSTEM: MINGW32
+            PREFIX: /mingw32
+            HOST: i686-w64-mingw32
+            EXPERIMENTAL: true
+          - PLATFORM: mingw64
+            MSYS_TARGET: x86_64
+            MSYSTEM: MINGW64
+            PREFIX: /mingw64
+            HOST: x86_64-w64-mingw32
+            EXPERIMENTAL: false
           - PLATFORM: ucrt64
             MSYS_TARGET: ucrt-x86_64
             MSYSTEM: UCRT64
             PREFIX: /ucrt64
             HOST: x86_64-w64-mingw32
-          - PLATFORM: x86-64
-            MSYS_TARGET: x86_64
-            MSYSTEM: MINGW64
-            PREFIX: /mingw64
+            EXPERIMENTAL: false
+          - PLATFORM: clang32
+            MSYS_TARGET: clang-i686
+            MSYSTEM: CLANG32
+            PREFIX: /clang32
+            HOST: i686-w64-mingw32
+            EXPERIMENTAL: true
+          - PLATFORM: clang64
+            MSYS_TARGET: clang-x86_64
+            MSYSTEM: CLANG64
+            PREFIX: /clang64
             HOST: x86_64-w64-mingw32
+            EXPERIMENTAL: false
+          - PLATFORM: clangarm64
+            MSYS_TARGET: clang-aarch64
+            MSYSTEM: CLANGARM64
+            PREFIX: /clangarm64
+            HOST: aarch64-w64-mingw32
+            EXPERIMENTAL: true
 
     name: Build ${{ matrix.PLATFORM }}
+    continue-on-error: ${{ matrix.EXPERIMENTAL }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
