@@ -742,7 +742,7 @@ void PlayerSelect::DoPlayerSelect()
 			if ( g_oBackend.m_aoPlayers[i].m_iFrame )
 			{
 				m_aoPlayers[i].m_poPack->Draw(
-					ABS(g_oBackend.m_aoPlayers[i].m_iFrame)-1,
+					omABS(g_oBackend.m_aoPlayers[i].m_iFrame)-1,
 					g_oBackend.m_aoPlayers[i].m_iX, g_oBackend.m_aoPlayers[i].m_iY + iYOffset,
 					g_oBackend.m_aoPlayers[i].m_iFrame < 0 );
 			}

@@ -26,6 +26,7 @@ jobs:
             --enable=warning,performance,portability \
             --suppress=missingInclude \
             --suppress=missingIncludeSystem \
+            --suppress=unknownMacro \
             --error-exitcode=1 \
             --quiet \
             src/

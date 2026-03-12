@@ -225,7 +225,7 @@ int FighterStatsDemo::Advance( int a_iNumFrames, bool a_bFlip )
 		int p1x = SvIV(get_sv("p1x", TRUE));
 		int p1y = SvIV(get_sv("p1y", TRUE));
 		int p1f = SvIV(get_sv("p1f", TRUE));
-		if (p1f) g_oPlayerSelect.GetPlayerInfo(0).m_poPack->Draw( ABS(p1f)-1, p1x, p1y, p1f<0 );
+		if (p1f) g_oPlayerSelect.GetPlayerInfo(0).m_poPack->Draw( omABS(p1f)-1, p1x, p1y, p1f<0 );
 	}
 	else
 	{

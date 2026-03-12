@@ -536,7 +536,7 @@ void CPlayerSelectView::Draw()
 		if ( g_oBackend.m_aoPlayers[i].m_iFrame )
 		{
 			roPlayerInfo.m_poPack->Draw(
-				ABS(g_oBackend.m_aoPlayers[i].m_iFrame)-1,
+				omABS(g_oBackend.m_aoPlayers[i].m_iFrame)-1,
 				g_oBackend.m_aoPlayers[i].m_iX, g_oBackend.m_aoPlayers[i].m_iY + m_iFighterYOffset,
 				g_oBackend.m_aoPlayers[i].m_iFrame < 0 );
 		}
