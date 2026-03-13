@@ -10,6 +10,7 @@
 #define __BACKGROUND_H
 
 
+#include <cstddef>
 #include <vector>
 struct SDL_Surface;
 

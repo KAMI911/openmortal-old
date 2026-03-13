@@ -21,12 +21,14 @@ file helps undefine them.
 #include <EXTERN.h>
 #include <perl.h>
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 #undef bool
 #undef chdir
 #undef close
 #undef eof
+#ifdef _MSC_VER
 #define vsnprintf _vsnprintf
+#endif
 #endif
 
 #endif  // __MSZPERL_H
