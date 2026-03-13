@@ -28,6 +28,11 @@
 #include "Audio.h"
 #include "MortalNetwork.h"
 
+// Windows headers (e.g. MSYS2/CLANG64) may define 'eof' as a macro
+#ifdef eof
+#undef eof
+#endif
+
 
 #include "MszPerl.h"
 

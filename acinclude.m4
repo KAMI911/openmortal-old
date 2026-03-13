@@ -12,6 +12,8 @@ AC_DEFUN([OMAC_PERL_EMBED_FLAGS],[
 	AC_MSG_CHECKING(for flags to compile embedded Perl)
 	perl_embed_ldflags=`$PERL -MExtUtils::Embed -e ldopts`
 	perl_embed_ccflags=`$PERL -MExtUtils::Embed -e ccopts`
+	perl_core_include=`$PERL -MConfig -e 'print "-I".$Config{archlibexp}."/CORE"'`
+	perl_embed_ccflags="$perl_embed_ccflags $perl_core_include"
 	AC_SUBST(perl_embed_ldflags)
 	AC_SUBST(perl_embed_ccflags)
 	AC_MSG_RESULT([$perl_embed_ccflags])

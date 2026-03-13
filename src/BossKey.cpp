@@ -145,7 +145,8 @@ static void Outline(Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2,
 // Return pixel width of string
 static int TxtW(sge_TTFont* f, const char* s)
 {
-    if (!f || !s || !*s) return (int)(strlen(s) * 6);
+    if (!s || !*s) return 0;
+    if (!f) return (int)(strlen(s) * 6);
     return sge_TTF_TextSize(f, s).w;
 }
 
