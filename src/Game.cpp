@@ -28,13 +28,12 @@
 #include "Audio.h"
 #include "MortalNetwork.h"
 
-// Windows headers (e.g. MSYS2/CLANG64) may define 'eof' as a macro
+#include "MszPerl.h"
+
+// Perl headers define 'eof' as a macro; undefine it to allow std::ifstream::eof()
 #ifdef eof
 #undef eof
 #endif
-
-
-#include "MszPerl.h"
 
 
 extern PerlInterpreter*	my_perl;

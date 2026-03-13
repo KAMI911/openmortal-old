@@ -1,4 +1,4 @@
-name: Windows Build (MSYS2 / CLANG32 / MinGW64 / UCRT64 / CLANG64)
+name: Windows Build (MSYS2 / MinGW64 / UCRT64 / CLANG64)
 
 on:
   push:
@@ -14,12 +14,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - PLATFORM: clang32
-            MSYS_TARGET: clang-i686
-            MSYSTEM: CLANG32
-            PREFIX: /clang32
-            HOST: i686-w64-mingw32
-            EXPERIMENTAL: true
           - PLATFORM: mingw64
             MSYS_TARGET: x86_64
             MSYSTEM: MINGW64
@@ -47,7 +41,7 @@ jobs:
 
       - name: Extract version from configure.ac
         shell: bash
-        run: echo "VERSION=$(grep -m1 'AC_INIT' configure.ac | grep -oP '\d+\.\d+\.\d+')" >> $GITHUB_ENV
+        run: echo "VERSION=$(sed -n 's/AC_INIT(\[openmortal\], \[\([0-9.]*\)\],.*/\1/p' configure.ac)" >> $GITHUB_ENV
 
       - name: Define paths
         run: |
