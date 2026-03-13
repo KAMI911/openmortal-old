@@ -7,9 +7,6 @@ on:
     branches: [ master, upgrade ]
   workflow_dispatch:
 
-env:
-  VERSION: 0.7.28
-
 jobs:
   build:
     runs-on: windows-latest
@@ -53,6 +50,10 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
+      - name: Extract version from configure.ac
+        shell: bash
+        run: echo "VERSION=$(grep -m1 'AC_INIT' configure.ac | grep -oP '\d+\.\d+\.\d+')" >> $GITHUB_ENV
 
       - name: Define paths
         run: |
