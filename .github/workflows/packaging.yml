@@ -211,6 +211,53 @@ jobs:
           name: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}-local.tar.gz
           path: ./openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}-local.tar.gz
 
+  linux-arm64_build:
+    runs-on: ubuntu-24.04-arm
+    env:
+      DEBIAN_FRONTEND: noninteractive
+      PLATFORM: arm64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract version from configure.ac
+        run: echo "VERSION=$(grep -m1 'AC_INIT' configure.ac | grep -oP '\d+\.\d+\.\d+')" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: |
+          set -e
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            build-essential autoconf automake libtool pkg-config \
+            libperl-dev libsdl1.2-dev libsdl-image1.2-dev \
+            libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev libgif-dev
+
+      - name: Build from source
+        run: |
+          set -e
+          autoreconf -i -f
+          ./configure --prefix=/usr
+          make -j$(nproc)
+
+      - name: Install and package
+        run: |
+          set -e
+          mkdir -p ${{ github.workspace }}/distribution/linux-arm64_build
+          mkdir -p ${{ github.workspace }}/distribution/linux-arm64_package/usr/bin
+          sudo make DESTDIR="${{ github.workspace }}/distribution/linux-arm64_build/" install
+          cp -a ${{ github.workspace }}/distribution/linux-arm64_build/usr/share \
+            ${{ github.workspace }}/distribution/linux-arm64_package/usr/
+          install -m755 ${{ github.workspace }}/distribution/linux-arm64_build/usr/bin/openmortal \
+            ${{ github.workspace }}/distribution/linux-arm64_package/usr/bin/openmortal
+          tar zcvf openmortal-${{ env.VERSION }}_linux_arm64.tar.gz \
+            -C ${{ github.workspace }}/distribution/linux-arm64_package .
+
+      - name: Upload Linux ARM64 binary archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-${{ env.VERSION }}_linux_arm64.tar.gz
+          path: ./openmortal-${{ env.VERSION }}_linux_arm64.tar.gz
+
   linux-distro-build:
     name: Linux Build (${{ matrix.DISTRO }})
     runs-on: ubuntu-latest
@@ -236,9 +283,6 @@ jobs:
           - { DISTRO: opensuse-leap,   IMAGE: "opensuse/leap:15.6", PKG_MGR: zypper,   EXPERIMENTAL: true  }
           # Arch Linux (rolling)
           - { DISTRO: archlinux,       IMAGE: "archlinux:latest",   PKG_MGR: pacman,   EXPERIMENTAL: true  }
-          # Alpine Linux
-          - { DISTRO: alpine-3.20,     IMAGE: "alpine:3.20",        PKG_MGR: apk,      EXPERIMENTAL: true  }
-          - { DISTRO: alpine-3.19,     IMAGE: "alpine:3.19",        PKG_MGR: apk,      EXPERIMENTAL: true  }
     continue-on-error: ${{ matrix.EXPERIMENTAL }}
     container:
       image: ${{ matrix.IMAGE }}
@@ -319,13 +363,6 @@ jobs:
             base-devel autoconf automake libtool pkgconf \
             perl sdl sdl_image sdl_mixer sdl_net freetype2 giflib
 
-      - name: Install build dependencies (apk - Alpine)
-        if: matrix.PKG_MGR == 'apk'
-        run: |
-          set -e
-          apk add --no-cache \
-            build-base autoconf automake libtool pkgconf bash \
-            perl-dev sdl-dev sdl_image-dev sdl_mixer-dev sdl_net-dev freetype-dev giflib-dev
 
       - name: Build from source
         run: |
