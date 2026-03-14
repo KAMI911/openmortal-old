@@ -327,7 +327,7 @@ jobs:
           dnf install -y dnf-plugins-core epel-release
           dnf config-manager --set-enabled crb
           dnf install -y \
-            gcc gcc-c++ make autoconf automake libtool pkgconf-pkg-config curl \
+            gcc gcc-c++ make autoconf automake libtool pkgconf-pkg-config \
             perl-devel perl-ExtUtils-Embed SDL-devel SDL_image-devel SDL_net-devel \
             freetype-devel giflib-devel
           # SDL_mixer 1.2 is absent from EPEL 9; build from source
