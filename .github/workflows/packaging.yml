@@ -326,11 +326,17 @@ jobs:
           set -e
           dnf install -y dnf-plugins-core epel-release
           dnf config-manager --set-enabled crb
-          dnf install -y "https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm"
           dnf install -y \
-            gcc gcc-c++ make autoconf automake libtool pkgconf-pkg-config \
-            perl-devel perl-ExtUtils-Embed SDL-devel SDL_image-devel SDL_mixer-devel SDL_net-devel \
+            gcc gcc-c++ make autoconf automake libtool pkgconf-pkg-config curl \
+            perl-devel perl-ExtUtils-Embed SDL-devel SDL_image-devel SDL_net-devel \
             freetype-devel giflib-devel
+          # SDL_mixer 1.2 is absent from EPEL 9; build from source
+          cd /tmp
+          curl -L https://github.com/libsdl-org/SDL_mixer/archive/refs/tags/release-1.2.12.tar.gz | tar xz
+          cd SDL_mixer-release-1.2.12
+          ./configure --prefix=/usr --disable-music-mp3 --disable-music-ogg
+          make -j$(nproc)
+          make install
 
       - name: Install build dependencies (dnf - Enterprise Linux 8)
         if: matrix.PKG_MGR == 'dnf_el8'
@@ -338,11 +344,17 @@ jobs:
           set -e
           dnf install -y dnf-plugins-core epel-release
           dnf config-manager --set-enabled powertools
-          dnf install -y "https://mirrors.rpmfusion.org/free/el/rpmfusion-free-release-$(rpm -E %rhel).noarch.rpm"
           dnf install -y \
-            gcc gcc-c++ make autoconf automake libtool pkgconf-pkg-config \
-            perl-devel perl-ExtUtils-Embed SDL-devel SDL_image-devel SDL_mixer-devel SDL_net-devel \
+            gcc gcc-c++ make autoconf automake libtool pkgconf-pkg-config curl \
+            perl-devel perl-ExtUtils-Embed SDL-devel SDL_image-devel SDL_net-devel \
             freetype-devel giflib-devel
+          # SDL_mixer 1.2 is absent from EPEL 8; build from source
+          cd /tmp
+          curl -L https://github.com/libsdl-org/SDL_mixer/archive/refs/tags/release-1.2.12.tar.gz | tar xz
+          cd SDL_mixer-release-1.2.12
+          ./configure --prefix=/usr --disable-music-mp3 --disable-music-ogg
+          make -j$(nproc)
+          make install
 
       - name: Install build dependencies (zypper - openSUSE)
         if: matrix.PKG_MGR == 'zypper'
@@ -350,7 +362,7 @@ jobs:
           zypper --non-interactive refresh || [ $? -eq 106 ]
           zypper --non-interactive install \
             gcc gcc-c++ make autoconf automake libtool pkg-config \
-            perl-devel libSDL-devel libSDL_image-devel libSDL_mixer-devel libSDL_net-devel \
+            perl libSDL-devel libSDL_image-devel libSDL_mixer-devel libSDL_net-devel \
             freetype2-devel giflib-devel || [ $? -eq 106 ]
 
       - name: Install build dependencies (pacman - Arch)
