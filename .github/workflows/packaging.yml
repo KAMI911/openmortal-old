@@ -263,6 +263,54 @@ jobs:
           name: openmortal-${{ env.VERSION }}_linux_arm64.tar.gz
           path: ./openmortal-${{ env.VERSION }}_linux_arm64.tar.gz
 
+  linux-i386_build:
+    runs-on: ubuntu-latest
+    container:
+      image: i386/ubuntu:22.04
+      options: --platform linux/386
+    env:
+      DEBIAN_FRONTEND: noninteractive
+      PLATFORM: i386
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract version from configure.ac
+        run: echo "VERSION=$(grep -m1 'AC_INIT' configure.ac | grep -oP '\d+\.\d+\.\d+')" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: |
+          set -e
+          apt-get update -qq
+          apt-get install -y --no-install-recommends \
+            build-essential autoconf automake libtool pkg-config \
+            libperl-dev libsdl1.2-dev libsdl-image1.2-dev \
+            libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev libgif-dev
+
+      - name: Build from source
+        run: |
+          set -e
+          autoreconf -i -f
+          ./configure --prefix=/usr
+          make -j$(nproc)
+
+      - name: Install and package
+        run: |
+          set -e
+          mkdir -p distribution/linux-i386_build distribution/linux-i386_package/usr/bin
+          make DESTDIR="distribution/linux-i386_build/" install
+          cp -a distribution/linux-i386_build/usr/share distribution/linux-i386_package/usr/
+          install -m755 distribution/linux-i386_build/usr/bin/openmortal \
+            distribution/linux-i386_package/usr/bin/openmortal
+          tar zcvf openmortal-${{ env.VERSION }}_linux_i386.tar.gz \
+            -C distribution/linux-i386_package .
+
+      - name: Upload Linux i386 binary archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-${{ env.VERSION }}_linux_i386.tar.gz
+          path: ./openmortal-${{ env.VERSION }}_linux_i386.tar.gz
+
   linux-distro-build:
     name: Linux Build (${{ matrix.DISTRO }})
     runs-on: ubuntu-latest
@@ -402,6 +450,7 @@ jobs:
       - linux-x86-64_build-local
       - linux-x86-64_build-debian
       - linux-arm64_build
+      - linux-i386_build
 
     steps:
       - name: Extract version from tag
