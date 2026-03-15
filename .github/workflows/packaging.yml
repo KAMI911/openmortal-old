@@ -134,6 +134,11 @@ jobs:
             libperl-dev libsdl1.2-dev libsdl-image1.2-dev \
             libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev libgif-dev
 
+      - name: Sync debian/changelog version from configure.ac
+        run: |
+          VERSION=$(grep -m1 'AC_INIT' configure.ac | grep -oP '\d+\.\d+\.\d+')
+          sed -i "1s/openmortal ([^)]*)/openmortal (${VERSION}-1)/" debian/changelog
+
       - name: Build debian package
         run: |
           set -e
