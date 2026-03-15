@@ -123,3 +123,26 @@ jobs:
         with:
           name: openmortal-${{ env.VERSION }}_windows_${{ matrix.PLATFORM }}
           path: openmortal-${{ env.VERSION }}_windows_${{ matrix.PLATFORM }}.tar.gz
+
+  release:
+    name: Upload Windows artifacts to GitHub Release
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build]
+
+    steps:
+      - name: Extract version from tag
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
+
+      - name: Download Windows archives
+        uses: actions/download-artifact@v4
+        with:
+          pattern: openmortal-${{ env.VERSION }}_windows_*
+          path: release/
+          merge-multiple: true
+
+      - name: Upload Windows archives to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: OpenMortal ${{ env.VERSION }}
+          files: release/**

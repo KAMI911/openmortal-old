@@ -387,3 +387,50 @@ jobs:
         with:
           name: openmortal_${{ matrix.DISTRO }}
           path: src/openmortal
+
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs:
+      - linux-x86-64_build
+      - linux-x86-64_build-local
+      - linux-x86-64_build-debian
+      - linux-arm64_build
+
+    steps:
+      - name: Extract version from tag
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
+
+      - name: Download versioned Linux archives
+        uses: actions/download-artifact@v4
+        with:
+          pattern: openmortal-${{ env.VERSION }}_linux_*
+          path: release/
+          merge-multiple: true
+
+      - name: Download source archive
+        uses: actions/download-artifact@v4
+        with:
+          name: openmortal-${{ env.VERSION }}.tar.gz
+          path: release/
+
+      - name: Download AppImage
+        uses: actions/download-artifact@v4
+        with:
+          name: openmortal_appimage_x86-64
+          path: release/
+
+      - name: Download Debian packages
+        uses: actions/download-artifact@v4
+        with:
+          pattern: openmortal_debian*
+          path: release/
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: OpenMortal ${{ env.VERSION }}
+          generate_release_notes: true
+          files: release/**
