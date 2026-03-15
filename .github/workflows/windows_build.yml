@@ -3,6 +3,8 @@ name: Windows Build (MSYS2 / MinGW64 / UCRT64 / CLANG64 / CLANGARM64)
 on:
   push:
     branches: [ master, upgrade ]
+    tags:
+      - "v*.*.*"
   pull_request:
     branches: [ master, upgrade ]
   workflow_dispatch:
