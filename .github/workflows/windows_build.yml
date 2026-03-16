@@ -100,11 +100,11 @@ jobs:
 
       - name: Set up Strawberry Perl 32-bit (mingw32 only)
         if: matrix.PLATFORM == 'mingw32'
-        shell: powershell
+        shell: pwsh
         run: |
-          $url = "https://strawberryperl.com/download/5.38.2.1/strawberry-perl-5.38.2.1-32bit-portable.zip"
+          $url = "https://github.com/StrawberryPerl/Perl-Dist-Strawberry/releases/download/SP_5382_32bit/strawberry-perl-5.38.2.1-32bit-portable.zip"
           Invoke-WebRequest -Uri $url -OutFile "$env:TEMP\strawberry.zip"
-          & "C:\Program Files\7-Zip\7z.exe" x "$env:TEMP\strawberry.zip" -o"C:\strawberry-perl" -y
+          7z x "$env:TEMP\strawberry.zip" -o"C:\strawberry-perl" -y
 
       - name: Build SDL_mixer 1.2 from source (mingw32 only)
         if: matrix.PLATFORM == 'mingw32'
