@@ -162,11 +162,95 @@ jobs:
           name: openmortal-${{ env.VERSION }}_windows_${{ matrix.PLATFORM }}
           path: openmortal-${{ env.VERSION }}_windows_${{ matrix.PLATFORM }}.tar.gz
 
+  installer:
+    name: Windows Installer (Inno Setup, mingw64)
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Extract version from configure.ac
+        shell: bash
+        run: echo "VERSION=$(sed -n 's/AC_INIT(\[openmortal\], \[\([0-9.]*\)\],.*/\1/p' configure.ac)" >> $GITHUB_ENV
+
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            base-devel
+            automake
+            autoconf
+            libtool
+            mingw-w64-x86_64-libiconv
+            mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-make
+            mingw-w64-x86_64-pkg-config
+            mingw-w64-x86_64-SDL
+            mingw-w64-x86_64-SDL_image
+            mingw-w64-x86_64-SDL_net
+            mingw-w64-x86_64-SDL_mixer
+            mingw-w64-x86_64-freetype
+            mingw-w64-x86_64-giflib
+            mingw-w64-x86_64-perl
+            mingw-w64-x86_64-icu
+            mingw-w64-x86_64-ntldd
+
+      - name: Build with installer prefix (/OpenMortal)
+        shell: msys2 {0}
+        run: |
+          autoreconf -i -f
+          ./configure --prefix=/OpenMortal --host=x86_64-w64-mingw32
+          make -j$(nproc)
+
+      - name: Install and collect DLLs
+        shell: msys2 {0}
+        run: |
+          INST_ROOT="$(cygpath '${{ runner.temp }}')/install_root"
+          DIST="$(cygpath '${{ runner.temp }}')/installer_dist"
+          mkdir -p "$DIST/bin" "$DIST/share"
+          make DESTDIR="$INST_ROOT" install
+          cp "$INST_ROOT/OpenMortal/bin/openmortal.exe" "$DIST/bin/"
+          cp -a "$INST_ROOT/OpenMortal/share/openmortal" "$DIST/share/"
+          ntldd -R "$INST_ROOT/OpenMortal/bin/openmortal.exe" \
+            | grep -v -i "system32" \
+            | grep -v -i "winsxs" \
+            | grep -v -i "not found" \
+            | awk '{print $3}' \
+            | xargs -d '\n' -I{} cp -- "{}" "$DIST/bin/"
+
+      - name: Convert icon PNG to ICO
+        shell: pwsh
+        run: |
+          $src = "packaging\1024x1024\openmortal.png"
+          $dst = "installer\openmortal.ico"
+          magick $src -define icon:auto-resize=256,128,64,48,32,16 $dst
+        continue-on-error: true
+
+      - name: Build installer with Inno Setup
+        shell: pwsh
+        run: |
+          $iscc  = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          $dist  = "$env:RUNNER_TEMP\installer_dist"
+          $ver   = $env:VERSION
+          & $iscc `
+            /DAppVersion="$ver" `
+            "/DSourceDir=$dist" `
+            installer\openmortal.iss
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmortal-${{ env.VERSION }}-win64-setup
+          path: installer/Output/openmortal-${{ env.VERSION }}-win64-setup.exe
+
   release:
     name: Upload Windows artifacts to GitHub Release
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [build]
+    needs: [build, installer]
 
     steps:
       - name: Extract version from tag
@@ -178,6 +262,12 @@ jobs:
           pattern: openmortal-${{ env.VERSION }}_windows_*
           path: release/
           merge-multiple: true
+
+      - name: Download Windows installer
+        uses: actions/download-artifact@v4
+        with:
+          name: openmortal-${{ env.VERSION }}-win64-setup
+          path: release/
 
       - name: Upload Windows archives to GitHub Release
         uses: softprops/action-gh-release@v2
