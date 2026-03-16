@@ -5,7 +5,7 @@
 *	Started 990815
 *
 *	License: LGPL v2+ (see the file LICENSE)
-*	(c)1999-2001 Anders Lindström
+*	(c)1999-2001 Anders Lindstrï¿½m
 *
 *	Uses the excellent FreeType 2 library, available at:
 *	http://www.freetype.org/
@@ -61,6 +61,7 @@ DECLSPEC void sge_TTF_SetFontStyle(sge_TTFont *font, Uint8 style);
 DECLSPEC Uint8 sge_TTF_GetFontStyle(sge_TTFont *font);
 
 DECLSPEC void sge_TTF_CloseFont(sge_TTFont *font);
+DECLSPEC void* sge_TTF_GetFTFace(sge_TTFont *font);
 
 DECLSPEC SDL_Rect sge_TTF_TextSizeUNI(sge_TTFont *font, const Uint16 *text);
 DECLSPEC SDL_Rect sge_TTF_TextSize(sge_TTFont *Font, const char *Text, int a_iMaxLength=-1);

@@ -128,7 +128,7 @@ FighterStatsDemo::FighterStatsDemo( FighterEnum a_iFighter )
 	}
 
 	g_oBackend.PerlEvalF("GetFighterStats(%d);", m_enFighter );
-	_sge_TTFont* font = impactFont;
+	_sge_TTFont* font = comboFont;
 	int y = MSZ_TOPMARGIN;
 
 
@@ -176,7 +176,11 @@ FighterStatsDemo::FighterStatsDemo( FighterEnum a_iFighter )
 	oFlyingRect.y = y+MSZ_DESCMARGIN;
 	oFlyingRect.w = gamescreen->w - oFlyingRect.x - 20;
 	oFlyingRect.h = gamescreen->h - oFlyingRect.y - 10;
+#ifdef USE_TTF_FLYINGCHARS
+	m_poFlyingChars = new FlyingChars( bungeeSpiceFont, oFlyingRect );
+#else
 	m_poFlyingChars = new FlyingChars( creditsFont, oFlyingRect );
+#endif
 	m_poFlyingChars->AddText( m_sStory.c_str(), FlyingChars::FC_AlignJustify, false );
 
 	if ( g_oPlayerSelect.IsFighterAvailable( m_enFighter ) )

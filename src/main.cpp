@@ -160,6 +160,8 @@ _sge_TTFont* inkFont;
 _sge_TTFont* impactFont;
 _sge_TTFont* titleFont;
 _sge_TTFont* chatFont;
+_sge_TTFont* bungeeSpiceFont;
+_sge_TTFont* comboFont;
 sge_bmpFont* fastFont;
 sge_bmpFont* creditsFont;
 sge_bmpFont* storyFont;
@@ -302,6 +304,10 @@ int init()
 	if ( !titleFont ) return -1;
 	chatFont = LoadTTF( "dejavu-thin.ttf", 20 );	// thin.ttf (no UTF-8)
 	if ( !chatFont ) return -1;
+	bungeeSpiceFont = LoadTTF( "BungeeSpice-Regular.ttf", 20 );
+	if ( !bungeeSpiceFont ) return -1;
+	comboFont = LoadTTF( "Combo-Regular.ttf", 18 );
+	if ( !comboFont ) return -1;
 
 	fastFont = LoadBMPFont( "brandybun3.png" );
 	if ( !fastFont ) return -1;

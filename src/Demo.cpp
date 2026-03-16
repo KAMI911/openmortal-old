@@ -219,8 +219,12 @@ public:
 		oRect.x = 110; oRect.w = gamescreen->w - 220;
 		oRect.y = 100; oRect.h = 350;
 		
+#ifdef USE_TTF_FLYINGCHARS
+		m_poFlyingChars = new FlyingChars( chatFont, oRect );
+#else
 		m_poFlyingChars = new FlyingChars( creditsFont, oRect );
-		
+#endif
+
 		m_sText1 = Translate( "CreditsText1" );
 		m_sText2 = Translate( "CreditsText2" );
 		m_sText3 = Translate( "CreditsText3" );
@@ -254,7 +258,11 @@ public:
 		oRect.x = 50; oRect.w = gamescreen->w - 100;
 		oRect.y = 50; oRect.h = gamescreen->h - 100;
 		
+#ifdef USE_TTF_FLYINGCHARS
+		m_poFlyingChars = new FlyingChars( chatFont, oRect );
+#else
 		m_poFlyingChars = new FlyingChars( storyFont, oRect, -1 );
+#endif
 		m_sText1 = "This version of OpenMortal was released on 2004-05-01, the day that Hungary "
 		"along with 9 other countries joined the European Union.\n\n\n\n\n\n\n\n\n";
 		m_poFlyingChars->AddText( m_sText1.c_str(), FlyingChars::FC_AlignJustify, true );
@@ -281,7 +289,11 @@ public:
 		oRect.x = 50; oRect.w = gamescreen->w - 100;
 		oRect.y = 50; oRect.h = gamescreen->h - 100;
 		
+#ifdef USE_TTF_FLYINGCHARS
+		m_poFlyingChars = new FlyingChars( chatFont, oRect );
+#else
 		m_poFlyingChars = new FlyingChars( storyFont, oRect, -1 );
+#endif
 		m_sText1 = Translate( "Story1Text" );
 		m_poFlyingChars->AddText( m_sText1.c_str(), FlyingChars::FC_AlignJustify, true );
 	}
@@ -305,7 +317,11 @@ public:
 		oRect.x = 50; oRect.w = gamescreen->w - 100;
 		oRect.y = 50; oRect.h = gamescreen->h - 100;
 
+#ifdef USE_TTF_FLYINGCHARS
+		m_poFlyingChars = new FlyingChars( chatFont, oRect );
+#else
 		m_poFlyingChars = new FlyingChars( storyFont, oRect, -1 );
+#endif
 		m_sText1 = Translate( "Story2Text" );
 		m_poFlyingChars->AddText( m_sText1.c_str(), FlyingChars::FC_AlignJustify, true );
 	}

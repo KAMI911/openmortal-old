@@ -63,19 +63,19 @@ Down Back LPunch - WrISt shot
 Forward Back Forward LPunch - WrISt mash',
 
 	'TEAM-hu'	=>'Gonosz',
-	'STYLE-hu'	=>'Bohóc-fu',
-	'WEIGHT-hu'	=>'50kg + vaságy',
+	'STYLE-hu'	=>'Bohï¿½c-fu',
+	'WEIGHT-hu'	=>'50kg + vasï¿½gy',
 	'HEIGHT-hu'	=>'168cm',
 	'SHOE-hu'	=>'51',
 	'STORY-hu'	=>
-'Miután Wasaiwa baka janaijo elszajrézta a kora legfejletebb tudományos cuccosát
-(véletlenül úgy behúztak neki, hogy berepült a laboratoriumba és rátekeredett a CsUKlo(tm)),
+'Miutï¿½n Wasaiwa baka janaijo elszajrï¿½zta a kora legfejletebb tudomï¿½nyos cuccosï¿½t
+(vï¿½letlenï¿½l ï¿½gy behï¿½ztak neki, hogy berepï¿½lt a laboratoriumba ï¿½s rï¿½tekeredett a CsUKlo(tm)),
 
-azután minden tudását latba vetve vissza utazott a múltba (elkezdte nyomkodni a gombokat a
-CsUKlo(tm)-en és ez lett belõle).
+azutï¿½n minden tudï¿½sï¿½t latba vetve vissza utazott a mï¿½ltba (elkezdte nyomkodni a gombokat a
+CsUKlo(tm)-en ï¿½s ez lett belï¿½le).
 
-Ezekután már rögtön tudta, hogy itt el kell pusztitania a Szombatot! (õ sem tudja, hogy hol
-is van éppen illetve mit is csinál...)',
+Ezekutï¿½n mï¿½r rï¿½gtï¿½n tudta, hogy itt el kell pusztitania a Szombatot! (ï¿½ sem tudja, hogy hol
+is van ï¿½ppen illetve mit is csinï¿½l...)',
 	},
 
 
@@ -103,17 +103,17 @@ Down Back LPunch - Fireball
 (also works while crouching)
 Back Up HPunch - Burning Hands',
 
-	'NAME-hu'	=>'Sötét Fekete Gonosz Mágus',
-	'TEAM-hu'	=>'Gonosz vezér',
+	'NAME-hu'	=>'Sï¿½tï¿½t Fekete Gonosz Mï¿½gus',
+	'TEAM-hu'	=>'Gonosz vezï¿½r',
 	'STYLE-hu'	=>'Piro-fu',
 	'AGE-hu'	=>'30',
 	'WEIGHT-hu'	=>'70kg',
 	'HEIGHT-hu'	=>'180cm',
 	'SHOE-hu'	=>'42',
 	'STORY-hu'	=>
-'A Gonosz Gyilkos Fekete Ellenszenves Sötét (elméjü) tüzvarázslók ligájának
-tagja, kit azzal bíztak meg, hogy elpusztítsa a szombatot egyszer, s
-mindörökre. Talán van valami hátsó szándéka, amirõl senki sem tud? Nincs!',
+'A Gonosz Gyilkos Fekete Ellenszenves Sï¿½tï¿½t (elmï¿½jï¿½) tï¿½zvarï¿½zslï¿½k ligï¿½jï¿½nak
+tagja, kit azzal bï¿½ztak meg, hogy elpusztï¿½tsa a szombatot egyszer, s
+mindï¿½rï¿½kre. Talï¿½n van valami hï¿½tsï¿½ szï¿½ndï¿½ka, amirï¿½l senki sem tud? Nincs!',
 },
 
 
@@ -146,9 +146,9 @@ Forward Forward HPunch - Leaping punch',
 	'HEIGHT-hu'	=>'180cm',
 	'SHOE-hu'	=>'43',
 	'STORY-hu'	=>
-'Boxer azért csatlakozott a Mortál Szombat csapathoz, hogy minél több
-embernek besomhasson, minél többször, és minél nagyobbat. Más célja ezen
-kívül nincs, de ez is remekül elszórakoztatja középtávon',
+'Boxer azï¿½rt csatlakozott a Mortï¿½l Szombat csapathoz, hogy minï¿½l tï¿½bb
+embernek besomhasson, minï¿½l tï¿½bbszï¿½r, ï¿½s minï¿½l nagyobbat. Mï¿½s cï¿½lja ezen
+kï¿½vï¿½l nincs, de ez is remekï¿½l elszï¿½rakoztatja kï¿½zï¿½ptï¿½von',
 },
 
 
@@ -212,14 +212,14 @@ join the good team... also he is frightened alone.',
 Forward Forward HPunch - Applause',
 
 
-	'STYLE-hu'	=> 'Nebánts-FU',
+	'STYLE-hu'	=> 'Nebï¿½nts-FU',
 	'STORY-hu'	=>
-'Sok évnyi hardcore gamerkedés után, miközben el is hízott jól,
-kikapcsolták nála a villanyt.
+'Sok ï¿½vnyi hardcore gamerkedï¿½s utï¿½n, mikï¿½zben el is hï¿½zott jï¿½l,
+kikapcsoltï¿½k nï¿½la a villanyt.
 
-Erre nagyon hülye pofát vágott, és ez igy is
-marad mindaddig, amíg le nem számol õsellenségével (vagy még utána is).
-Ezért csatlakozott a jók kicsiny csapatához... Meg amúgy is fél egyedül.',
+Erre nagyon hï¿½lye pofï¿½t vï¿½gott, ï¿½s ez igy is
+marad mindaddig, amï¿½g le nem szï¿½mol ï¿½sellensï¿½gï¿½vel (vagy mï¿½g utï¿½na is).
+Ezï¿½rt csatlakozott a jï¿½k kicsiny csapatï¿½hoz... Meg amï¿½gy is fï¿½l egyedï¿½l.',
 },
 
 
@@ -247,13 +247,13 @@ it won\'t be until the next fight agains Evil...',
 Forward Forward HKick - Scissor Kick',
 
 	'STORY-hu'	=>
-'kb. néhány évvel ezelõtt, (vagy talán egy kicsit korábban, esetleg
-késõbb) a felhõk között egy pólyában találtak rá (zuhanás közben).
+'kb. nï¿½hï¿½ny ï¿½vvel ezelï¿½tt, (vagy talï¿½n egy kicsit korï¿½bban, esetleg
+kï¿½sï¿½bb) a felhï¿½k kï¿½zï¿½tt egy pï¿½lyï¿½ban talï¿½ltak rï¿½ (zuhanï¿½s kï¿½zben).
 
-A bátor
-Songokutól elleste a harcmûvészet mesteri fortélyait, igy talpra esett és
-nem halt meg. Azóta is halhatatlan. Ki tudja, még meddig? Talán a
-következõ harcig a gonosz ellen...',
+A bï¿½tor
+Songokutï¿½l elleste a harcmï¿½vï¿½szet mesteri fortï¿½lyait, igy talpra esett ï¿½s
+nem halt meg. Azï¿½ta is halhatatlan. Ki tudja, mï¿½g meddig? Talï¿½n a
+kï¿½vetkezï¿½ harcig a gonosz ellen...',
 	},
 
 
@@ -289,10 +289,10 @@ Back Forward HPunc - Pierce',
 	'HEIGHT-hu' =>'172',
 	'SHOE-hu'	=>'39',
 	'STORY-hu'	=>
-'A japán óriás Descant esküdt ellensége, mióta összejárta az általa frissen felmosott
-verandát a 16 generáció óta családja által birtokolt foga-do-ban. Tudását a sötét
-oldal szolgálatába állította. Tudását a "gondnok útján" csak mélységes megvetése a
-vasaltorrú bakancsok iránt szárnyalja túl.',
+'A japï¿½n ï¿½riï¿½s Descant eskï¿½dt ellensï¿½ge, miï¿½ta ï¿½sszejï¿½rta az ï¿½ltala frissen felmosott
+verandï¿½t a 16 generï¿½ciï¿½ ï¿½ta csalï¿½dja ï¿½ltal birtokolt foga-do-ban. Tudï¿½sï¿½t a sï¿½tï¿½t
+oldal szolgï¿½latï¿½ba ï¿½llï¿½totta. Tudï¿½sï¿½t a "gondnok ï¿½tjï¿½n" csak mï¿½lysï¿½ges megvetï¿½se a
+vasaltorrï¿½ bakancsok irï¿½nt szï¿½rnyalja tï¿½l.',
 	},
 
 
@@ -323,24 +323,24 @@ Down Down LKick - Earthquake
 Back Forward Back HPunch - Nunchaku',
 
 	'NAME-hu'	=>'Grizli',
-	'TEAM-hu'	=>'Jó',
-	'STYLE-hu'	=>'Gyakás ala Medve',
+	'TEAM-hu'	=>'Jï¿½',
+	'STYLE-hu'	=>'Gyakï¿½s ala Medve',
 	'AGE-hu'	=>'21',
 	'WEIGHT-hu'	=>'50000000',
 	'HEIGHT-hu'	=>'170',
 	'SHOE-hu'	=>'49',
 	'STORY-hu'	=>
-'Grili a lustaságáról volt hires mindig. Olyannyira, hogy amilyen szinten
-azt csinálja, az már mûvészet. Az utóbbi 5 évben már a TV
-nézéshez is lusta lett.
+'Grili a lustasï¿½gï¿½rï¿½l volt hires mindig. Olyannyira, hogy amilyen szinten
+azt csinï¿½lja, az mï¿½r mï¿½vï¿½szet. Az utï¿½bbi 5 ï¿½vben mï¿½r a TV
+nï¿½zï¿½shez is lusta lett.
 
-Minden Szobaton tart edzést a Különbenmegintdühbejövünk do
-stilusból, amit még kezdõ korában a TV-bõl sajátított el. A stilus
-tiszteletbeli nagymestere maga Bád Szpencer, de sajnos miután Bád-ról
-kiderült, hogy szombatonként dolgozik, Grizli elvette tõle a cimet, s
-azóta magának tartogatja.
+Minden Szobaton tart edzï¿½st a Kï¿½lï¿½nbenmegintdï¿½hbejï¿½vï¿½nk do
+stilusbï¿½l, amit mï¿½g kezdï¿½ korï¿½ban a TV-bï¿½l sajï¿½tï¿½tott el. A stilus
+tiszteletbeli nagymestere maga Bï¿½d Szpencer, de sajnos miutï¿½n Bï¿½d-rï¿½l
+kiderï¿½lt, hogy szombatonkï¿½nt dolgozik, Grizli elvette tï¿½le a cimet, s
+azï¿½ta magï¿½nak tartogatja.
 
-Grizli a szombat ellenesek ádáz gyûlölõje, a jó csapat oszlopos tagja.',
+Grizli a szombat ellenesek ï¿½dï¿½z gyï¿½lï¿½lï¿½je, a jï¿½ csapat oszlopos tagja.',
 	},
 
 
@@ -369,17 +369,17 @@ Forward Down HPunch - Knife Throw
 Forward Forward HPunch - Gun Hit',
 
 	'NAME-hu'	=>'Descant',
-	'TEAM-hu'	=>'Jó',
+	'TEAM-hu'	=>'Jï¿½',
 	'STYLE-hu'	=>'+halol',
 	'AGE-hu'	=>'58',
 	'WEIGHT-hu'=>'89',
 	'HEIGHT-hu'=>'180',
 	'SHOE-hu'	=>'44',
 	'STORY-hu'	=>
-'A Vietnámi háború során képezték ki minden ismert fegyverre és harcm~uvészetre. Már ott
-is az Oroszok és az Amerikaik oldalán harcolt, már aki éppen többet fizetett. Ezután a pénzb"ol
-hibernáltatta magát és csak háborúk esetén olvasztatja föl magát, vagy most mikor a szombat
-bajba kerül most is azon az oldalon van, ahol vastagabb a BUKSZA, most épp a...',
+'A Vietnï¿½mi hï¿½borï¿½ sorï¿½n kï¿½peztï¿½k ki minden ismert fegyverre ï¿½s harcm~uvï¿½szetre. Mï¿½r ott
+is az Oroszok ï¿½s az Amerikaik oldalï¿½n harcolt, mï¿½r aki ï¿½ppen tï¿½bbet fizetett. Ezutï¿½n a pï¿½nzb"ol
+hibernï¿½ltatta magï¿½t ï¿½s csak hï¿½borï¿½k esetï¿½n olvasztatja fï¿½l magï¿½t, vagy most mikor a szombat
+bajba kerï¿½l most is azon az oldalon van, ahol vastagabb a BUKSZA, most ï¿½pp a...',
 },
 
 
@@ -403,16 +403,16 @@ why he joined the Dark Evil Mage...',
 
 	'NAME-hu'	=>'Rising-san',
 	'TEAM-hu'	=>'Gonosz',
-	'STYLE-hu'	=>'Pöcc-fu',
+	'STYLE-hu'	=>'Pï¿½cc-fu',
 	'AGE-hu'	=>'500',
 	'WEIGHT-hu'	=>'N/A',
 	'HEIGHT-hu'	=>'50',
 	'SHOE-hu'	=>'Nem visel',
 	'STORY-hu'	=>
-'Sok-sok évvel ezel"ott eltûnt misztikus körülmények között... egy szombati napon!
-És most visszatért. Senki sem tudja honnan jött, de magával hozta pusztító technikáját
-melynek nincs párja a földön. Senki sem érti miért fogadta el a gonosz varázsl
-megbízását...',
+'Sok-sok ï¿½vvel ezel"ott eltï¿½nt misztikus kï¿½rï¿½lmï¿½nyek kï¿½zï¿½tt... egy szombati napon!
+ï¿½s most visszatï¿½rt. Senki sem tudja honnan jï¿½tt, de magï¿½val hozta pusztï¿½tï¿½ technikï¿½jï¿½t
+melynek nincs pï¿½rja a fï¿½ldï¿½n. Senki sem ï¿½rti miï¿½rt fogadta el a gonosz varï¿½zsl
+megbï¿½zï¿½sï¿½t...',
 },
 
 
@@ -439,17 +439,17 @@ maniac laughter echoes far.',
 Back Forward HKick - Chop Chop
 Forward Forward LKick - Bonesaw',
 
-	'NAME-hu'	=>'Fûrészes Õrült',
+	'NAME-hu'	=>'Fï¿½rï¿½szes ï¿½rï¿½lt',
 	'TEAM-hu'	=>'Gonosz',
-	'STYLE-hu'	=>'Fanyûvõ',
+	'STYLE-hu'	=>'Fanyï¿½vï¿½',
 	'AGE-hu'	=>'35',
 	'WEIGHT-hu'	=>'110',
 	'HEIGHT-hu'	=>'120',
 	'SHOE-hu'	=>'49',
 	'STORY-hu'	=>
-'Bölcsõjét egy fán találták meg. Késõbb felaprította az egész befogadó családját, és
-megetette a medvékkel. Azóta a kanadai erdõkben bolyongva vágja a fákat és az
-emberfejeket. Forró nyári éjszakákon mindig hallatszik õrült kacaja.',
+'Bï¿½lcsï¿½jï¿½t egy fï¿½n talï¿½ltï¿½k meg. Kï¿½sï¿½bb felaprï¿½totta az egï¿½sz befogadï¿½ csalï¿½djï¿½t, ï¿½s
+megetette a medvï¿½kkel. Azï¿½ta a kanadai erdï¿½kben bolyongva vï¿½gja a fï¿½kat ï¿½s az
+emberfejeket. Forrï¿½ nyï¿½ri ï¿½jszakï¿½kon mindig hallatszik ï¿½rï¿½lt kacaja.',
 },
 
 
@@ -477,20 +477,20 @@ Forward Forward HPunch - Ramming Attack
 Back Down Back LPunch - Stab
 Back Forward LKick - Poke',
 
-	'NAME-hu'	=>'Tökéletlen Katona',
-	'TEAM-hu'	=>'Jó',
-	'STYLE-hu'	=>'Kocsmabunyó',
+	'NAME-hu'	=>'Tï¿½kï¿½letlen Katona',
+	'TEAM-hu'	=>'Jï¿½',
+	'STYLE-hu'	=>'Kocsmabunyï¿½',
 	'AGE-hu'	=>'50',
 	'WEIGHT-hu'	=>'100',
 	'HEIGHT-hu'	=>'180',
 	'SHOE-hu'	=>'44',
 	'STORY-hu'	=>
-'Gyermekkorát meghatározta Drezda lebombázása. E trauma hatására katonai
-pályára állt. Immáron 30 éve a Bundeswehr kötelékében tizedes az
-elõléptetés bárminem~u esélye nélkül.
+'Gyermekkorï¿½t meghatï¿½rozta Drezda lebombï¿½zï¿½sa. E trauma hatï¿½sï¿½ra katonai
+pï¿½lyï¿½ra ï¿½llt. Immï¿½ron 30 ï¿½ve a Bundeswehr kï¿½telï¿½kï¿½ben tizedes az
+elï¿½lï¿½ptetï¿½s bï¿½rminem~u esï¿½lye nï¿½lkï¿½l.
 
-Alantasait folytonosan kocsmai bunyóinak történeteivel traktálja, amíg azok
-áthelyezésüket nem kérik.',
+Alantasait folytonosan kocsmai bunyï¿½inak tï¿½rtï¿½neteivel traktï¿½lja, amï¿½g azok
+ï¿½thelyezï¿½sï¿½ket nem kï¿½rik.',
 },
 
 
@@ -517,12 +517,12 @@ So one time she said:
 "If I survive this, I swear, I\'ll join those stupid Mortal guys!"',
 
 	'STORY-hu'=>
-'A megprobaltatasok akkor kezdodtek, amikor anyukaja a szive alatt hordta.
-Egyetlen koldokzsinoron fuggott az elete! De megszuletett vegul, ezert
-kapta az Aisha ("mindent tulelo") nevet. Aztan gyermekkoratol fogva sok
-termeszeti katasztrofat, terrortamadast atveszelt, es mar kezdett elege
-lenni az egeszbol, igy hat az egyik alkalommal kijelentette, hogy ha ezt
-tulelem, csatlakozom azokhoz a hulye Mortalosokhoz!',
+'A megprobÃ¡ltatÃ¡sok akkor kezdÅ‘dtek, amikor anyukÃ¡ja a szÃ­ve alatt hordta.
+Egyetlen kÃ¶ldÃ¶kzsinoron fÃ¼ggÃ¶tt az Ã©lete! De megszÃ¼letett vÃ©gÃ¼l, ezÃ©rt
+kapta az Aisha ("mindent tÃºlÃ©lÅ‘") nevet. Aztan gyermekkorÃ¡tÃ³l fogva sok
+termÃ©szeti katasztrÃ³fat, terrortÃ¡madÃ¡st Ã¡tveszÃ©lt, Ã©s mar kezdett elege
+lenni az egÃ©szbÅ‘l, igy hÃ¡t az egyik alkalommal kijelentette, hogy ha ezt
+tÃºlelem, csatlakozom azokhoz a hÃ¼lye MortÃ¡losokhoz!',
 },	#'
 
 
@@ -580,17 +580,17 @@ alone...',
 	'NAME-hu'	=>'Apatsuka Anyatsuba',
 	'TEAM-hu'	=>'Gonosz',
 	'STYLE-hu'	=>'Komor',
-	'AGE-hu'	=>'Feudális közép...',
-	'WEIGHT-hu'	=>'Nagyon súlyos!',
+	'AGE-hu'	=>'Feudï¿½lis kï¿½zï¿½p...',
+	'WEIGHT-hu'	=>'Nagyon sï¿½lyos!',
 	'STORY-hu'	=>
-'Apatsukát 4 éves kora óta nevelték szülei a szamuráj életmódra, szigor
-keretek között. Apja az elmúlt 20 év leghíresebb harcosa volt. Amint
-minden harci fogást elsajátított apjától, megskalpolta és a skalpját
-fejére illesztette, ezzel megfélemlítve ellenségeit.
+'Apatsukï¿½t 4 ï¿½ves kora ï¿½ta neveltï¿½k szï¿½lei a szamurï¿½j ï¿½letmï¿½dra, szigor
+keretek kï¿½zï¿½tt. Apja az elmï¿½lt 20 ï¿½v leghï¿½resebb harcosa volt. Amint
+minden harci fogï¿½st elsajï¿½tï¿½tott apjï¿½tï¿½l, megskalpolta ï¿½s a skalpjï¿½t
+fejï¿½re illesztette, ezzel megfï¿½lemlï¿½tve ellensï¿½geit.
 
-Hétközben nõket
-hajszolt, szombaton szívott és berugott. Aztán úgy döntött, hogy ezen a
-szombaton csak õ érezheti jól magát...',
+Hï¿½tkï¿½zben nï¿½ket
+hajszolt, szombaton szï¿½vott ï¿½s berugott. Aztï¿½n ï¿½gy dï¿½ntï¿½tt, hogy ezen a
+szombaton csak ï¿½ ï¿½rezheti jï¿½l magï¿½t...',
 
 
 },
@@ -644,8 +644,19 @@ sub RegisterFighter($)
 sub GetStatsTranslated($$)
 {
 	my ($source, $stat) = @_;
-	return $source->{"${stat}-$::LanguageCode"} if defined $source->{"${stat}-$::LanguageCode"};
-	return $source->{$stat};
+	my $val = $source->{"${stat}-$::LanguageCode"};
+	$val = $source->{$stat} unless defined $val;
+	# The -hu strings are stored as ISO-8859-2.  Four Hungarian characters
+	# differ from their Unicode (Latin-1) counterparts and must be re-encoded
+	# as proper UTF-8 so that DrawTextMSZ (sge_tt_textout_UTF8) renders them
+	# correctly: \xD5=Å \xF5=Å‘  \xDB=Å° \xFB=Å±
+	if ( defined $val && defined $::LanguageCode && $::LanguageCode eq 'hu' ) {
+		$val =~ s/\xD5/\xC5\x90/g;  # Å -> UTF-8
+		$val =~ s/\xF5/\xC5\x91/g;  # Å‘ -> UTF-8
+		$val =~ s/\xDB/\xC5\xB0/g;  # Å° -> UTF-8
+		$val =~ s/\xFB/\xC5\xB1/g;  # Å± -> UTF-8
+	}
+	return $val;
 }
 
 
@@ -671,7 +682,11 @@ sub GetFighterStats($)
 	
 	$::Story =~ s/([^\n])\n([^\n])/$1 $2/gms if defined $::Story;
 	
-	@::StatTags = ( 'Name: ', 'Team: ', 'Style: ', 'Age: ', 'Weight: ', 'Height: ', 'Shoe size: ' );
+	if ( defined $::LanguageCode && $::LanguageCode eq 'hu' ) {
+		@::StatTags = ( "N\xC3\xA9v: ", 'Csapat: ', "St\xC3\xADlus: ", 'Kor: ', "S\xC3\xBAly: ", "Magass\xC3\xA1g: ", "Cip\xC5\x91m\xC3\xA9ret: " );
+	} else {
+		@::StatTags = ( 'Name: ', 'Team: ', 'Style: ', 'Age: ', 'Weight: ', 'Height: ', 'Shoe size: ' );
+	}
 	
 	# print "The data file of $fighterenum is '$::Datafile'\n";
 	

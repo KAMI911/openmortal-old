@@ -209,6 +209,12 @@ void sge_TTF_CloseFont(sge_TTFont *font)
 }
 
 
+void* sge_TTF_GetFTFace(sge_TTFont *font)
+{
+	return (void*)font->face;
+}
+
+
 //==================================================================================
 // Open the TT font file and returns the font with pt size
 //==================================================================================

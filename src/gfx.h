@@ -80,6 +80,8 @@ extern _sge_TTFont* titleFont;		// Largest font, for titles
 extern _sge_TTFont* inkFont;		// Medium-size front, headings
 extern _sge_TTFont* impactFont;		// Smallest font, for long descriptions
 extern _sge_TTFont* chatFont;		// small but legible.
+extern _sge_TTFont* bungeeSpiceFont;	// FighterStats: flying story text
+extern _sge_TTFont* comboFont;		// FighterStats: stats labels/values
 
 #ifdef sge_bm_text_H
 extern sge_bmpFont* fastFont;		// In-game text, e.g. combo text

@@ -1,3 +1,6 @@
+# Local saved patches (not for committing)
+tt-flyingchars.patch
+
 # Autotools generated files
 aclocal.m4
 autom4te.cache/

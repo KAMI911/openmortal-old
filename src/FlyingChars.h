@@ -12,9 +12,14 @@
 #define FLYINGCHARS_H
 
 
+#include "config.h"
 #include "sge_bm_text.h"
+#ifdef USE_TTF_FLYINGCHARS
+#include "sge_tt_text.h"
+#endif
 #include <vector>
 #include <list>
+#include <stdint.h>
 
 
 /**
@@ -31,7 +36,7 @@ struct FlyingLetter
 	int m_iDX, m_iDY;
 	int m_iDelay;
 	int m_iTime;
-	unsigned char m_cLetter;
+	uint32_t m_cLetter;
 };
 
 
@@ -48,19 +53,27 @@ public:
 
 public:
 	FlyingChars( sge_bmpFont* a_poFont, const SDL_Rect& a_roRect, int a_iFontDisplacement = 0 );
+#ifdef USE_TTF_FLYINGCHARS
+	FlyingChars( _sge_TTFont* a_poTTFont, const SDL_Rect& a_roRect, Uint32 a_iColor = 0xFFFFFFFF );
+#endif
 	~FlyingChars();
-	
+
 	void AddText( const char* a_pcText, TextAlignment a_enAlignment, bool bOneByOne );
-	
+
 	void Advance( int a_iNumFrames );
 	void Draw();
 	bool IsDone();
 	int GetCount();
-	
+
+#ifdef USE_TTF_FLYINGCHARS
+	void SetTTColor( Uint32 a_iColor ) { m_iTTColor = a_iColor; }
+#endif
+
 protected:
 	void AddNextLine();
-	int GetCharWidth( unsigned char a_cChar );
+	int GetCharWidth( uint32_t a_cChar );
 	void DequeueText();
+	int GetFontHeight() const;
 
 protected:
 
@@ -80,11 +93,15 @@ protected:
 	typedef FlyingLetterList::iterator	FlyingLetterIterator;
 
 	sge_bmpFont*				m_poFont;
+#ifdef USE_TTF_FLYINGCHARS
+	_sge_TTFont*				m_poTTFont;
+	Uint32						m_iTTColor;
+#endif
 	int							m_iFontDisplacement;
 	FlyingLetterList			m_oLetters;
 	int							m_iTimeToNextLine;
 
-	SDL_Rect					m_oRect;	
+	SDL_Rect					m_oRect;
 	const unsigned char*		m_pcText;
 	TextAlignment				m_enAlignment;
 	int							m_iTextOffset;

@@ -81,6 +81,18 @@ if test x$boss_key = xtrue; then
   AC_DEFINE(MSZ_BOSS_KEY, 1, [Define to 1 to compile the Shift+Esc boss-key screen])
 fi
 
+AC_ARG_ENABLE(ttf-flyingchars,
+[  --enable-ttf-flyingchars  Use TrueType fonts in FlyingChars scrollers (default: no)],
+[case "${enableval}" in
+  yes) ttf_flyingchars=true ;;
+  no)  ttf_flyingchars=false ;;
+  *) AC_MSG_ERROR(bad value ${enableval} for --enable-ttf-flyingchars) ;;
+esac],[ttf_flyingchars=false])
+AM_CONDITIONAL(TTF_FLYINGCHARS, test x$ttf_flyingchars = xtrue)
+if test x$ttf_flyingchars = xtrue; then
+  AC_DEFINE(USE_TTF_FLYINGCHARS, 1, [Define to 1 to use TrueType fonts in FlyingChars scrollers])
+fi
+
 
 
 
