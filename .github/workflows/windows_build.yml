@@ -1,4 +1,4 @@
-name: Windows Build (MSYS2 / MinGW64 / UCRT64 / CLANG64 / CLANG32 / CLANGARM64)
+name: Windows Build (MSYS2 / MinGW64 / UCRT64 / CLANG64 / MinGW32 / CLANGARM64)
 
 on:
   push:
@@ -37,11 +37,11 @@ jobs:
             PREFIX: /clang64
             HOST: x86_64-w64-mingw32
             EXPERIMENTAL: false
-          - PLATFORM: clang32
+          - PLATFORM: mingw32
             RUNNER: windows-latest
-            MSYS_TARGET: clang-i686
-            MSYSTEM: CLANG32
-            PREFIX: /clang32
+            MSYS_TARGET: i686
+            MSYSTEM: MINGW32
+            PREFIX: /mingw32
             HOST: i686-w64-mingw32
             EXPERIMENTAL: true
           - PLATFORM: clangarm64

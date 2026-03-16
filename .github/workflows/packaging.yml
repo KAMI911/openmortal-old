@@ -265,11 +265,7 @@ jobs:
 
   linux-i386_build:
     runs-on: ubuntu-latest
-    container:
-      image: i386/ubuntu:22.04
-      options: --platform linux/386
     env:
-      DEBIAN_FRONTEND: noninteractive
       PLATFORM: i386
 
     steps:
@@ -278,30 +274,36 @@ jobs:
       - name: Extract version from configure.ac
         run: echo "VERSION=$(grep -m1 'AC_INIT' configure.ac | grep -oP '\d+\.\d+\.\d+')" >> $GITHUB_ENV
 
-      - name: Install dependencies
-        run: |
-          set -e
-          apt-get update -qq
-          apt-get install -y --no-install-recommends \
-            build-essential autoconf automake libtool pkg-config \
-            libperl-dev libsdl1.2-dev libsdl-image1.2-dev \
-            libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev libgif-dev
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
-      - name: Build from source
+      - name: Build in i386 container
         run: |
-          set -e
-          autoreconf -i -f
-          ./configure --prefix=/usr
-          make -j$(nproc)
+          docker run --rm --platform linux/386 \
+            -v "${{ github.workspace }}:/workspace" \
+            -e DEBIAN_FRONTEND=noninteractive \
+            ubuntu:22.04 \
+            sh -c '
+              set -e
+              apt-get update -qq
+              apt-get install -y --no-install-recommends \
+                build-essential autoconf automake libtool pkg-config \
+                libperl-dev libsdl1.2-dev libsdl-image1.2-dev \
+                libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev libgif-dev
+              cd /workspace
+              autoreconf -i -f
+              ./configure --prefix=/usr
+              make -j$(nproc)
+              mkdir -p distribution/linux-i386_build distribution/linux-i386_package/usr/bin
+              make DESTDIR=/workspace/distribution/linux-i386_build/ install
+              cp -a /workspace/distribution/linux-i386_build/usr/share \
+                /workspace/distribution/linux-i386_package/usr/
+              install -m755 /workspace/distribution/linux-i386_build/usr/bin/openmortal \
+                /workspace/distribution/linux-i386_package/usr/bin/openmortal
+            '
 
-      - name: Install and package
+      - name: Create archive
         run: |
-          set -e
-          mkdir -p distribution/linux-i386_build distribution/linux-i386_package/usr/bin
-          make DESTDIR="distribution/linux-i386_build/" install
-          cp -a distribution/linux-i386_build/usr/share distribution/linux-i386_package/usr/
-          install -m755 distribution/linux-i386_build/usr/bin/openmortal \
-            distribution/linux-i386_package/usr/bin/openmortal
           tar zcvf openmortal-${{ env.VERSION }}_linux_i386.tar.gz \
             -C distribution/linux-i386_package .
 
