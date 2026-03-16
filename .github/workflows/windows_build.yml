@@ -1,4 +1,4 @@
-name: Windows Build (MSYS2 / MinGW64 / UCRT64 / CLANG64 / CLANGARM64)
+name: Windows Build (MSYS2 / MinGW64 / UCRT64 / CLANG64 / MinGW32 / CLANGARM64)
 
 on:
   push:
@@ -37,6 +37,13 @@ jobs:
             PREFIX: /clang64
             HOST: x86_64-w64-mingw32
             EXPERIMENTAL: false
+          - PLATFORM: mingw32
+            RUNNER: windows-latest
+            MSYS_TARGET: i686
+            MSYSTEM: MINGW32
+            PREFIX: /mingw32
+            HOST: i686-w64-mingw32
+            EXPERIMENTAL: true
           - PLATFORM: clangarm64
             RUNNER: windows-11-arm
             MSYS_TARGET: clang-aarch64
@@ -71,24 +78,53 @@ jobs:
             automake
             autoconf
             libtool
-            mingw-w64-${{ matrix.MSYS_TARGET }}-perl
-            mingw-w64-${{ matrix.MSYS_TARGET }}-icu
             mingw-w64-${{ matrix.MSYS_TARGET }}-libiconv
             mingw-w64-${{ matrix.MSYS_TARGET }}-toolchain
             mingw-w64-${{ matrix.MSYS_TARGET }}-make
             mingw-w64-${{ matrix.MSYS_TARGET }}-pkg-config
             mingw-w64-${{ matrix.MSYS_TARGET }}-SDL
             mingw-w64-${{ matrix.MSYS_TARGET }}-SDL_image
-            mingw-w64-${{ matrix.MSYS_TARGET }}-SDL_mixer
             mingw-w64-${{ matrix.MSYS_TARGET }}-SDL_net
             mingw-w64-${{ matrix.MSYS_TARGET }}-freetype
             mingw-w64-${{ matrix.MSYS_TARGET }}-giflib
             mingw-w64-${{ matrix.MSYS_TARGET }}-ntldd
 
+      - name: Install Perl, ICU and SDL_mixer from pacman
+        if: matrix.PLATFORM != 'mingw32'
+        shell: msys2 {0}
+        run: |
+          pacman --noconfirm -S \
+            mingw-w64-${{ matrix.MSYS_TARGET }}-perl \
+            mingw-w64-${{ matrix.MSYS_TARGET }}-icu \
+            mingw-w64-${{ matrix.MSYS_TARGET }}-SDL_mixer
+
+      - name: Set up Strawberry Perl 32-bit (mingw32 only)
+        if: matrix.PLATFORM == 'mingw32'
+        shell: powershell
+        run: |
+          $url = "https://strawberryperl.com/download/5.38.2.1/strawberry-perl-5.38.2.1-32bit-portable.zip"
+          Invoke-WebRequest -Uri $url -OutFile "$env:TEMP\strawberry.zip"
+          & "C:\Program Files\7-Zip\7z.exe" x "$env:TEMP\strawberry.zip" -o"C:\strawberry-perl" -y
+
+      - name: Build SDL_mixer 1.2 from source (mingw32 only)
+        if: matrix.PLATFORM == 'mingw32'
+        shell: msys2 {0}
+        run: |
+          cd /tmp
+          curl -L https://github.com/libsdl-org/SDL_mixer/archive/refs/tags/release-1.2.12.tar.gz | tar xz
+          cd SDL_mixer-release-1.2.12
+          ./configure --prefix=/mingw32 --host=i686-w64-mingw32 \
+            --disable-music-mp3 --disable-music-ogg
+          make -j$(nproc)
+          make install
+
       - name: Configure project
         shell: msys2 {0}
         run: |
           autoreconf -i -f
+          if [ "${{ matrix.PLATFORM }}" = "mingw32" ]; then
+            export PATH="/c/strawberry-perl/perl/bin:/c/strawberry-perl/c/bin:$PATH"
+          fi
           ./configure --prefix=${{ matrix.PREFIX }} --host=${{ matrix.HOST }}
 
       - name: Build
