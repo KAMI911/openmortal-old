@@ -282,7 +282,7 @@ jobs:
           docker run --rm --platform linux/386 \
             -v "${{ github.workspace }}:/workspace" \
             -e DEBIAN_FRONTEND=noninteractive \
-            ubuntu:22.04 \
+            debian:bullseye \
             sh -c '
               set -e
               apt-get update -qq
