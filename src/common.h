@@ -29,6 +29,22 @@ void debug( const char* format, ... );
 #endif
 
 // -----------------------------------------------------------------------
+// Runtime data directory
+// -----------------------------------------------------------------------
+// On Windows the binary is relocatable: the data path is derived at
+// startup from the executable location (GetModuleFileName) so the game
+// works wherever it is installed (e.g. Program Files).
+// On all other platforms MSZ_DATADIR stays the compile-time constant
+// set by Makefile.am via -DMSZ_DATADIR=...
+#ifdef _WIN32
+extern char g_szDataDir[];
+#ifdef MSZ_DATADIR
+#undef MSZ_DATADIR
+#endif
+#define MSZ_DATADIR ((const char*)g_szDataDir)
+#endif
+
+// -----------------------------------------------------------------------
 // Main program methods
 // -----------------------------------------------------------------------
 

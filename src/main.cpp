@@ -154,6 +154,22 @@ protected:
 
 #ifdef _WIN32
 #include <windows.h>
+
+// Runtime data directory — set once by init_data_dir() before main().
+// MSZ_DATADIR is #defined to this array in common.h for Windows builds.
+char g_szDataDir[4096];
+
+static void init_data_dir()
+{
+	char exe_path[MAX_PATH];
+	GetModuleFileNameA(NULL, exe_path, MAX_PATH);
+	char* last_sep = strrchr(exe_path, '\\');
+	if ( last_sep ) *last_sep = '\0';
+	snprintf(g_szDataDir, sizeof(g_szDataDir), "%s\\share\\openmortal", exe_path);
+	// Normalise backslashes so SDL/fopen paths work on Windows
+	for ( char* p = g_szDataDir; *p; ++p )
+		if ( *p == '\\' ) *p = '/';
+}
 #endif
 
 _sge_TTFont* inkFont;
@@ -421,7 +437,11 @@ int DrawMainScreen()
 	sprintf(char_buf, "%s/characters", MSZ_DATADIR);
 	g_oBackend.PerlEvalF( "$CppRetval = GetNumberOfFighterFiles('%s')", char_buf );
 #else
-	g_oBackend.PerlEvalF( "$CppRetval = GetNumberOfFighterFiles('%s')", MSZ_DATADIR "/characters" );
+	{
+		char sCharDir[4096];
+		snprintf(sCharDir, sizeof(sCharDir), "%s/characters", MSZ_DATADIR);
+		g_oBackend.PerlEvalF( "$CppRetval = GetNumberOfFighterFiles('%s')", sCharDir );
+	}
 #endif
 	iNumFighterFiles = g_oBackend.GetPerlInt( "CppRetval" );
 	
@@ -620,6 +640,9 @@ void PgTest();
 
 int main(int argc, char *argv[])
 {
+#ifdef _WIN32
+	init_data_dir();
+#endif
 	srand( (unsigned int)time(NULL) );
 	if ( 0 != init2() )
 	{

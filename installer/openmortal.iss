@@ -33,9 +33,9 @@ AppPublisher=OpenMortal Community
 AppPublisherURL={#AppURL}
 AppSupportURL={#AppContact}
 AppUpdatesURL={#AppURL}/releases
-; Fixed path — must match the --prefix=/OpenMortal used at compile time
-DefaultDirName={sd}\OpenMortal
-DisableDirPage=yes
+; The binary detects its own location at startup (GetModuleFileName) and
+; looks for data in <exedir>\share\openmortal, so any install path works.
+DefaultDirName={autopf}\OpenMortal
 DefaultGroupName={#AppName}
 AllowNoIcons=yes
 LicenseFile=..\COPYING

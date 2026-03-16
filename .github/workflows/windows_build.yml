@@ -198,11 +198,11 @@ jobs:
             mingw-w64-x86_64-icu
             mingw-w64-x86_64-ntldd
 
-      - name: Build with installer prefix (/OpenMortal)
+      - name: Build
         shell: msys2 {0}
         run: |
           autoreconf -i -f
-          ./configure --prefix=/OpenMortal --host=x86_64-w64-mingw32
+          ./configure --prefix=/mingw64 --host=x86_64-w64-mingw32
           make -j$(nproc)
 
       - name: Install and collect DLLs
@@ -212,9 +212,9 @@ jobs:
           DIST="$(cygpath '${{ runner.temp }}')/installer_dist"
           mkdir -p "$DIST/bin" "$DIST/share"
           make DESTDIR="$INST_ROOT" install
-          cp "$INST_ROOT/OpenMortal/bin/openmortal.exe" "$DIST/bin/"
-          cp -a "$INST_ROOT/OpenMortal/share/openmortal" "$DIST/share/"
-          ntldd -R "$INST_ROOT/OpenMortal/bin/openmortal.exe" \
+          cp "$INST_ROOT/mingw64/bin/openmortal.exe" "$DIST/bin/"
+          cp -a "$INST_ROOT/mingw64/share/openmortal" "$DIST/share/"
+          ntldd -R "$INST_ROOT/mingw64/bin/openmortal.exe" \
             | grep -v -i "system32" \
             | grep -v -i "winsxs" \
             | grep -v -i "not found" \

@@ -446,7 +446,7 @@ void DoReplayDemo()
 	//[segabor] path fix.
 	sprintf( acFilename, "%s/demo%d.om", MSZ_DATADIR, aiOrder[iNext] );
 #else
-	sprintf( acFilename, MSZ_DATADIR "/demo%d.om", aiOrder[iNext] );
+	sprintf( acFilename, "%s/demo%d.om", MSZ_DATADIR, aiOrder[iNext] );
 #endif
 	//	DoGame( acFilename, true, false );
 	
