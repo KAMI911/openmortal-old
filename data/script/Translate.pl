@@ -49,6 +49,7 @@ $::English = { 'LanguageCode' => 0,
 	"GAME SPEED: "		=> undef,
 	"GAME TIME: "		=> undef,
 	"STAMINA: "			=> undef,
+	"BLOOD: "			=> undef,
 	"~SOUND"			=> undef,
 	"~RIGHT PLAYER KEYS"=> undef,
 	"~LEFT PLAYER KEYS"	=> undef,
@@ -97,6 +98,8 @@ $::English = { 'LanguageCode' => 0,
 	
 	# Sound volume
 	"OFF"				=> undef,
+	"LIGHT"				=> undef,
+	"HEAVY"				=> undef,
 	
 # Key configuration
 
@@ -294,6 +297,7 @@ $::Hungarian = {  'LanguageCode' => 3,
 	"GAME SPEED: "		=> 'Játék sebesség: ',
 	"GAME TIME: "		=> 'Játékidő: ',
 	"STAMINA: "			=> 'Állóképesség: ',
+	"BLOOD: "			=> "V\xC3\xA9r: ",
 	"~SOUND"			=> '~HANG',
 	"~RIGHT PLAYER KEYS"=> '~Jobb játékos gombjai',
 	"~LEFT PLAYER KEYS"	=> '~Bal játékos gombjai',
@@ -339,6 +343,8 @@ $::Hungarian = {  'LanguageCode' => 3,
 	"HIGH"				=> 'MAGAS',
 
 	"OFF"				=> 'NINCS',
+	"LIGHT"				=> "K\xC3\xB6nny\xC5\xB1",
+	"HEAVY"				=> "NEH\xC3\x89Z",
 
 # Key configuration
 
@@ -535,6 +541,7 @@ $::French = { 'LanguageCode' => 2,
 	"GAME SPEED: "		=> "Vitesse de jeu: ",
 	"GAME TIME: "		=> "Temps de jeu: ",
 	"STAMINA: "			=> "Vitalité: ",
+	"BLOOD: "			=> "Sang: ",
 	"~SOUND"			=> "SON",
 	"~RIGHT PLAYER KEYS"=> "Touches joueur droite",
 	"~LEFT PLAYER KEYS"	=> "Touches joueur gauche",
@@ -580,10 +587,12 @@ $::French = { 'LanguageCode' => 2,
 	"LOW"				=> "BAS",
 	"MEDIUM"			=> "MOYEN",
 	"HIGH"				=> "HAUT",
-	
+
 	# Sound volume
 	"OFF"				=> "OFF",
-	
+	"LIGHT"				=> "L\xC3\x89GER",
+	"HEAVY"				=> "LOURD",
+
 # Key configuration
 
 	'%s player-\'%s\'?'	=> '%s joueur-\'%s\'?',		# The first %s becomes Left or Right. The second %s is up/down/high punch/...
@@ -781,6 +790,7 @@ $::Spanish = { 'LanguageCode' => 1,
 	"GAME SPEED: "		=> "VELOCIDAD DEL JUEGO: ",
 	"GAME TIME: "		=> "TIEMPO DEL JUEGO: ",
 	"STAMINA: "			=> "STAMINA: ",
+	"BLOOD: "			=> "SANGRE: ",
 	"~SOUND"			=> "~SONIDO",
 	"~RIGHT PLAYER KEYS"=> "~TECLAS JUGADOR DERECHO",
 	"~LEFT PLAYER KEYS"	=> "~TECLAS JUGADOR IZQUIERDO",
@@ -829,7 +839,9 @@ $::Spanish = { 'LanguageCode' => 1,
 
 	# Sound volume
 	"OFF"				=> "OFF",
-	
+	"LIGHT"				=> "LEVE",
+	"HEAVY"				=> "PESADO",
+
 # Key configuration
 
 	'%s player-\'%s\'?'	=> '%s jugador-\'%s\'?',		# The first %s becomes Left or Right. The second %s is up/down/high punch/...
@@ -1027,6 +1039,7 @@ $::Portuguese = { 'LanguageCode' => 4,
 	"GAME SPEED: "			=> "VELOCIDADE DE JOGO: ",
 	"GAME TIME: "			=> "TEMPO DE JOGO: ",
 	"STAMINA: "			=> "RESISTÊNCIA: ",
+	"BLOOD: "			=> "SANGUE: ",
 	"~SOUND"			=> "~AUDIO",
 	"~RIGHT PLAYER KEYS"		=> "TECLAS, JOGADOR DA ~DIREITA",
 	"~LEFT PLAYER KEYS"		=> "TECLAS, JOGADOR DA ~ESQUERDA",
@@ -1076,7 +1089,9 @@ $::Portuguese = { 'LanguageCode' => 4,
 	
 	# Sound volume
 	"OFF"				=> "DESLIGADO",
-	
+	"LIGHT"				=> "LEVE",
+	"HEAVY"				=> "PESADO",
+
 # Key configuration
 
 	'%s player-\'%s\'?'	=> 'Jogador da %s-\'%s\'?',		# The first %s becomes Left or Right. The second %s is up/down/high punch/...

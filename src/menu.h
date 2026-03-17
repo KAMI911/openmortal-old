@@ -48,6 +48,7 @@ MENU_UNKNOWN,
 			MENU_GAME_SPEED,
 			MENU_GAME_TIME,			//	( :30 - 5:00 )
 			MENU_TOTAL_HIT_POINTS,	// ( 25 - 1000 )
+			MENU_GORE_LEVEL,		// 0=off 1=light 2=medium 3=heavy
 		MENU_SOUND,
 			MENU_CHANNELS,		// MONO / STEREO
 			MENU_MIXING_RATE,	// 11kHz / 22kHz / 44.1 kHz

@@ -34,6 +34,8 @@ const char* g_ppcHitPoints[] = { "BABY", "VERY LOW", "LOW", "NORMAL", "HIGH", "V
 const int g_piHitPoints[] = { 1, 10, 50, 100, 150, 200, 500 };
 const char* g_ppcGameSpeed[] = { "SNAIL RACE", "SLOW", "NORMAL", "TURBO", "KUNG-FU MOVIE", NULL };
 const int g_piGameSpeed[] = { 16, 14, 12, 10, 8 };
+const char* g_ppcGoreLevel[] = { "OFF", "LIGHT", "MEDIUM", "HEAVY", NULL };
+const int g_piGoreLevel[] = { 0, 1, 2, 3 };
 const char* g_ppcChannels[] = { "MONO", "STEREO", NULL };
 const int g_piChannels[] = { 1, 2 };
 const char* g_ppcMixingRate[] = { "LOW", "MEDIUM", "HIGH", NULL };
@@ -911,6 +913,7 @@ void Menu::ItemActivated( int a_iItemCode, MenuItem* a_poMenuItem )
 			poMenu->AddEnumMenuItem( "GAME SPEED: ", g_oState.m_iGameSpeed, g_ppcGameSpeed, g_piGameSpeed, MENU_GAME_SPEED );
 			poMenu->AddEnumMenuItem( "GAME TIME: ", g_oState.m_iGameTime, g_ppcGameTime, g_piGameTime, MENU_GAME_TIME );
 			poMenu->AddEnumMenuItem( "STAMINA: ", g_oState.m_iHitPoints, g_ppcHitPoints, g_piHitPoints, MENU_TOTAL_HIT_POINTS );
+			poMenu->AddEnumMenuItem( "BLOOD: ", g_oState.m_iGoreLevel, g_ppcGoreLevel, g_piGoreLevel, MENU_GORE_LEVEL );
 			poMenu->AddOkCancel( MENU_OPTIONS_OK );
 			InvokeSubmenu( poMenu );
 			delete poMenu;
@@ -1085,6 +1088,10 @@ void Menu::ItemChanged( int a_iItemCode, int a_iValue, MenuItem* a_poMenuItem )
 			
 		case MENU_TOTAL_HIT_POINTS:
 			g_oState.m_iHitPoints = a_iValue;
+			break;
+
+		case MENU_GORE_LEVEL:
+			g_oState.m_iGoreLevel = a_iValue;
 			break;
 
 		case MENU_LEVEL_SELECT:
