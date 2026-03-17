@@ -495,9 +495,25 @@ void Game::DrawDoodads()
 			continue;
 		}
 		
+		if ( roDoodad.m_iType == 6 )
+		{
+			// Blood drop: rendered as a filled rectangle.
+			// m_iFrame encodes visual size: 0=small(2px) 1=medium(4px) 2=large(6px)
+			static const int aSizes[] = { 2, 4, 6 };
+			int sz = aSizes[ roDoodad.m_iFrame < 3 ? roDoodad.m_iFrame : 0 ];
+			SDL_Rect rBlood;
+			rBlood.x = roDoodad.m_iX - sz / 2;
+			rBlood.y = roDoodad.m_iY + m_iYOffset - sz / 2;
+			rBlood.w = sz;
+			rBlood.h = sz;
+			SDL_FillRect( gamescreen, &rBlood,
+				SDL_MapRGB( gamescreen->format, 180, 10, 10 ) );
+			continue;
+		}
+
 		if ( roDoodad.m_iGfxOwner >= 0 )
 		{
-			g_oPlayerSelect.GetPlayerInfo(roDoodad.m_iGfxOwner).m_poPack->Draw( 
+			g_oPlayerSelect.GetPlayerInfo(roDoodad.m_iGfxOwner).m_poPack->Draw(
 				roDoodad.m_iFrame, roDoodad.m_iX, roDoodad.m_iY + m_iYOffset, roDoodad.m_iDir < 1 );
 			continue;
 		}
@@ -983,6 +999,7 @@ void Game::DoOneRound()
 		}
 	}
 	
+	g_oBackend.PerlEvalF( "$::GoreLevel = %d;", g_oState.m_iGoreLevel );
 	g_oBackend.PerlEvalF( "GameStart(%d,%d,%d,%d,%d);",
 		IsMaster() ? g_oState.m_iHitPoints : g_poNetwork->GetGameParams().iHitPoints,
 		g_oState.m_iNumPlayers,

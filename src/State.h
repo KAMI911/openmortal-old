@@ -68,6 +68,7 @@ struct SState
 	int		m_iGameTime;		// Time of rounds in seconds.
 	int		m_iHitPoints;		// The initial number of hit points.
 	int		m_iGameSpeed;		// The speed of the game (fps = 1000/GameSpeed)
+	int		m_iGoreLevel;		// Blood/gore level: 0=off 1=light 2=medium 3=heavy
 	
 	bool	m_bFullscreen;		// True in fullscreen mode.
 	

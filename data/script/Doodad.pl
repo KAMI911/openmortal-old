@@ -32,6 +32,7 @@ Doodad types are:
 3		UPi's explosion
 4		UPi's familiar
 5		Tooth
+6		Blood drop (rendered as SDL_FillRect in C++; F=0/1/2 → 2/4/6 px)
 
 =cut
 
@@ -86,6 +87,18 @@ package Doodad;
 	
 	'GFXOWNER' => 0,			'FIRSTFRAME' => 345,		'FRAMES' => 15,
 	'SA' => 1/2,
+},
+
+'BloodDrop' => {
+	'T'        => 6,			'HOSTILE'  => 0,			'LIFETIME' => 25,
+	'SIZE'     => [ 4, 4 ],		'SPEED'    => [ 0, -8 ],	'ACCEL'    => [ 0, 3 ],
+	'GFXOWNER' => -1,			'FIRSTFRAME' => 0,			'FRAMES'   => 3,
+	'SA'       => 0,
+	'INITCODE' => sub {
+		my ($self) = @_;
+		$self->{SPEED}->[0] = int(rand(20)) - 10;
+		$self->{SPEED}->[1] = -int(rand(10)) - 4;
+	},
 },
 
 'UPiFamiliar' => {

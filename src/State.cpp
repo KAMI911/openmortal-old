@@ -87,6 +87,7 @@ SState::SState()
 	m_iGameTime = 60;
 	m_iHitPoints = 100;
 	m_iGameSpeed = 12;
+	m_iGoreLevel = 0;
 
 	#ifdef _WIN32
 		#ifdef _DEBUG
@@ -310,6 +311,7 @@ void SState::Load()
 	poSv = get_sv("GAMETIME", FALSE); if (poSv) m_iGameTime = SvIV( poSv );
 	poSv = get_sv("HITPOINTS", FALSE); if (poSv) m_iHitPoints = SvIV( poSv );
 	poSv = get_sv("GAMESPEED", FALSE); if (poSv) m_iGameSpeed = SvIV( poSv );
+	poSv = get_sv("GORELEVEL", FALSE); if (poSv) m_iGoreLevel = SvIV( poSv );
 
 	poSv = get_sv("FULLSCREEN", FALSE); if (poSv) m_bFullscreen = SvIV( poSv );
 	poSv = get_sv("CHANNELS", FALSE); if (poSv) m_iChannels = SvIV( poSv );
@@ -360,6 +362,7 @@ void SState::Save()
 	oStream << "GAMETIME=" << m_iGameTime << '\n';
 	oStream << "HITPOINTS=" << m_iHitPoints << '\n';
 	oStream << "GAMESPEED=" << m_iGameSpeed << '\n';
+	oStream << "GORELEVEL=" << m_iGoreLevel << '\n';
 
 	oStream << "FULLSCREEN=" << m_bFullscreen << '\n';
 	oStream << "CHANNELS=" << m_iChannels << '\n';

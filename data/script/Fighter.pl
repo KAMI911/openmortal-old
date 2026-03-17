@@ -539,7 +539,22 @@ sub HitEvent($$$$)
 	# Hit point adjustment here.
 	
 	$self->{HP} -= $blocked ? $damage >> 3 : $damage;
-	
+
+	# Spawn blood drops for unblocked hits based on gore level.
+	if ( $::GoreLevel > 0 && !$blocked )
+	{
+		my $size  = ( $damage > 20 ) ? 2 : ( $damage > 10 ) ? 1 : 0;
+		my $drops = ( $::GoreLevel >= 3 ) ? $size + 2
+		          : ( $::GoreLevel >= 2 ) ? $size + 1
+		          :                         1;
+		my $bx = $self->{X};
+		my $by = $self->{Y} - 50 * $::GAMEBITS2;
+		for my $i ( 1 .. $drops ) {
+			my $drop = CreateDoodad( $bx, $by, 'BloodDrop', $self->{DIR}, $self->{NUMBER} );
+			$drop->{F} = $size if defined $drop;
+		}
+	}
+
 	# Turn if we must.
 
 	$self->{DIR} = ( $self->{X} > $other->{X} ) ? -1 : 1;
