@@ -165,6 +165,11 @@ static void init_data_dir()
 	GetModuleFileNameA(NULL, exe_path, MAX_PATH);
 	char* last_sep = strrchr(exe_path, '\\');
 	if ( last_sep ) *last_sep = '\0';
+	// If the exe lives in a "bin" subdirectory, step up one more level so
+	// that share\openmortal is found relative to the prefix root.
+	char* bin_sep = strrchr(exe_path, '\\');
+	if ( bin_sep && _stricmp(bin_sep + 1, "bin") == 0 )
+		*bin_sep = '\0';
 	snprintf(g_szDataDir, sizeof(g_szDataDir), "%s\\share\\openmortal", exe_path);
 	// Normalise backslashes so SDL/fopen paths work on Windows
 	for ( char* p = g_szDataDir; *p; ++p )
@@ -178,6 +183,8 @@ _sge_TTFont* titleFont;
 _sge_TTFont* chatFont;
 _sge_TTFont* bungeeSpiceFont;
 _sge_TTFont* comboFont;
+_sge_TTFont* rubikBubblesFont;
+_sge_TTFont* bigelowRulesFont;
 sge_bmpFont* fastFont;
 sge_bmpFont* creditsFont;
 sge_bmpFont* storyFont;
@@ -316,15 +323,18 @@ int init()
 	if ( !inkFont ) return -1;
 	impactFont = LoadTTF( "comic-neue-bold.otf", 20 );	// bradybun.ttf (no UTF-8)
 	if ( !impactFont ) return -1;
-	titleFont = LoadTTF( "RubikGlitch-Regular.ttf", 48 );	// deadgrit.ttf (no UTF-8)
+	titleFont = LoadTTF( "RubikGlitch-Regular.ttf", 36 );	// deadgrit.ttf (no UTF-8)
 	if ( !titleFont ) return -1;
 	chatFont = LoadTTF( "dejavu-thin.ttf", 20 );	// thin.ttf (no UTF-8)
 	if ( !chatFont ) return -1;
-	bungeeSpiceFont = LoadTTF( "BungeeSpice-Regular.ttf", 20 );
+	bungeeSpiceFont = LoadTTF( "Eater-Regular.ttf", 20 );
 	if ( !bungeeSpiceFont ) return -1;
-	comboFont = LoadTTF( "Combo-Regular.ttf", 18 );
+	comboFont = LoadTTF( "Jaini-Regular.ttf", 18 );
 	if ( !comboFont ) return -1;
-
+	rubikBubblesFont = LoadTTF( "RubikBubbles-Regular.ttf", 20 );
+	if ( !rubikBubblesFont ) return -1;
+	bigelowRulesFont = LoadTTF( "CherryBombOne-Regular.ttf", 12 );
+	if ( !bigelowRulesFont ) return -1;
 	fastFont = LoadBMPFont( "brandybun3.png" );
 	if ( !fastFont ) return -1;
 	creditsFont = LoadBMPFont( "CreditsFont2.png" );//"fangfont.png" );
