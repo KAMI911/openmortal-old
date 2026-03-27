@@ -13,6 +13,7 @@
 #include "State.h"
 
 #include <string>
+#include <vector>
 #include <stdarg.h>
 #include "MszPerl.h"
 
@@ -157,13 +158,17 @@ bool Backend::Construct()
 	std::string sFileName = MSZ_DATADIR;
 	sFileName += "/script";
 
-#ifndef _WIN32
+#ifdef _WIN32
+	std::string sBackendFile = sFileName + "/Backend.pl";
+	std::vector<char> vBackendFile( sBackendFile.begin(), sBackendFile.end() );
+	vBackendFile.push_back( '\0' );
+	char *perl_argv[] = { (char*)"", vBackendFile.data() };
+#else
 	chdir( sFileName.c_str() );
-#endif
-	
 //	char *perl_argv[] = {"", "-d:Trace", "Backend.pl"};
 //	int perl_argc = 3;
-	char *perl_argv[] = {"", "Backend.pl"};
+	char *perl_argv[] = { (char*)"", (char*)"Backend.pl" };
+#endif
 	int perl_argc = 2;
 	my_perl = perl_alloc();
 	if ( my_perl == NULL )
