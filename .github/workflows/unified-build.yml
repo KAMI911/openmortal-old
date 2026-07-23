@@ -2,11 +2,11 @@ name: OpenMortal Unified Multi-Platform Build
 
 on:
   push:
-    branches: [ upgrade, main ]
+    branches: [ upgrade, master ]
     tags:
       - "v*.*.*"
   pull_request:
-    branches: [ upgrade, main ]
+    branches: [ upgrade, master ]
   workflow_dispatch:
 
 env:

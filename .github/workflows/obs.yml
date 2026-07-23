@@ -2,7 +2,7 @@ name: OpenSUSE Build Service Integration
 
 on:
   push:
-    branches: [ upgrade, main ]
+    branches: [ upgrade, master ]
     tags:
       - "v*.*.*"
   workflow_dispatch:
