@@ -31,6 +31,7 @@ Usage:
 import asyncio
 import argparse
 import dataclasses
+import hmac
 import http.server
 import json
 import logging
@@ -49,6 +50,7 @@ from typing import Dict, List, Optional, Set, Tuple
 CHAT_PORT_DEFAULT = 14883
 WEB_PORT_DEFAULT  = 8080
 MAX_LINE_BYTES    = 1024
+MAX_WRITE_BUFFER  = 64 * 1024  # bytes — disconnect clients that fall this far behind
 NICK_REGEX        = re.compile(r'^[a-zA-Z0-9_\-]{1,20}$')
 IDLE_TIMEOUT      = 300.0   # seconds — sliding read deadline
 WRITE_TIMEOUT     = 30.0    # seconds — per-write deadline
@@ -141,8 +143,9 @@ class MortalNetServer:
         self._history:     List[str]                  = []
         self._banned_ips:  Set[str]                   = set()
         self._start_time   = time.monotonic()
-        self._lock         = threading.Lock()
-        self._snapshot_data: dict = {}
+        # Event loop running the chat server; the HTTP thread submits
+        # snapshot/stats reads to it so all state stays loop-owned.
+        self._loop: Optional[asyncio.AbstractEventLoop] = None
         # Metrics (in-process counters)
         self._metrics = {
             "connections_total":  0,
@@ -163,7 +166,8 @@ class MortalNetServer:
     # ------------------------------------------------------------------
 
     async def start(self) -> None:
-        host, port = _split_addr(self._cfg.chat_addr)
+        self._loop = asyncio.get_running_loop()
+        host, port = _split_addr(self._cfg.chat_addr, CHAT_PORT_DEFAULT)
 
         ssl_ctx = None
         if self._cfg.tls_cert and self._cfg.tls_key:
@@ -279,8 +283,9 @@ class MortalNetServer:
             if not client.nick_confirmed and prefix not in ("N", "L"):
                 continue
 
-            # Rate-limit message-producing commands
-            if prefix in ("M", "C", "W", "T"):
+            # Rate-limit message-producing commands. "N" is included because
+            # every nick change is broadcast, "A" to slow password guessing.
+            if prefix in ("M", "C", "W", "T", "N", "A"):
                 if not client.bucket.consume():
                     client.strikes += 1
                     logging.debug("Client %d rate-limited (strike %d)", client.id, client.strikes)
@@ -349,7 +354,6 @@ class MortalNetServer:
             # 5. Announce new client to everyone else
             self._broadcast(f"J{new_nick} {client.ip}", exclude_id=client.id)
             logging.info("Client %d registered as '%s' from %s", client.id, new_nick, client.ip)
-            self._update_snapshot()
 
     async def _on_message(self, client: Client, text: str) -> None:
         text = _sanitize(text)
@@ -436,7 +440,7 @@ class MortalNetServer:
         password, cmd = parts[0], parts[1].lower()
         args = parts[2].strip() if len(parts) > 2 else ""
 
-        if password != self._cfg.admin_password:
+        if not hmac.compare_digest(password, self._cfg.admin_password):
             self._send(client, "SInvalid admin password.")
             logging.warning("Failed admin attempt from '%s' (%s)", client.nick, client.ip)
             return
@@ -518,8 +522,6 @@ class MortalNetServer:
         except Exception:
             pass
 
-        self._update_snapshot()
-
     # ------------------------------------------------------------------
     # I/O helpers
     # ------------------------------------------------------------------
@@ -527,16 +529,15 @@ class MortalNetServer:
     def _send(self, client: Client, msg: str) -> None:
         try:
             client.writer.write((msg + "\n").encode("utf-8"))
-            loop = asyncio.get_event_loop()
-            loop.create_task(self._drain(client))
+            # Backpressure: a client that stops reading would otherwise
+            # buffer unbounded data in memory — disconnect it instead.
+            transport = client.writer.transport
+            if (transport is not None
+                    and transport.get_write_buffer_size() > MAX_WRITE_BUFFER):
+                logging.warning("Client %d send buffer full, disconnecting", client.id)
+                client.writer.close()
         except Exception as exc:
             logging.debug("Send to client %d failed: %s", client.id, exc)
-
-    async def _drain(self, client: Client) -> None:
-        try:
-            await asyncio.wait_for(client.writer.drain(), timeout=WRITE_TIMEOUT)
-        except Exception:
-            pass
 
     def _broadcast(self, msg: str, exclude_id: Optional[int] = None) -> None:
         for client in list(self._clients.values()):
@@ -669,7 +670,8 @@ class MortalNetServer:
     # Snapshot & metrics (thread-safe for HTTP thread)
     # ------------------------------------------------------------------
 
-    def _update_snapshot(self) -> None:
+    def _build_snapshot(self) -> dict:
+        """Must run on the event loop thread."""
         now     = time.monotonic()
         players = [
             {
@@ -682,19 +684,35 @@ class MortalNetServer:
             for c in self._clients.values()
             if c.nick_confirmed
         ]
-        data = {
+        return {
             "uptime_seconds": int(now - self._start_time),
             "player_count":   len(players),
             "players":        players,
             "metrics":        dict(self._metrics),
         }
-        with self._lock:
-            self._snapshot_data = data
+
+    def _run_on_loop(self, fn):
+        """Execute fn() on the event loop thread and return its result.
+
+        Called from the HTTP thread; all server state is owned by the
+        event loop, so reads must be serialized through it.
+        """
+        loop = self._loop
+        if loop is None or loop.is_closed():
+            return None
+
+        async def call():
+            return fn()
+
+        fut = asyncio.run_coroutine_threadsafe(call(), loop)
+        return fut.result(timeout=5.0)
 
     def snapshot(self) -> dict:
-        self._update_snapshot()
-        with self._lock:
-            return dict(self._snapshot_data)
+        data = self._run_on_loop(self._build_snapshot)
+        return data if data is not None else {
+            "uptime_seconds": 0, "player_count": 0, "players": [],
+            "metrics": dict(self._metrics),
+        }
 
     def metrics_text(self) -> str:
         """Prometheus exposition format."""
@@ -733,7 +751,10 @@ class MortalNetServer:
         return "\n".join(lines)
 
     def stats(self) -> dict:
-        return dict(self._stats)
+        # Deep-copy on the loop thread so the HTTP thread never sees
+        # a dict that is being mutated.
+        data = self._run_on_loop(lambda: json.loads(json.dumps(self._stats)))
+        return data if data is not None else {}
 
 
 # ---------------------------------------------------------------------------
@@ -854,8 +875,9 @@ def _make_handler(server: MortalNetServer):
 
 
 def _run_dashboard(server: MortalNetServer, cfg: Config) -> None:
-    host, port = _split_addr(cfg.web_addr)
-    httpd = http.server.HTTPServer((host or "0.0.0.0", port), _make_handler(server))
+    host, port = _split_addr(cfg.web_addr, WEB_PORT_DEFAULT)
+    httpd = http.server.ThreadingHTTPServer(
+        (host or "0.0.0.0", port), _make_handler(server))
     logging.info("MortalNet dashboard listening on %s:%s", host or "0.0.0.0", port)
     httpd.serve_forever()
 
@@ -864,11 +886,11 @@ def _run_dashboard(server: MortalNetServer, cfg: Config) -> None:
 # Utilities
 # ---------------------------------------------------------------------------
 
-def _split_addr(addr: str):
+def _split_addr(addr: str, default_port: int):
     if addr.startswith(":"):
         return "", int(addr[1:])
     parts = addr.rsplit(":", 1)
-    return (parts[0], int(parts[1])) if len(parts) == 2 else (addr, CHAT_PORT_DEFAULT)
+    return (parts[0], int(parts[1])) if len(parts) == 2 else (addr, default_port)
 
 
 def _sanitize(text: str) -> str:

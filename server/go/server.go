@@ -3,6 +3,8 @@ package main
 import (
 	"bufio"
 	"context"
+	"crypto/subtle"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"log/slog"
@@ -303,8 +305,10 @@ func (h *Hub) handleMessage(c *Client, msg *ClientMessage) {
 		return
 	}
 
-	// Rate-limit message-producing commands
-	if msg.Prefix == 'M' || msg.Prefix == 'C' || msg.Prefix == 'W' || msg.Prefix == 'T' {
+	// Rate-limit message-producing commands. 'N' is included because every
+	// nick change is broadcast, and 'A' to slow down password guessing.
+	if msg.Prefix == 'M' || msg.Prefix == 'C' || msg.Prefix == 'W' || msg.Prefix == 'T' ||
+		msg.Prefix == 'N' || msg.Prefix == 'A' {
 		c.mu.Lock()
 		allowed := c.consumeToken(h.cfg)
 		if !allowed {
@@ -367,9 +371,8 @@ func (h *Hub) onNick(c *Client, requested string) {
 		c.confirmed = true
 		c.mu.Unlock()
 
-		// Stats
+		// Stats (TotalConnections is already counted in handleJoin)
 		h.touchPlayerStat(newNick, "connect_count")
-		h.stats.TotalConnections++
 		h.saveStats()
 
 		// 1. Confirm nick
@@ -545,7 +548,7 @@ func (h *Hub) onAdmin(c *Client, content string) {
 		args = strings.TrimSpace(parts[2])
 	}
 
-	if password != h.cfg.AdminPassword {
+	if subtle.ConstantTimeCompare([]byte(password), []byte(h.cfg.AdminPassword)) != 1 {
 		c.mu.Lock()
 		nick := c.nick
 		c.mu.Unlock()
@@ -787,11 +790,21 @@ func (h *Hub) loadBanList() {
 // ---------------------------------------------------------------------------
 
 func RunTCPListener(ctx context.Context, cfg *Config, hub *Hub, wg *sync.WaitGroup) error {
-	ln, err := net.Listen("tcp", cfg.ChatAddr)
+	var ln net.Listener
+	var err error
+	if cfg.TLSCert != "" && cfg.TLSKey != "" {
+		cert, certErr := tls.LoadX509KeyPair(cfg.TLSCert, cfg.TLSKey)
+		if certErr != nil {
+			return fmt.Errorf("loading TLS key pair: %w", certErr)
+		}
+		ln, err = tls.Listen("tcp", cfg.ChatAddr, &tls.Config{Certificates: []tls.Certificate{cert}})
+	} else {
+		ln, err = net.Listen("tcp", cfg.ChatAddr)
+	}
 	if err != nil {
 		return err
 	}
-	slog.Info("MortalNet chat server listening", "addr", ln.Addr())
+	slog.Info("MortalNet chat server listening", "addr", ln.Addr(), "tls", cfg.TLSCert != "")
 
 	go func() { <-ctx.Done(); ln.Close() }()
 

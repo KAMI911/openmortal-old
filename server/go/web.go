@@ -19,7 +19,7 @@ const dashboardHTML = `<!DOCTYPE html>
 <style>
   body { font-family: monospace; background: #111; color: #ccc; padding: 2em; }
   h1 { color: #f80; }
-  table { border-collapse: collapse; width: 100%; margin-bottom: 2em; }
+  table { border-collapse: collapse; width: 100%%; margin-bottom: 2em; }
   th, td { border: 1px solid #444; padding: 0.4em 0.8em; text-align: left; }
   th { color: #f80; background: #222; }
   tr:nth-child(even) { background: #1a1a1a; }

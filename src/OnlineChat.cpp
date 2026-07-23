@@ -493,7 +493,7 @@ void COnlineChat::ReceiveUser( char a_cID, char* a_pcData )
 	switch ( a_cID )
 	{
 	case 'J':
-		sprintf( acMsg, "*** %s has joined MortalChat from %s.", pcFirstWord, pcSecondWord );
+		snprintf( acMsg, sizeof(acMsg), "*** %s has joined MortalChat from %s.", pcFirstWord, pcSecondWord );
 		if ( strcmp( pcFirstWord, g_oState.m_acNick ) != 0 )
 		{
 			m_asNicks[ pcFirstWord ] = pcSecondWord;
@@ -501,7 +501,7 @@ void COnlineChat::ReceiveUser( char a_cID, char* a_pcData )
 		break;
 	case 'L':
 	{
-		sprintf( acMsg, "*** %s has left MortalChat.", pcFirstWord );
+		snprintf( acMsg, sizeof(acMsg), "*** %s has left MortalChat.", pcFirstWord );
 		iColor = C_LIGHTRED;
 		m_asNicks.erase( pcFirstWord );
 		debug( "# of Nicks: %d\n", m_asNicks.size() );
@@ -509,7 +509,7 @@ void COnlineChat::ReceiveUser( char a_cID, char* a_pcData )
 	}
 	case 'N':
 	{
-		sprintf( acMsg, "%s is now known as %s", pcFirstWord, pcSecondWord );
+		snprintf( acMsg, sizeof(acMsg), "%s is now known as %s", pcFirstWord, pcSecondWord );
 		iColor = C_LIGHTGRAY;
 		std::string sHost = m_asNicks[pcFirstWord];
 		m_asNicks.erase( pcFirstWord );
@@ -517,7 +517,7 @@ void COnlineChat::ReceiveUser( char a_cID, char* a_pcData )
 		break;
 	}
 	case 'Y':
-		sprintf( acMsg, "You are now known as %s", pcFirstWord );
+		snprintf( acMsg, sizeof(acMsg), "You are now known as %s", pcFirstWord );
 		iColor = C_LIGHTCYAN;
 
 		m_bMyNickIsOk = true;
@@ -528,7 +528,7 @@ void COnlineChat::ReceiveUser( char a_cID, char* a_pcData )
 		g_oState.m_acNick[127] = 0;
 		break;
 	case 'W':
-		sprintf( acMsg, "%s is hailing from %s", pcFirstWord, pcSecondWord );
+		snprintf( acMsg, sizeof(acMsg), "%s is hailing from %s", pcFirstWord, pcSecondWord );
 		iColor = C_LIGHTGRAY;
 		m_asNicks[ pcFirstWord ] = pcSecondWord;
 		break;

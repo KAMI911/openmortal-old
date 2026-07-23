@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net"
@@ -9,6 +10,8 @@ import (
 	"sync/atomic"
 	"time"
 )
+
+var errLineTooLong = errors.New("line exceeds maximum length")
 
 const (
 	maxLineBytes = 1024
@@ -70,18 +73,16 @@ func (c *Client) readPump(hub *Hub, cfg *Config) {
 
 		if !scanner.Scan() {
 			if err := scanner.Err(); err != nil {
-				slog.Debug("client read error", "client", c.id, "err", err)
+				if errors.Is(err, errLineTooLong) {
+					slog.Warn("oversized line, disconnecting", "client", c.id)
+				} else {
+					slog.Debug("client read error", "client", c.id, "err", err)
+				}
 			}
 			return
 		}
 
-		raw := scanner.Bytes()
-		if len(raw) > maxLineBytes {
-			slog.Warn("oversized line, disconnecting", "client", c.id)
-			return
-		}
-
-		msg := ParseLine(raw)
+		msg := ParseLine(scanner.Bytes())
 		if msg == nil {
 			continue
 		}
@@ -118,7 +119,10 @@ func (c *Client) enqueue(msg string, hub *Hub) {
 	select {
 	case c.send <- msg:
 	default:
-		slog.Warn("send buffer full, disconnecting", "client", c.id, "nick", c.nick)
+		c.mu.Lock()
+		nick := c.nick
+		c.mu.Unlock()
+		slog.Warn("send buffer full, disconnecting", "client", c.id, "nick", nick)
 		c.conn.Close()
 	}
 }
@@ -141,6 +145,8 @@ func (c *Client) consumeToken(cfg *Config) bool {
 }
 
 // scanLines splits on '\n', strips '\r', enforces maxLineBytes.
+// An oversized line is a protocol violation: fail the scan instead of
+// truncating, so the remainder can never be parsed as a fresh command.
 func scanLines(data []byte, atEOF bool) (advance int, token []byte, err error) {
 	for i, b := range data {
 		if b == '\n' {
@@ -151,10 +157,13 @@ func scanLines(data []byte, atEOF bool) (advance int, token []byte, err error) {
 			return i + 1, line, nil
 		}
 		if i >= maxLineBytes {
-			return i + 1, data[:i], nil
+			return 0, nil, errLineTooLong
 		}
 	}
 	if atEOF && len(data) > 0 {
+		if len(data) > maxLineBytes {
+			return 0, nil, errLineTooLong
+		}
 		return len(data), data, nil
 	}
 	return 0, nil, nil
