@@ -60,11 +60,14 @@ AllowNoIcons=yes
 ArchitecturesInstallIn64BitMode=x64compatible arm64
 
 ; Output
-OutputDir={#SourceDir}\..\installer
+; NOTE: relative to this script's own folder (packaging\), not SourceDir —
+; SourceDir points at the per-arch staged package tree, which doesn't
+; contain openmortal.ico or the installer\ output folder.
+OutputDir={#SourcePath}installer
 OutputBaseFilename=openmortal-{#AppVersion}-windows-{#AppArch}-setup
 
 ; Visuals
-SetupIconFile={#SourceDir}\..\openmortal.ico
+SetupIconFile={#SourcePath}openmortal.ico
 WizardStyle=modern
 WizardResizable=yes
 
