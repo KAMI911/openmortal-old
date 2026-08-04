@@ -60,7 +60,14 @@ jobs:
             tar xzf "/tmp/${repo}.tar.gz" -C "/tmp/${repo}" --strip-components=1
             (
               cd "/tmp/${repo}"
-              autoreconf -i -f
+              # SDL_image/mixer/net tags ship a pre-generated configure; only
+              # bare SDL-1.2 needs autoreconf. Its configure.in references
+              # AM_PATH_ALSA/AM_PATH_ESD from acinclude/, which plain
+              # autoreconf won't find without -I (those backends aren't used
+              # on macOS anyway — this just lets the macros expand).
+              if [ ! -x ./configure ]; then
+                autoreconf -i -f -I acinclude
+              fi
               ./configure --prefix="${SDL_PREFIX}"
               make -j"$(sysctl -n hw.logicalcpu)"
               make install

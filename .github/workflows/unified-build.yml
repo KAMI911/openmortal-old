@@ -210,7 +210,13 @@ jobs:
                     tar xzf "/tmp/${repo}.tar.gz" -C "/tmp/${repo}" --strip-components=1
                     (
                       cd "/tmp/${repo}"
-                      autoreconf -i -f
+                      # SDL_image/mixer/net tags ship a pre-generated
+                      # configure; only bare SDL-1.2 needs autoreconf, and
+                      # its configure.in needs -I acinclude to find the
+                      # AM_PATH_ALSA/AM_PATH_ESD macros it references.
+                      if [ ! -x ./configure ]; then
+                        autoreconf -i -f -I acinclude
+                      fi
                       ./configure --prefix=/usr
                       make -j"$(nproc)"
                       make install
