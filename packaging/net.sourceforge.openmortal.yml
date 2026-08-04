@@ -65,7 +65,7 @@ modules:
       - type: git
         url: https://github.com/libsdl-org/SDL-1.2.git
         tag: release-1.2.15
-        commit: c4d8b72e2a70ddf96a5e08f0e5f38a5fb6709e8f
+        commit: 457d4e55ffe1b6ad4c4fa4559dbda8360bf8253d
     cleanup:
       - /bin/sdl-config
       - /share/aclocal
@@ -77,7 +77,7 @@ modules:
       - type: git
         url: https://github.com/libsdl-org/SDL_image.git
         tag: release-1.2.12
-        commit: 5d1e3e8fe2cca4e1edeefd3b42ed0e51e3e93c30
+        commit: 220be3fd43a85921138072ed847b7e4bc5ad163e
     cleanup:
       - /share/aclocal
 
@@ -88,7 +88,7 @@ modules:
       - type: git
         url: https://github.com/libsdl-org/SDL_mixer.git
         tag: release-1.2.12
-        commit: 97c502e02f7a45e37e5c0cb6c0dad5a4f7daef04
+        commit: 1a14d94ed4271e45435ecb5512d61792e1a42932
     cleanup:
       - /share/aclocal
 
@@ -99,7 +99,7 @@ modules:
       - type: git
         url: https://github.com/libsdl-org/SDL_net.git
         tag: release-1.2.8
-        commit: 0a90a8e1db8e4c05a41b05e2f9c7b9571db6a8eb
+        commit: 7aa8ffae32fda6455792c5538a8b64a655dd0721
     cleanup:
       - /share/aclocal
 

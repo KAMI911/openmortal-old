@@ -57,7 +57,7 @@ AllowNoIcons=yes
 
 ; 64-bit builds install into 64-bit Program Files; 32-bit builds use the
 ; 32-bit location automatically because autopf respects the installer arch.
-ArchitecturesInstallIn64BitMode=x64compatible arm64compatible
+ArchitecturesInstallIn64BitMode=x64compatible arm64
 
 ; Output
 OutputDir={#SourceDir}\..\installer

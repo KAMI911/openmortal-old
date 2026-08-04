@@ -106,7 +106,8 @@ jobs:
   linux-i386:
     runs-on: ubuntu-latest
     container:
-      image: i386/ubuntu:22.04
+      # Ubuntu dropped i386 images after 20.04; 20.04 is the newest available.
+      image: i386/ubuntu:20.04
     env:
       DEBIAN_FRONTEND: noninteractive
       PLATFORM: i386
@@ -258,6 +259,7 @@ jobs:
         # arm32v7/debian:12 runs transparently via binfmt_misc QEMU
         run: |
           docker run --rm \
+            --platform=linux/arm/v7 \
             -v "$PWD":/workspace \
             -w /workspace \
             -e DEBIAN_FRONTEND=noninteractive \
