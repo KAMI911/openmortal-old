@@ -10,16 +10,20 @@ URL:            https://github.com/KAMI911/openmortal-old
 Source0:        https://github.com/KAMI911/openmortal-old/archive/refs/heads/upgrade.tar.gz
 
 
-%if 0%{?rhel} >= 8
-BuildRequires:	compat-sdl12-devel
+%if 0%{?fedora}
+# Fedora dropped the plain SDL-devel package; sdl12-compat-devel (SDL 1.2
+# API on top of SDL2) is what SDL_image/mixer/net-devel depend on there.
+BuildRequires:	sdl12-compat-devel
 %else
+# EL8 still ships a real SDL-devel. EL9 has neither this nor
+# sdl12-compat-devel — the whole SDL 1.2 stack has to be built from source
+# there (see .github/workflows/unified-build.yml, sdl_mode: source).
 BuildRequires:	SDL-devel
 %endif
 
 BuildRequires:	SDL_image-devel
 BuildRequires:	SDL_mixer-devel
 BuildRequires:	SDL_net-devel
-BuildRequires:	SDL_ttf-devel
 
 BuildRequires:	freetype2-devel
 BuildRequires:	libnsl-devel

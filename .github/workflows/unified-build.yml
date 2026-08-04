@@ -117,21 +117,36 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # Fedora dropped the plain "SDL-devel" package; sdl12-compat-devel
+          # (SDL 1.2 API on top of SDL2) is what SDL_image/mixer/net-devel
+          # now depend on there.
           - distro: fedora:41
             pkg_manager: dnf
+            sdl_mode: compat
           - distro: fedora:42
             pkg_manager: dnf
+            sdl_mode: compat
           - distro: fedora:43
             pkg_manager: dnf
+            sdl_mode: compat
           - distro: almalinux:8
             pkg_manager: dnf
+            sdl_mode: repo
+          # EL9's EPEL SDL_image/mixer/net-devel packages all depend on a
+          # "SDL-devel >= 1.2.x" that EPEL9 simply doesn't ship (neither the
+          # classic package nor a sdl12-compat-devel exist there), so dnf
+          # can't install any of them — build the whole SDL 1.2 stack from
+          # source instead (versions matched to the flatpak manifest).
           - distro: almalinux:9
             pkg_manager: dnf
+            sdl_mode: source
           - distro: rockylinux:8
             pkg_manager: dnf
+            sdl_mode: repo
           - distro: rockylinux:9
             pkg_manager: dnf
-    
+            sdl_mode: source
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -147,15 +162,16 @@ jobs:
         run: |
           docker run --rm \
             -v "$PWD":/workspace \
+            -e SDL_MODE="${{ matrix.sdl_mode }}" \
             ${{ matrix.distro }} \
             /bin/bash -c '
               set -euo pipefail
-              
+
               # Install EPEL for RHEL clones if needed
               if [[ "${{ matrix.distro }}" == almalinux* ]] || [[ "${{ matrix.distro }}" == rockylinux* ]]; then
                 ${{ matrix.pkg_manager }} install -y epel-release
               fi
-              
+
               # Install build dependencies
               ${{ matrix.pkg_manager }} install -y \
                 rpm-build \
@@ -167,15 +183,42 @@ jobs:
                 libtool \
                 pkgconfig \
                 perl-devel \
-                SDL-devel \
-                SDL_image-devel \
-                SDL_mixer-devel \
-                SDL_net-devel \
-                SDL_ttf-devel \
                 freetype-devel \
                 tar \
-                gzip
-              
+                gzip \
+                curl
+
+              case "${SDL_MODE}" in
+                repo)
+                  ${{ matrix.pkg_manager }} install -y \
+                    SDL-devel SDL_image-devel SDL_mixer-devel SDL_net-devel
+                  ;;
+                compat)
+                  ${{ matrix.pkg_manager }} install -y \
+                    sdl12-compat-devel SDL_image-devel SDL_mixer-devel SDL_net-devel
+                  ;;
+                source)
+                  # No usable SDL 1.2 devel packages on this distro at all —
+                  # build straight into /usr so pkg-config/%configure finds
+                  # it exactly like a system install would.
+                  for pair in "SDL-1.2:release-1.2.15" "SDL_image:release-1.2.12" "SDL_mixer:release-1.2.12" "SDL_net:release-1.2.8"; do
+                    repo="${pair%%:*}"
+                    tag="${pair##*:}"
+                    curl -fsSL -o "/tmp/${repo}.tar.gz" \
+                      "https://github.com/libsdl-org/${repo}/archive/refs/tags/${tag}.tar.gz"
+                    mkdir -p "/tmp/${repo}"
+                    tar xzf "/tmp/${repo}.tar.gz" -C "/tmp/${repo}" --strip-components=1
+                    (
+                      cd "/tmp/${repo}"
+                      autoreconf -i -f
+                      ./configure --prefix=/usr
+                      make -j"$(nproc)"
+                      make install
+                    )
+                  done
+                  ;;
+              esac
+
               # Copy source to build directory
               cp -r /workspace /build
               cd /build
