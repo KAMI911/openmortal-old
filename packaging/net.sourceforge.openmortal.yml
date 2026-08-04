@@ -29,6 +29,11 @@ modules:
   # We build a shared Perl so that libperl.so can be bundled in the Flatpak.
   - name: perl
     buildsystem: simple
+    # Perl installs some .so modules (e.g. auto/threads/threads.so) read-only
+    # by design; flatpak-builder's debuginfo extraction needs to rewrite
+    # those files in place and fails with EACCES. Debug symbols for the
+    # embedded Perl runtime aren't useful inside the sandboxed app anyway.
+    no-debuginfo: true
     build-commands:
       - >
         ./Configure -des
