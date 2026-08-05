@@ -94,6 +94,7 @@ protected:
 	void DrawHitPointDisplays();
 	void DrawBackground();
 	void DrawDoodads();
+	void DrawGroundDoodads();
 	void DrawPoly( const char* a_pcName, int a_iColor );
 	void AddBodyToBackground( int a_iPlayer );
 	

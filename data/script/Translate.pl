@@ -297,7 +297,7 @@ $::Hungarian = {  'LanguageCode' => 3,
 	"GAME SPEED: "		=> 'Játék sebesség: ',
 	"GAME TIME: "		=> 'Játékidő: ',
 	"STAMINA: "			=> 'Állóképesség: ',
-	"BLOOD: "			=> "V\xC3\xA9r: ",
+	"BLOOD: "			=> "Vér: ",
 	"~SOUND"			=> '~HANG',
 	"~RIGHT PLAYER KEYS"=> '~Jobb játékos gombjai',
 	"~LEFT PLAYER KEYS"	=> '~Bal játékos gombjai',
@@ -343,8 +343,11 @@ $::Hungarian = {  'LanguageCode' => 3,
 	"HIGH"				=> 'MAGAS',
 
 	"OFF"				=> 'NINCS',
-	"LIGHT"				=> "K\xC3\xB6nny\xC5\xB1",
-	"HEAVY"				=> "NEH\xC3\x89Z",
+	"LIGHT"				=> "Könnyű",
+	"HEAVY"				=> "Nehéz",
+	"MATINEE"			=> "MATINÉ",
+	"BRUTAL"			=> "BRUTÁLIS",
+	"BLOODBATH"			=> "FÜRDŐ",
 
 # Key configuration
 
@@ -590,8 +593,11 @@ $::French = { 'LanguageCode' => 2,
 
 	# Sound volume
 	"OFF"				=> "OFF",
-	"LIGHT"				=> "L\xC3\x89GER",
+	"LIGHT"				=> "LÉGER",
 	"HEAVY"				=> "LOURD",
+	"MATINEE"			=> "MATINÉE",
+	"BRUTAL"			=> "BRUTAL",
+	"BLOODBATH"			=> "BAIN DE SANG",
 
 # Key configuration
 
@@ -841,6 +847,9 @@ $::Spanish = { 'LanguageCode' => 1,
 	"OFF"				=> "OFF",
 	"LIGHT"				=> "LEVE",
 	"HEAVY"				=> "PESADO",
+	"MATINEE"			=> "MATINÉE",
+	"BRUTAL"			=> "BRUTAL",
+	"BLOODBATH"			=> "BAÑO DE SANGRE",
 
 # Key configuration
 
@@ -1091,6 +1100,9 @@ $::Portuguese = { 'LanguageCode' => 4,
 	"OFF"				=> "DESLIGADO",
 	"LIGHT"				=> "LEVE",
 	"HEAVY"				=> "PESADO",
+	"MATINEE"			=> "MATINÉE",
+	"BRUTAL"			=> "BRUTAL",
+	"BLOODBATH"			=> "BANHO DE SANGUE",
 
 # Key configuration
 

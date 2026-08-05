@@ -33,6 +33,7 @@ Doodad types are:
 4		UPi's familiar
 5		Tooth
 6		Blood drop (rendered as SDL_FillRect in C++; F=0/1/2 → 2/4/6 px)
+7		Blood pool (flat ellipse on ground; F=base_size*100+life_pct, fades over 240 ticks)
 
 =cut
 
@@ -90,7 +91,7 @@ package Doodad;
 },
 
 'BloodDrop' => {
-	'T'        => 6,			'HOSTILE'  => 0,			'LIFETIME' => 25,
+	'T'        => 6,			'HOSTILE'  => 0,			'LIFETIME' => 60,
 	'SIZE'     => [ 4, 4 ],		'SPEED'    => [ 0, -8 ],	'ACCEL'    => [ 0, 3 ],
 	'GFXOWNER' => -1,			'FIRSTFRAME' => 0,			'FRAMES'   => 3,
 	'SA'       => 0,
@@ -98,6 +99,48 @@ package Doodad;
 		my ($self) = @_;
 		$self->{SPEED}->[0] = int(rand(20)) - 10;
 		$self->{SPEED}->[1] = -int(rand(10)) - 4;
+	},
+	'UPDATECODE' => sub {
+		my ($self) = @_;
+		my $dead = MoveDoodad($self);
+		return 1 if $dead;
+		# Stop at visual ground and spawn a blood pool
+		if ( $self->{POS}->[1] >= 440 * $::GAMEBITS2 ) {
+			my $cx = $self->{POS}->[0] + $self->{SIZE}->[0] * $::GAMEBITS2 / 2;
+			my $pool = CreateDoodad( $cx, 440 * $::GAMEBITS2, 'BloodPool', 1, $self->{OWNER} );
+			if ( defined $pool ) {
+				my $bs = int($self->{F});
+				$bs = 2 if $::GoreLevel >= 3 && $bs < 2;
+				$pool->{F}     = $bs;
+				$pool->{_gore} = $::GoreLevel;
+			}
+			return 1;
+		}
+		return 0;
+	},
+},
+
+'BloodPool' => {
+	'T'        => 7,			'HOSTILE'  => 0,			'LIFETIME' => -1,
+	'SIZE'     => [ 1, 1 ],		'SPEED'    => [ 0, 0 ],		'ACCEL'    => [ 0, 0 ],
+	'GFXOWNER' => -1,			'FIRSTFRAME' => 0,			'FRAMES'   => 1,
+	'SA'       => 0,
+	'UPDATECODE' => sub {
+		my ($self) = @_;
+		# Lazy init: F holds base_size (0/1/2) until first UPDATECODE call
+		unless ( defined $self->{_life} ) {
+			$self->{_basesize} = ( $self->{F} < 3 ) ? int($self->{F}) : 2;
+			my $gore = $self->{_gore} // 1;
+			$self->{_maxlife} = $gore >= 3 ? 900
+			                  : $gore >= 2 ? 450
+			                  :              200;
+			$self->{_life} = $self->{_maxlife};
+		}
+		$self->{_life}--;
+		return 1 if $self->{_life} <= 0;
+		my $pct = int( $self->{_life} * 99 / $self->{_maxlife} );
+		$self->{F} = $self->{_basesize} * 100 + $pct;
+		return 0;
 	},
 },
 

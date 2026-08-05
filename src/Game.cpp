@@ -328,12 +328,15 @@ void Game::DrawHitPointDisplay( int a_iPlayer )
 		SDL_BlitSurface( m_poDoodads, &oSrcRect , gamescreen, &oDstRect );
 	}
 	
+	// Fighter name inside the HP bar: left player right-aligned, right player left-aligned.
+	// Y = bar centre (iY+10), AlignVCenter centres the text vertically in the 20 px bar.
+	int iBarLeft  = iX + (bLeft ? 36 : 0);
+	int iBarRight = iX + (bLeft ? 236 : 200);
 	int iTextW = g_oPlayerSelect.GetFighterNameWidth(a_iPlayer);
-	int iTextX = bLeft ? iX + 230 - iTextW : iX + 10 ;
-	if ( iTextX + iTextW + 5 > gamescreen->w ) iTextX = gamescreen->w - iTextW - 5;
-	if ( iTextX < iX + 5 ) iTextX = iX + 5;
-	sge_BF_textout( gamescreen, fastFont, g_oPlayerSelect.GetFighterName(a_iPlayer),
-		iTextX, iY/*+ 38*/ + m_iYOffset );
+	int iTextX = bLeft ? iBarRight - iTextW - 2 : iBarLeft + 2;
+	if ( iTextX < iBarLeft ) iTextX = iBarLeft;
+	DrawTextMSZ( g_oPlayerSelect.GetFighterName(a_iPlayer), bigelowRulesFont,
+		iTextX, iY + 10 + m_iYOffset, UseShadow | AlignVCenter, C_WHITE, gamescreen, false );
 
 }
 
@@ -473,6 +476,40 @@ void Game::DrawPoly( const char* a_pcName, int a_iColor )
 
 
 
+/** Draws ground-level doodads (type 7: blood pools) behind the player sprites.
+*/
+void Game::DrawGroundDoodads()
+{
+	for ( int i=0; i<g_oBackend.m_iNumDoodads; ++i )
+	{
+		Backend::SDoodad& roDoodad = g_oBackend.m_aoDoodads[i];
+		if ( roDoodad.m_iType != 7 )
+			continue;
+
+		// Blood pool: flat ellipse, fades as it seeps into the ground.
+		// m_iFrame encodes: base_size*100 + life_pct (0-99)
+		int f         = roDoodad.m_iFrame;
+		int base_size = f / 100;
+		int life_pct  = f % 100;
+		if ( base_size > 2 ) base_size = 2;
+		if ( life_pct  < 0 ) life_pct  = 0;
+
+		static const int aRx[] = { 4, 7, 10 };
+		int rx = aRx[base_size] * life_pct / 100 + 1;
+		int ry = rx / 3 + 1;
+		int cx = roDoodad.m_iX;
+		int cy = roDoodad.m_iY + m_iYOffset;
+		Uint32 blood = SDL_MapRGB( gamescreen->format, 120, 8, 8 );
+		int alpha = 220 * life_pct / 100;
+
+		if ( gamescreen->format->BitsPerPixel <= 8 )
+			sge_FilledEllipse( gamescreen, cx, cy, rx, ry, blood );
+		else
+			sge_FilledEllipseAlpha( gamescreen, cx, cy, rx, ry, blood, alpha );
+	}
+}
+
+
 /** Draws every doodad that is currently defined in the backend.
 */
 void Game::DrawDoodads()
@@ -485,31 +522,35 @@ void Game::DrawDoodads()
 			// Handle text doodads
 			const char *s = roDoodad.m_sText.c_str();
 			
-			int iWidth = sge_BF_TextSize(fastFont, s).w;
-			int iDoodadX = roDoodad.m_iX - iWidth/2;
-			if ( iDoodadX + iWidth > gamescreen->w ) iDoodadX = gamescreen->w - iWidth;
-			if ( iDoodadX < 0 ) iDoodadX = 0;
+			int iDoodadX = roDoodad.m_iX;
 			int iDoodadY = roDoodad.m_iY;
-			
-			sge_BF_textout( gamescreen, fastFont, s, iDoodadX, iDoodadY + m_iYOffset );
+
+			DrawTextMSZ( s, bungeeSpiceFont, iDoodadX, iDoodadY + m_iYOffset, AlignHCenter|UseShadow, C_WHITE, gamescreen, false );
 			continue;
 		}
 		
 		if ( roDoodad.m_iType == 6 )
 		{
-			// Blood drop: rendered as a filled rectangle.
-			// m_iFrame encodes visual size: 0=small(2px) 1=medium(4px) 2=large(6px)
-			static const int aSizes[] = { 2, 4, 6 };
-			int sz = aSizes[ roDoodad.m_iFrame < 3 ? roDoodad.m_iFrame : 0 ];
+			// Blood drop: elongated vertical teardrop shape.
+			// m_iFrame encodes visual size: 0-4, boosted by gore level
+			static const int aSizes[] = { 3, 5, 8, 11, 15 };
+			int iFrame = roDoodad.m_iFrame;
+			if ( iFrame < 0 ) iFrame = 0;
+			if ( iFrame > 4 ) iFrame = 4;
+			int sw = aSizes[ iFrame ];
+			int sh = sw * 3;
 			SDL_Rect rBlood;
-			rBlood.x = roDoodad.m_iX - sz / 2;
-			rBlood.y = roDoodad.m_iY + m_iYOffset - sz / 2;
-			rBlood.w = sz;
-			rBlood.h = sz;
+			rBlood.x = roDoodad.m_iX - sw / 2;
+			rBlood.y = roDoodad.m_iY + m_iYOffset - sh / 2;
+			rBlood.w = sw;
+			rBlood.h = sh;
 			SDL_FillRect( gamescreen, &rBlood,
 				SDL_MapRGB( gamescreen->format, 180, 10, 10 ) );
 			continue;
 		}
+
+		if ( roDoodad.m_iType == 7 )
+			continue;	// Drawn before players in DrawGroundDoodads()
 
 		if ( roDoodad.m_iGfxOwner >= 0 )
 		{
@@ -618,6 +659,8 @@ void Game::Draw()
 		}
 	}
 
+	DrawGroundDoodads();
+
 	for ( i=0; i<g_oState.m_iNumPlayers; ++i )
 	{
 		Backend::SPlayer& roPlayer = g_oBackend.m_aoPlayers[i];
@@ -660,12 +703,12 @@ void Game::Draw()
 	else if ( Ph_REWIND == m_enGamePhase )
 	{
 		DrawTextMSZ( "REW", inkFont, 320, 10 + m_iYOffset, AlignHCenter, C_WHITE, gamescreen );
-		sge_BF_textout( gamescreen, fastFont, Translate("Press F1 to skip..."), 230, 450 + m_iYOffset );
+		sge_BF_textout( gamescreen, fastFont, Utf8ToAscii(Translate("Press F1 to skip...")).c_str(), 230, 450 + m_iYOffset );
 	}
 	else if ( Ph_SLOWFORWARD == m_enGamePhase )
 	{
 		DrawTextMSZ( "REPLAY", inkFont, 320, 10 + m_iYOffset, AlignHCenter, C_WHITE, gamescreen );
-		sge_BF_textout( gamescreen, fastFont, Translate("Press F1 to skip..."), 230, 450 + m_iYOffset );
+		sge_BF_textout( gamescreen, fastFont, Utf8ToAscii(Translate("Press F1 to skip...")).c_str(), 230, 450 + m_iYOffset );
 	}
 	else if ( Ph_REPLAY == m_enGamePhase )
 	{
@@ -999,13 +1042,13 @@ void Game::DoOneRound()
 		}
 	}
 	
-	g_oBackend.PerlEvalF( "$::GoreLevel = %d;", g_oState.m_iGoreLevel );
 	g_oBackend.PerlEvalF( "GameStart(%d,%d,%d,%d,%d);",
 		IsMaster() ? g_oState.m_iHitPoints : g_poNetwork->GetGameParams().iHitPoints,
 		g_oState.m_iNumPlayers,
 		iTeamSize,
 		m_bWide,
 		m_bDebug );
+	g_oBackend.PerlEvalF( "$::GoreLevel = %d;", g_oState.m_iGoreLevel );
 	g_oBackend.ReadFromPerl();
 
 	if ( IsNetworkGame() )

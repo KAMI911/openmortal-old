@@ -544,13 +544,15 @@ sub HitEvent($$$$)
 	if ( $::GoreLevel > 0 && !$blocked )
 	{
 		my $size  = ( $damage > 20 ) ? 2 : ( $damage > 10 ) ? 1 : 0;
-		my $drops = ( $::GoreLevel >= 3 ) ? $size + 2
-		          : ( $::GoreLevel >= 2 ) ? $size + 1
-		          :                         1;
+		$size += $::GoreLevel - 1 if $::GoreLevel > 1;
+		$size = 4 if $size > 4;
+		my $drops = ( $::GoreLevel >= 3 ) ? $size + 5
+		          : ( $::GoreLevel >= 2 ) ? $size + 2
+		          :                         2;
 		my $bx = $self->{X};
-		my $by = $self->{Y} - 50 * $::GAMEBITS2;
+		my $by = $self->{Y} + 140 * $::GAMEBITS2;
 		for my $i ( 1 .. $drops ) {
-			my $drop = CreateDoodad( $bx, $by, 'BloodDrop', $self->{DIR}, $self->{NUMBER} );
+			my $drop = Doodad::CreateDoodad( $bx, $by, 'BloodDrop', $self->{DIR}, $self->{NUMBER} );
 			$drop->{F} = $size if defined $drop;
 		}
 	}
