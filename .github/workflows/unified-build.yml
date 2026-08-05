@@ -239,11 +239,14 @@ jobs:
                     find . -name "Makefile.in" -exec touch {} +
                   fi
                   # Modern Xlibint.h declares _XData32 with a const
-                  # parameter; SDL-1.2s own copy of the prototype conflicts
-                  # with it. Upstream says these two symbols are "not
-                  # required... safe for them to be missing".
+                  # parameter; the SDL-1.2 copy of the prototype has no
+                  # const, so they conflict. Deleting the symbol instead of fixing
+                  # it breaks the link: other SDL X11 source files call
+                  # _XData32 directly, not just through the dynamic-
+                  # dispatch table this macro also defines. Add the
+                  # missing const to match Xlibint.h instead.
                   if [ -f src/video/x11/SDL_x11sym.h ]; then
-                    sed -i "/_XData32\|_XRead32/d" src/video/x11/SDL_x11sym.h
+                    sed -i "s/register long \*data,unsigned len),(dpy,data,len),return)/register const long *data,unsigned len),(dpy,data,len),return)/" src/video/x11/SDL_x11sym.h
                   fi
                   ./configure --prefix=/usr
                   make -j"$(nproc)"
@@ -435,7 +438,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: openmortal-binary-tarball-x86_64
-          path: /workspace/openmortal-${VERSION}_linux_${PLATFORM}.tar.gz
+          path: /workspace/openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz
           retention-days: 30
 
   # ============================================================================
@@ -490,7 +493,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: openmortal-local-install-tarball-x86_64
-          path: /workspace/openmortal-${VERSION}_linux_${PLATFORM}-local.tar.gz
+          path: /workspace/openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}-local.tar.gz
           retention-days: 30
 
   # ============================================================================
