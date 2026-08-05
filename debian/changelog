@@ -1,3 +1,11 @@
+openmortal (0.7.30-1) unstable; urgency=low
+
+  * AI/CPU system: single-player mode, difficulty selector, demo AI battles
+  * Gore: blood pool doodad, improved blood drop visuals, MATINEE/BRUTAL/BLOODBATH levels
+  * Fonts: 12 new TTF fonts, UTF-8 rendering fixes, Utf8ToAscii fallback
+
+ -- KAMI <kami911@gmail.com>  Tue, 5 Aug 2026 00:00:00 +0200
+
 openmortal (0.7.29-1) unstable; urgency=low
 
   * * Build packages after twenty years
