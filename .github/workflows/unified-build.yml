@@ -765,10 +765,19 @@ jobs:
         run: |
           # magick (ImageMagick 7) is pre-installed on windows-latest (x64)
           # runners, but not on windows-11-arm — install it there instead of
-          # assuming it exists (it failed with a bare "RegistryKeyLookupFailed
-          # CoderModulesPath" otherwise).
-          if (-not (Get-Command magick -ErrorAction SilentlyContinue)) {
-            choco install imagemagick -y --no-progress
+          # assuming it exists. It turned out there IS a magick.exe on PATH
+          # there already, but a broken one: it fails every invocation with
+          # "RegistryKeyLookupFailed CoderModulesPath" (its module registry
+          # keys never got set up), so checking for the command existing
+          # isn't enough — actually run it and reinstall via choco if that
+          # fails too.
+          $magickOk = $false
+          if (Get-Command magick -ErrorAction SilentlyContinue) {
+            magick -version *> $null
+            $magickOk = $LASTEXITCODE -eq 0
+          }
+          if (-not $magickOk) {
+            choco install imagemagick -y --no-progress --force
             $magickDir = Get-ChildItem "C:\Program Files" -Directory -Filter "ImageMagick-*" |
               Select-Object -First 1 -ExpandProperty FullName
             $env:Path = "$magickDir;$env:Path"
