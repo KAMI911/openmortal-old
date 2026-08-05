@@ -681,13 +681,15 @@ jobs:
           # only exists when shared libs are also built. Alias each
           # libsicuXX.a to libicuXX.a as it appears and retry: every
           # attempt gets further before failing on the next not-yet-built
-          # archive, until nothing is left to alias.
+          # archive, until nothing is left to alias. This isn't a
+          # parallelism race (a fully serial `make` hit the exact same
+          # failure), so -j$(nproc) is fine here.
           for i in 1 2 3 4 5 6; do
             find . -name 'libs*.a' -exec bash -c '
               alias="$(dirname "$1")/$(basename "$1" | sed "s/^libs/lib/")"
               [ -e "$alias" ] || ln -s "$(basename "$1")" "$alias"
             ' _ {} \;
-            make && break
+            make -j$(nproc) && break
           done
 
       - name: Build SDL_mixer from source (32-bit)
