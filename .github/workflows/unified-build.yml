@@ -657,8 +657,15 @@ jobs:
           wget https://github.com/unicode-org/icu/releases/download/release-73-2/icu4c-73_2-src.tgz
           tar xzf icu4c-73_2-src.tgz
           cd icu/source
-          # Workaround for GCC 15.x __float128 / GLIBCXX_USE_FLOAT128 bug
-          export CXXFLAGS="-O2 -std=c++11 -D__NO_INLINE__ -fext-numeric-literals -D_GLIBCXX_USE_FLOAT128=0"
+          # Workaround for GCC 15.x __float128 / GLIBCXX_USE_FLOAT128 bug.
+          # -D_GLIBCXX_USE_FLOAT128=0 alone stopped being enough once the
+          # mingw32 toolchain moved to GCC 16: libstdc++'s <bits/c++config.h>
+          # auto-defines _GLIBCXX_USE_FLOAT128 from __SIZEOF_FLOAT128__
+          # unconditionally, silently overriding the command-line -D. i686
+          # has no real hardware/ABI support for __float128 anyway, so
+          # undefine the compiler's own advertised support for it instead of
+          # trying to override the derived macro after the fact.
+          export CXXFLAGS="-O2 -std=c++11 -D__NO_INLINE__ -fext-numeric-literals -U__SIZEOF_FLOAT128__ -U_GLIBCXX_USE_FLOAT128"
           export CFLAGS="-O2 -D__NO_INLINE__"
           ./configure \
             --prefix=/mingw32 \
@@ -751,7 +758,17 @@ jobs:
       - name: Create .ico from PNG (ImageMagick)
         shell: pwsh
         run: |
-          # magick (ImageMagick 7) is pre-installed on windows-latest runners
+          # magick (ImageMagick 7) is pre-installed on windows-latest (x64)
+          # runners, but not on windows-11-arm — install it there instead of
+          # assuming it exists (it failed with a bare "RegistryKeyLookupFailed
+          # CoderModulesPath" otherwise).
+          if (-not (Get-Command magick -ErrorAction SilentlyContinue)) {
+            choco install imagemagick -y --no-progress
+            $magickDir = Get-ChildItem "C:\Program Files" -Directory -Filter "ImageMagick-*" |
+              Select-Object -First 1 -ExpandProperty FullName
+            $env:Path = "$magickDir;$env:Path"
+            echo $magickDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          }
           magick "packaging\1024x1024\openmortal.png" `
             -define icon:auto-resize="256,128,64,48,32,16" `
             "packaging\openmortal.ico"
