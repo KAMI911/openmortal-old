@@ -662,7 +662,12 @@ jobs:
           wget -q https://github.com/StrawberryPerl/Perl-Dist-Strawberry/releases/download/SP_5382_32bit/strawberry-perl-5.38.2.1-32bit-portable.zip
           mkdir -p /opt/strawberry
           unzip -q strawberry-perl-5.38.2.1-32bit-portable.zip -d /opt/strawberry
-          echo "/opt/strawberry/perl/bin" >> "$GITHUB_PATH"
+          # GITHUB_PATH doesn't reliably survive into later msys2-shell
+          # steps for a raw POSIX path like this (confirmed: the next step
+          # still picked up MSYS2's own /usr/bin/perl). configure.ac's
+          # AC_PATH_PROG(PERL, perl) honors a pre-set $PERL, so force it
+          # via GITHUB_ENV instead, which every later step does see.
+          echo "PERL=/opt/strawberry/perl/bin/perl" >> "$GITHUB_ENV"
           export PATH="/opt/strawberry/perl/bin:$PATH"
           perl --version
           which perl
