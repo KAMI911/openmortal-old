@@ -673,13 +673,22 @@ jobs:
             --disable-samples --disable-tests \
             --enable-static --disable-shared \
             --disable-renaming
-          # -j$(nproc) races: tools/ (makeconv etc.) can start linking
-          # against ../../lib/libicuuc.a before common/'s archive step
-          # finishes, and once that partial state exists, a plain retry
-          # doesn't reliably rebuild it (make sees the .o files as already
-          # up to date). Build serially instead — ICU is small enough that
-          # the extra time doesn't matter.
-          make
+          # This configuration (--enable-static --disable-shared, MinGW
+          # cross build) makes ICU name its static archives with an 's'
+          # prefix (libsicuuc.a, libsicuin.a, libsicudt.a, libsicutu.a),
+          # but its own internal tools (makeconv etc.) still link against
+          # the un-prefixed name (-licuuc/-licuin/-licudt/-licutu), which
+          # only exists when shared libs are also built. Alias each
+          # libsicuXX.a to libicuXX.a as it appears and retry: every
+          # attempt gets further before failing on the next not-yet-built
+          # archive, until nothing is left to alias.
+          for i in 1 2 3 4 5 6; do
+            find . -name 'libs*.a' -exec bash -c '
+              alias="$(dirname "$1")/$(basename "$1" | sed "s/^libs/lib/")"
+              [ -e "$alias" ] || ln -s "$(basename "$1")" "$alias"
+            ' _ {} \;
+            make && break
+          done
 
       - name: Build SDL_mixer from source (32-bit)
         if: matrix.build_deps == true
