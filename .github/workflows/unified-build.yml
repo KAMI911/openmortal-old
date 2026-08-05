@@ -906,11 +906,30 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           path: all-artifacts
-      
+
+      - name: Prepare release files
+        run: |
+          # debs-*/rpms-* artifacts each bundle several related package
+          # files per distro (deb+data+dbgsym, or rpm+src.rpm+debuginfo+
+          # debugsource) - keep each distro's set zipped together under its
+          # artifact name instead of flattening, since the .deb filenames
+          # are also identical across distros and would overwrite each
+          # other otherwise.
+          mkdir -p release-files
+          for d in all-artifacts/*/; do
+            name=$(basename "$d")
+            if [[ "$name" == debs-* || "$name" == rpms-* ]]; then
+              (cd "$d" && zip -j "$GITHUB_WORKSPACE/release-files/${name}.zip" *)
+            else
+              cp "$d"* release-files/
+            fi
+          done
+          ls -la release-files
+
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
-          files: all-artifacts/**/*
+          files: release-files/*
           draft: false
           prerelease: false
           generate_release_notes: true
