@@ -37,7 +37,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -168,7 +168,7 @@ jobs:
             -C "${PKG}" .
 
       - name: Upload portable archive artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: openmortal-${{ env.VERSION }}_windows_${{ matrix.env }}
           path: openmortal-${{ env.VERSION }}_windows_${{ matrix.env }}.tar.gz
@@ -204,7 +204,7 @@ jobs:
             "packaging\openmortal.iss"
 
       - name: Upload installer artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: openmortal-${{ env.VERSION }}_windows_${{ matrix.env }}_setup
           path: packaging/installer/openmortal-${{ env.VERSION }}-windows-${{ matrix.env }}-setup.exe

@@ -10,7 +10,7 @@ jobs:
   build-and-test:
       runs-on: ubuntu-latest
       steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: install build packages and developer libraries
         run: sudo apt update && sudo apt upgrade -y &&
              sudo apt install -y cppcheck &&

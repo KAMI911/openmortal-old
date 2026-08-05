@@ -20,7 +20,7 @@ jobs:
     name: Flatpak x86_64
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install Flatpak and flatpak-builder
         run: |
@@ -55,7 +55,7 @@ jobs:
             "${{ env.FLATPAK_ID }}"
 
       - name: Upload Flatpak artifact (x86_64)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ env.FLATPAK_ID }}-${{ env.VERSION }}-x86_64.flatpak
           path: ${{ env.FLATPAK_ID }}-${{ env.VERSION }}-x86_64.flatpak

@@ -32,7 +32,7 @@ jobs:
     name: AmigaOS 3.x (m68k)
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up bebbo GCC cross-compiler (m68k-amigaos)
         run: |
@@ -99,7 +99,7 @@ jobs:
           fi
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: openmortal-${{ env.VERSION }}_amiga_m68k
           path: openmortal-${{ env.VERSION }}_amiga_m68k.tar.gz
@@ -111,7 +111,7 @@ jobs:
     name: AmigaOS 4.x (PPC)
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install adtools PPC cross-compiler
         run: |
@@ -153,7 +153,7 @@ jobs:
           fi
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: openmortal-${{ env.VERSION }}_amiga_os4_ppc
           path: openmortal-${{ env.VERSION }}_amiga_os4_ppc.tar.gz
@@ -167,7 +167,7 @@ jobs:
     name: AROS i386 (open-source Amiga OS)
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install AROS cross-SDK
         run: |
@@ -211,7 +211,7 @@ jobs:
           fi
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: openmortal-${{ env.VERSION }}_aros_i386
           path: openmortal-${{ env.VERSION }}_aros_i386.tar.gz
@@ -223,7 +223,7 @@ jobs:
     name: MorphOS (PPC)
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install MorphOS cross-SDK
         run: |
@@ -263,7 +263,7 @@ jobs:
           fi
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: openmortal-${{ env.VERSION }}_morphos_ppc
           path: openmortal-${{ env.VERSION }}_morphos_ppc.tar.gz

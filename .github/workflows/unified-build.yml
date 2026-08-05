@@ -39,7 +39,7 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       
@@ -105,7 +105,7 @@ jobs:
           echo "name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
       
       - name: Upload DEBs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.artifact.outputs.name }}
           path: artifacts/*.deb
@@ -161,7 +161,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       
@@ -352,7 +352,7 @@ jobs:
           echo "name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
       
       - name: Upload RPMs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.artifact.outputs.name }}
           path: artifacts/*.rpm
@@ -373,7 +373,7 @@ jobs:
       DIST_FOLDER: /workspace/distribution
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Define paths
         run: |
@@ -440,21 +440,21 @@ jobs:
           /tmp/appimagetool.AppImage ${PLATFORM_APPIMAGE_PATH}
 
       - name: Upload AppImage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: openmortal-appimage-x86_64
           path: ./*.AppImage
           retention-days: 30
 
       - name: Upload source tarball
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: openmortal-source-tarball
           path: ./openmortal-*.tar.gz
           retention-days: 30
 
       - name: Upload binary tarball
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: openmortal-binary-tarball-x86_64
           path: /workspace/openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz
@@ -473,7 +473,7 @@ jobs:
       DIST_FOLDER: /workspace/distribution
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Define paths
         run: |
@@ -509,7 +509,7 @@ jobs:
           tar zcvf /workspace/openmortal-${VERSION}_linux_${PLATFORM}-local.tar.gz .
 
       - name: Upload local install tarball
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: openmortal-local-install-tarball-x86_64
           path: /workspace/openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}-local.tar.gz
@@ -525,7 +525,7 @@ jobs:
     
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: all-artifacts
       

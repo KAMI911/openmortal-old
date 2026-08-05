@@ -24,7 +24,7 @@ jobs:
       PLATFORM: x86_64
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install dependencies
         run: |
@@ -49,7 +49,7 @@ jobs:
             -C dist .
 
       - name: Upload tar.gz artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}
           path: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz
@@ -97,7 +97,7 @@ jobs:
             "OpenMortal-${{ env.VERSION }}-x86_64.AppImage"
 
       - name: Upload AppImage artifact (x86_64)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: OpenMortal-${{ env.VERSION }}-x86_64.AppImage
           path: OpenMortal-${{ env.VERSION }}-x86_64.AppImage
@@ -115,7 +115,7 @@ jobs:
       PLATFORM: i386
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Build inside i386 container
         # i386 needs no QEMU: x86_64 CPUs execute 32-bit code natively.
@@ -147,7 +147,7 @@ jobs:
             -C dist .
 
       - name: Upload tar.gz artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}
           path: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz
@@ -214,7 +214,7 @@ jobs:
             '
 
       - name: Upload AppImage artifact (i686)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: OpenMortal-${{ env.VERSION }}-i686.AppImage
           path: OpenMortal-${{ env.VERSION }}-i686.AppImage
@@ -229,7 +229,7 @@ jobs:
       PLATFORM: arm64
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install dependencies
         run: |
@@ -253,7 +253,7 @@ jobs:
             -C dist .
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}
           path: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz
@@ -265,7 +265,7 @@ jobs:
       PLATFORM: armhf
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up QEMU (enables running arm32v7 containers)
         uses: docker/setup-qemu-action@v3
@@ -301,7 +301,7 @@ jobs:
             -C dist .
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}
           path: openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz
