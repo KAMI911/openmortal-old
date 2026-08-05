@@ -769,32 +769,56 @@ jobs:
             choco install innosetup -y --no-progress
           }
 
-      - name: Create .ico from PNG (ImageMagick)
+      - name: Create .ico from PNG (System.Drawing)
         shell: pwsh
         run: |
-          # magick (ImageMagick 7) is pre-installed on windows-latest (x64)
-          # runners, but not on windows-11-arm — install it there instead of
-          # assuming it exists. It turned out there IS a magick.exe on PATH
-          # there already, but a broken one: it fails every invocation with
-          # "RegistryKeyLookupFailed CoderModulesPath" (its module registry
-          # keys never got set up), so checking for the command existing
-          # isn't enough — actually run it and reinstall via choco if that
-          # fails too.
-          $magickOk = $false
-          if (Get-Command magick -ErrorAction SilentlyContinue) {
-            magick -version *> $null
-            $magickOk = $LASTEXITCODE -eq 0
+          # ImageMagick is only reliably present on windows-latest (x64):
+          # windows-11-arm either lacks it or has a broken install (fails
+          # every invocation with "RegistryKeyLookupFailed CoderModulesPath"),
+          # and pulling it in via choco is slow and another moving part.
+          # System.Drawing is part of the .NET Framework that ships with
+          # Windows itself on every runner arch, so build the .ico directly
+          # with it instead — no external tool needed at all.
+          Add-Type -AssemblyName System.Drawing
+
+          $sizes = 256, 128, 64, 48, 32, 16
+          $src = [System.Drawing.Image]::FromFile((Resolve-Path "packaging\1024x1024\openmortal.png"))
+          $pngs = foreach ($s in $sizes) {
+            $bmp = New-Object System.Drawing.Bitmap $s, $s
+            $g = [System.Drawing.Graphics]::FromImage($bmp)
+            $g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+            $g.DrawImage($src, 0, 0, $s, $s)
+            $g.Dispose()
+            $ms = New-Object System.IO.MemoryStream
+            $bmp.Save($ms, [System.Drawing.Imaging.ImageFormat]::Png)
+            $bmp.Dispose()
+            , $ms.ToArray()
           }
-          if (-not $magickOk) {
-            choco install imagemagick -y --no-progress --force
-            $magickDir = Get-ChildItem "C:\Program Files" -Directory -Filter "ImageMagick-*" |
-              Select-Object -First 1 -ExpandProperty FullName
-            $env:Path = "$magickDir;$env:Path"
-            echo $magickDir | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          $src.Dispose()
+
+          # Modern (Vista+) ICO format: a standard ICONDIR/ICONDIRENTRY
+          # table where each entry's payload is just a full PNG file.
+          $fs = [System.IO.File]::Create("packaging\openmortal.ico")
+          $bw = New-Object System.IO.BinaryWriter $fs
+          $bw.Write([UInt16]0)          # reserved
+          $bw.Write([UInt16]1)          # type = icon
+          $bw.Write([UInt16]$sizes.Count)
+
+          $offset = 6 + 16 * $sizes.Count
+          for ($i = 0; $i -lt $sizes.Count; $i++) {
+            $dim = [byte]($(if ($sizes[$i] -eq 256) { 0 } else { $sizes[$i] }))
+            $bw.Write($dim)                          # width (0 means 256)
+            $bw.Write($dim)                          # height
+            $bw.Write([byte]0)                       # color count
+            $bw.Write([byte]0)                        # reserved
+            $bw.Write([UInt16]1)                      # planes
+            $bw.Write([UInt16]32)                     # bits per pixel
+            $bw.Write([UInt32]$pngs[$i].Length)
+            $bw.Write([UInt32]$offset)
+            $offset += $pngs[$i].Length
           }
-          magick "packaging\1024x1024\openmortal.png" `
-            -define icon:auto-resize="256,128,64,48,32,16" `
-            "packaging\openmortal.ico"
+          foreach ($png in $pngs) { $bw.Write($png) }
+          $bw.Close()
 
       - name: Build InnoSetup installer
         shell: pwsh
