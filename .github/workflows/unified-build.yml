@@ -280,8 +280,13 @@ jobs:
                 tar xzf /tmp/giflib.tar.gz -C /tmp/giflib --strip-components=1
                 (
                   cd /tmp/giflib
-                  make -j"$(nproc)"
-                  make install PREFIX=/usr
+                  # Skip the default "all"/"install" targets: they also
+                  # build doc/, which shells out to ImageMagick convert to
+                  # render a logo and fails ("convert: No such file or
+                  # directory") since that is not installed here. We only
+                  # need the library, so build/install just that.
+                  make -j"$(nproc)" libgif.a libgif.so
+                  make install-lib install-include PREFIX=/usr
                 )
               }
 
