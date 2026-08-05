@@ -766,11 +766,22 @@ int main(int argc, char *argv[])
 		case SState::IN_DEMO:
 			DoDemos();
 			continue;
-			
+
 		case SState::IN_CHAT:
 			ChatLoop();
 			continue;
-			
+
+		case SState::IN_SINGLE:
+			// Configure CPU slots in Perl before the game starts.
+			// Slot 0 = human, slot 1 = CPU at the chosen difficulty.
+			g_oBackend.PerlEvalF(
+				"$::CPUSlots[0]=0; $::CPUSlots[1]=1; "
+				"$::CPUDifficulty[1]=%d; "
+				"$::CPUSlots[2]=0; $::CPUSlots[3]=0;",
+				g_oState.m_iCPUDifficulty );
+			GameLoop();
+			continue;
+
 		default:
 			GameLoop();
 			continue;

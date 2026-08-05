@@ -19,6 +19,7 @@
 #include "FighterStats.h"	// #includes Demo.h
 #include "Event.h"
 #include "config.h"
+#include "PlayerSelect.h"
 
 
 
@@ -257,9 +258,9 @@ public:
 		SDL_Rect oRect;
 		oRect.x = 50; oRect.w = gamescreen->w - 100;
 		oRect.y = 50; oRect.h = gamescreen->h - 100;
-		
+
 #ifdef USE_TTF_FLYINGCHARS
-		m_poFlyingChars = new FlyingChars( chatFont, oRect );
+		m_poFlyingChars = new FlyingChars( rubikBubblesFont, oRect );
 #else
 		m_poFlyingChars = new FlyingChars( storyFont, oRect, -1 );
 #endif
@@ -288,9 +289,9 @@ public:
 		SDL_Rect oRect;
 		oRect.x = 50; oRect.w = gamescreen->w - 100;
 		oRect.y = 50; oRect.h = gamescreen->h - 100;
-		
+
 #ifdef USE_TTF_FLYINGCHARS
-		m_poFlyingChars = new FlyingChars( chatFont, oRect );
+		m_poFlyingChars = new FlyingChars( rubikBubblesFont, oRect );
 #else
 		m_poFlyingChars = new FlyingChars( storyFont, oRect, -1 );
 #endif
@@ -318,7 +319,7 @@ public:
 		oRect.y = 50; oRect.h = gamescreen->h - 100;
 
 #ifdef USE_TTF_FLYINGCHARS
-		m_poFlyingChars = new FlyingChars( chatFont, oRect );
+		m_poFlyingChars = new FlyingChars( rubikBubblesFont, oRect );
 #else
 		m_poFlyingChars = new FlyingChars( storyFont, oRect, -1 );
 #endif
@@ -458,6 +459,53 @@ void DoReplayDemo()
 static bool g_bFirstTime = true;
 
 
+/** Run a short AI-vs-AI battle for the attract mode.
+    Both fighters and difficulty levels are picked at random.
+    Match length is capped at 30 seconds.
+*/
+static void DoAIBattleDemo()
+{
+	if ( g_oState.m_enGameMode != SState::IN_DEMO || g_oState.m_bQuitFlag )
+		return;
+
+	// Random difficulties: Hard / Mars / Ares
+	static const int aiDiffPool[] = {
+		SState::AI_HARD, SState::AI_MARS, SState::AI_ARES
+	};
+	int iDiff0 = aiDiffPool[ rand() % 3 ];
+	int iDiff1 = aiDiffPool[ rand() % 3 ];
+
+	// Random fighters (ULMAR=1 .. MISI=LASTFIGHTER-1)
+	int iNumF = (int)LASTFIGHTER - 1;
+	FighterEnum enF0 = (FighterEnum)( 1 + rand() % iNumF );
+	FighterEnum enF1 = (FighterEnum)( 1 + rand() % iNumF );
+	if ( enF1 == enF0 )
+		enF1 = (FighterEnum)( 1 + ((int)enF0 % iNumF) );
+
+	g_oPlayerSelect.SetPlayer( 0, enF0 );
+	g_oPlayerSelect.SetPlayer( 1, enF1 );
+
+	// Activate both CPU slots with chosen difficulties
+	g_oBackend.PerlEvalF(
+		"$::CPUSlots[0]=1; $::CPUDifficulty[0]=%d; "
+		"$::CPUSlots[1]=1; $::CPUDifficulty[1]=%d; "
+		"$::CPUSlots[2]=0; $::CPUSlots[3]=0;",
+		iDiff0, iDiff1 );
+
+	// Short match: 30 seconds
+	int iSavedTime = g_oState.m_iGameTime;
+	g_oState.m_iGameTime = 30;
+
+	DoGame( NULL, false, false );
+
+	// Restore state
+	g_oState.m_iGameTime = iSavedTime;
+	g_oBackend.PerlEvalF(
+		"$::CPUSlots[0]=0; $::CPUSlots[1]=0; "
+		"$::CPUSlots[2]=0; $::CPUSlots[3]=0;" );
+}
+
+
 void DoDemos()
 {
 	#define DoDemos_BREAKONEND \
@@ -483,6 +531,8 @@ void DoDemos()
 			oDemo.Run();
 		}
 		DoDemos_BREAKONEND;
+		DoAIBattleDemo();
+		DoDemos_BREAKONEND;
 		DoReplayDemo();
 		DoDemos_BREAKONEND;
 		{
@@ -496,6 +546,8 @@ void DoDemos()
 			FighterStatsDemo oDemo;
 			oDemo.Run();
 		}
+		DoDemos_BREAKONEND;
+		DoAIBattleDemo();
 		DoDemos_BREAKONEND;
 		DoReplayDemo();
 		DoDemos_BREAKONEND;
@@ -516,11 +568,13 @@ void DoDemos()
 			oDemo.Run();
 		}
 		DoDemos_BREAKONEND;
+		DoAIBattleDemo();
+		DoDemos_BREAKONEND;
 		{
 			MainScreenDemo oDemo;
 			oDemo.Run();
 		}
 		DoDemos_BREAKONEND;
-		
+
 	}
 }

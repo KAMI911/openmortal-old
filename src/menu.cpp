@@ -34,7 +34,7 @@ const char* g_ppcHitPoints[] = { "BABY", "VERY LOW", "LOW", "NORMAL", "HIGH", "V
 const int g_piHitPoints[] = { 1, 10, 50, 100, 150, 200, 500 };
 const char* g_ppcGameSpeed[] = { "SNAIL RACE", "SLOW", "NORMAL", "TURBO", "KUNG-FU MOVIE", NULL };
 const int g_piGameSpeed[] = { 16, 14, 12, 10, 8 };
-const char* g_ppcGoreLevel[] = { "OFF", "LIGHT", "MEDIUM", "HEAVY", NULL };
+const char* g_ppcGoreLevel[] = { "OFF", "MATINEE", "BRUTAL", "BLOODBATH", NULL };
 const int g_piGoreLevel[] = { 0, 1, 2, 3 };
 const char* g_ppcChannels[] = { "MONO", "STEREO", NULL };
 const int g_piChannels[] = { 1, 2 };
@@ -56,6 +56,20 @@ int g_piServer[] = { 0, 1 };
 
 const char* g_ppcTeamMode[] = { "1 VS 1", "Good VS Evil", "Custom teams", NULL };
 int g_piTeamMode[] = { SState::Team_ONE_VS_ONE, SState::Team_GOOD_VS_EVIL, SState::Team_CUSTOM };
+
+// AI difficulty levels shown in the Single Player submenu
+const char* g_ppcAIDifficulty[] = {
+    "VERY EASY", "EASY", "MEDIUM", "HARD", "MARS", "ARES", "ADAPTIVE ML", NULL
+};
+const int g_piAIDifficulty[] = {
+    SState::AI_VERY_EASY,
+    SState::AI_EASY,
+    SState::AI_MEDIUM,
+    SState::AI_HARD,
+    SState::AI_MARS,
+    SState::AI_ARES,
+    SState::AI_ADAPTIVE_ML,
+};
 const char* g_ppcTeamSize[] = { "2", "3", "4", "5", "6", "7", "8", "9", "10", NULL };
 int g_piTeamSize[] = { 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 const char* g_ppcNumPlayers[] = { "2", "3", "4", NULL };
@@ -932,6 +946,24 @@ void Menu::ItemActivated( int a_iItemCode, MenuItem* a_poMenuItem )
 			break;
 		}
 
+		case MENU_SINGLE_PLAYER:
+		{
+			Menu* poMenu = new Menu( "Single Player" );
+			poMenu->AddMenuItem( "START GAME", SDLK_UNKNOWN, MENU_SINGLE_PLAYER_START );
+			poMenu->AddEnumMenuItem( "Difficulty: ", g_oState.m_iCPUDifficulty,
+			                         g_ppcAIDifficulty, g_piAIDifficulty, MENU_AI_DIFFICULTY );
+			InvokeSubmenu( poMenu );
+			delete poMenu;
+			break;
+		}
+
+		case MENU_SINGLE_PLAYER_START:
+			m_bDone = true;
+			m_iReturnCode = 100;
+			g_oState.m_bCPUEnabled    = true;
+			g_oState.m_enGameMode     = SState::IN_SINGLE;
+			break;
+
 		case MENU_MULTI_PLAYER:
 		{
 			Menu* poMenu = new Menu( "Multi Player" );
@@ -1370,7 +1402,7 @@ void DoMenu()
 	
 	if ( SState::IN_DEMO == g_oState.m_enGameMode )
 	{
-		oMenu.AddMenuItem( "~SINGLE PLAYER GAME", SDLK_s, MENU_SINGLE_PLAYER )->SetEnabled(false);
+		oMenu.AddMenuItem( "~SINGLE PLAYER GAME", SDLK_s, MENU_SINGLE_PLAYER );
 		oMenu.AddMenuItem( "~NETWORK GAME", SDLK_n, MENU_NETWORK_GAME );
 		oMenu.AddMenuItem( "~MULTI PLAYER GAME", SDLK_m, MENU_MULTI_PLAYER );
 	}

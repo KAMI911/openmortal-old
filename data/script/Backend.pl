@@ -84,6 +84,21 @@ require 'State.pl';
 require 'Translate.pl';
 require 'Rewind.pl';
 
+# AI system — loaded conditionally so the game still works without it
+eval {
+    require 'AIInput.pl';
+    require 'AIController.pl';
+    require 'TeamBattle.pl';
+    require 'DemoMode.pl';
+};
+if ($@) {
+    print STDERR "AI modules not loaded: $@\n" if $::Debug;
+    # Provide a no-op stub so AIController calls don't crash
+    *AIController::Tick = sub {};
+    *TeamBattle::Tick   = sub {};
+    *DemoMode::Tick     = sub {};
+}
+
 
 
 =comment
@@ -112,7 +127,13 @@ sub CreateFighters()
 
 
 CreateFighters();
-CreatePlayerInputs();
+# Use AIController::CreateMixedInputs when AI modules are loaded;
+# it falls back to all-human PlayerInput if @CPUSlots is all zeros.
+if (defined &AIController::CreateMixedInputs) {
+    AIController::CreateMixedInputs();
+} else {
+    CreatePlayerInputs();
+}
 
 
 
@@ -376,7 +397,12 @@ GAME BACKEND METHODS
 sub GameStart($$$$$)
 {
 	my ( $MaxHP, $numplayers, $teamsize, $wide, $debug ) = @_;
-	
+
+	# Re-create inputs now that CPUSlots/CPUDifficulty may have been set by C++
+	if (defined &AIController::CreateMixedInputs) {
+	    AIController::CreateMixedInputs();
+	}
+
 	ResetGame( $BgMax >> 1, $wide, $numplayers );
 
 	$::MaxHP = $MaxHP;
@@ -636,10 +662,15 @@ sub GameAdvance
 	my ( @hits, @playerhit, $i, $j, $fighter, $input);
 	
 	$gametick += 1;
-	
+
 	$NextDoodad = 0;
 	$NextSound = 0;
-	
+
+	# AI system ticks (no-ops if modules not loaded)
+	AIController::Tick();
+	TeamBattle::Tick();
+	DemoMode::Tick();
+
 	# 1. ADVANCE THE PLAYERS
 	
 	for ( $i=0; $i<$NUMPLAYERS; ++$i ) {

@@ -27,6 +27,9 @@ MAIN MENU
 MENU_UNKNOWN,
 	MENU_SURRENDER,
 	MENU_SINGLE_PLAYER,
+		MENU_SINGLE_PLAYER_START,
+		MENU_AI_DIFFICULTY,		// enum: Very Easy … Ares … Adaptive ML
+		// legacy stubs (kept so old saves don't break the enum sequence)
 		MENU_EASY,
 		MENU_MEDIUM,
 		MENU_HARD,

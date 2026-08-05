@@ -82,6 +82,14 @@ SState::SState()
 	m_iNumPlayers = 2;
 	m_enTeamMode = Team_ONE_VS_ONE;
 	m_iTeamSize = 5;
+
+	// AI settings
+	m_bCPUEnabled     = false;
+	m_iCPUDifficulty  = AI_MEDIUM;   // 3 = Medium
+	m_bDemoMode       = false;
+	m_acDemoModeType[0] = '\0';
+	strncpy( m_acDemoModeType, "1v1", sizeof(m_acDemoModeType)-1 );
+	m_bAIDebugOverlay = false;
 	m_bTeamMultiselect = false;
 
 	m_iGameTime = 60;
@@ -313,6 +321,9 @@ void SState::Load()
 	poSv = get_sv("GAMESPEED", FALSE); if (poSv) m_iGameSpeed = SvIV( poSv );
 	poSv = get_sv("GORELEVEL", FALSE); if (poSv) m_iGoreLevel = SvIV( poSv );
 
+	// AI settings
+	poSv = get_sv("CPUDIFFICULTY", FALSE); if (poSv) m_iCPUDifficulty = SvIV( poSv );
+
 	poSv = get_sv("FULLSCREEN", FALSE); if (poSv) m_bFullscreen = SvIV( poSv );
 	poSv = get_sv("CHANNELS", FALSE); if (poSv) m_iChannels = SvIV( poSv );
 	poSv = get_sv("MIXINGRATE", FALSE); if (poSv) m_iMixingRate = SvIV( poSv );
@@ -363,6 +374,7 @@ void SState::Save()
 	oStream << "HITPOINTS=" << m_iHitPoints << '\n';
 	oStream << "GAMESPEED=" << m_iGameSpeed << '\n';
 	oStream << "GORELEVEL=" << m_iGoreLevel << '\n';
+	oStream << "CPUDIFFICULTY=" << m_iCPUDifficulty << '\n';
 
 	oStream << "FULLSCREEN=" << m_bFullscreen << '\n';
 	oStream << "CHANNELS=" << m_iChannels << '\n';

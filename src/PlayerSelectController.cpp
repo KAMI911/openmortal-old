@@ -467,6 +467,28 @@ void CPlayerSelectController::DoPlayerSelect()
 
 	g_oBackend.PerlEvalF( "SelectStart(%d);", g_oState.m_iNumPlayers );
 
+	// In single-player mode, auto-select a random fighter for the CPU (player 1).
+	if ( g_oState.m_bCPUEnabled && !m_bNetworkGame )
+	{
+		int iNumFighters = g_oBackend.GetNumberOfFighters();
+		std::vector<FighterEnum> aSelectable;
+		for ( int k = 0; k < iNumFighters; ++k )
+		{
+			FighterEnum en = g_oBackend.GetFighterID( k );
+			if ( IsFighterSelectable( en ) )
+				aSelectable.push_back( en );
+		}
+		if ( !aSelectable.empty() )
+		{
+			FighterEnum enCPU = aSelectable[ rand() % aSelectable.size() ];
+			g_oPlayerSelect.SetPlayer( 1, enCPU );
+			g_oPlayerSelect.EditPlayerInfo(1).m_aenTeam.clear();
+			g_oPlayerSelect.EditPlayerInfo(1).m_aenTeam.push_back( enCPU );
+			g_oBackend.PerlEvalF( "PlayerSelected(1);" );
+			SetPlayerActive( 1, false );
+		}
+	}
+
 	m_bChatActive = false;
 
 	m_iGameSpeed = 12 ;

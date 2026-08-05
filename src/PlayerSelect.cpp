@@ -216,7 +216,9 @@ void PlayerSelect::SetPlayer( int a_iPlayer, FighterEnum a_enFighter )
 
 	g_oBackend.PerlEvalF( "SetPlayerNumber(%d,%d);", a_iPlayer, a_enFighter );
 	m_aoPlayers[a_iPlayer].m_sFighterName = g_oBackend.GetPerlString( "PlayerName" );
-	m_aiFighterNameWidth[a_iPlayer] = sge_BF_TextSize( fastFont, GetFighterName(a_iPlayer) ).w;
+	int _w, _h;
+	sge_TTF_SizeText( bigelowRulesFont, GetFighterName(a_iPlayer), &_w, &_h );
+	m_aiFighterNameWidth[a_iPlayer] = _w;
 
 	TintEnum enTint = NO_TINT;
 
@@ -747,8 +749,9 @@ void PlayerSelect::DoPlayerSelect()
 			if ( x<10 ) x = 10;
 			if ( i ) x = gamescreen->w - x - m_aiFighterNameWidth[i];
 			
-			sge_BF_textout( gamescreen, fastFont, GetFighterName(i),
-				x, gamescreen->h - 30 + iYOffset - (bNetworkMode ? 40 : 0) );
+			DrawTextMSZ( GetFighterName(i), impactFont,
+				x, gamescreen->h - 30 + iYOffset - (bNetworkMode ? 40 : 0),
+				UseShadow, C_WHITE, gamescreen, false );
 		}
 		
 		SDL_Flip( gamescreen );

@@ -93,6 +93,22 @@ struct SState
 	} m_enLevelSelect;
 	int		m_iSelectedLevel;	///< Level number when m_enLevelSelect == Level_SELECT
 
+	// AI / CPU PLAYER SETTINGS
+	enum TAIDifficultyEnum {
+		AI_VERY_EASY   = 1,
+		AI_EASY        = 2,
+		AI_MEDIUM      = 3,
+		AI_HARD        = 4,
+		AI_MARS        = 5,   ///< "Mars" — punishing, near-no-error
+		AI_ARES        = 6,   ///< "Ares" — inhuman reflexes, maximum pressure
+		AI_ADAPTIVE_ML = 7,   ///< ML model-driven
+	};
+	bool	m_bCPUEnabled;            ///< true when at least one CPU slot is active
+	int		m_iCPUDifficulty;         ///< Difficulty for all CPU slots (1-7)
+	bool	m_bDemoMode;              ///< Run AI-vs-AI demo in main menu background
+	char	m_acDemoModeType[8];      ///< "1v1", "2v2", or "3v3"
+	bool	m_bAIDebugOverlay;        ///< Show AI state/action debug overlay in-game
+
 	int		m_aiPlayerKeys[MSZ_MAXPLAYERS][9];	// Player keysyms
 	char	m_acLanguage[10];	// Language ID (en,hu,fr,es,..)
 	int		m_iLanguageCode;	// Non-persistend language code (set by backend based on the language)
