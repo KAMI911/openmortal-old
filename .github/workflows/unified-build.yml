@@ -220,11 +220,30 @@ jobs:
                   # needs -I acinclude to find the AM_PATH_ALSA/AM_PATH_ESD
                   # macros it references.
                   if [ ! -x ./configure ]; then
-                    # Checked-in ltmain.sh can predate the system libtool,
-                    # causing a "Version mismatch" build failure unless it
-                    # is regenerated first.
+                    # SDL bundles its own (old) libtool.m4 family in
+                    # acinclude/, purely so its configure.in can find
+                    # AM_PATH_ALSA/AM_PATH_ESD from the same directory via
+                    # -I acinclude below. But that also makes aclocal pick
+                    # SDL-1.2s own outdated LT_INIT over the system
+                    # libtool, causing a "Version mismatch" build failure
+                    # later. Drop the redundant bundled libtool macros so
+                    # aclocal falls back to the current system ones.
+                    rm -f acinclude/libtool.m4 acinclude/ltoptions.m4 \
+                      acinclude/ltsugar.m4 acinclude/ltversion.m4 \
+                      "acinclude/lt~obsolete.m4" acinclude/ltdl.m4
                     libtoolize --force --copy
-                    autoreconf -i -f -I acinclude
+                    # autoreconf itself aborts the whole chain if any step
+                    # fails. On autoconf 2.69 (EL9), autoheader exits
+                    # non-zero for SDL-1.2s old undocumented AC_DEFINE
+                    # calls (just "missing template" warnings, not real
+                    # errors), which would otherwise kill the whole
+                    # reconfigure before configure gets generated at all.
+                    # Run the steps autoreconf would run individually so
+                    # that one failure does not abort the others.
+                    aclocal -I acinclude
+                    autoconf
+                    autoheader || true
+                    automake --add-missing --copy --foreign || true
                   else
                     # A fresh git checkout can give configure.ac/Makefile.am
                     # a timestamp that looks newer than the pre-generated
@@ -272,7 +291,7 @@ jobs:
                   ;;
                 source)
                   # No usable SDL 1.2 devel packages on this distro at all.
-                  ${{ matrix.pkg_manager }} install -y libX11-devel
+                  ${{ matrix.pkg_manager }} install -y libX11-devel libXext-devel
                   build_sdl_from_source SDL-1.2   release-1.2.15
                   build_sdl_from_source SDL_image release-1.2.12
                   build_sdl_from_source SDL_mixer release-1.2.12
