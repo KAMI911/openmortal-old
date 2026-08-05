@@ -19,6 +19,7 @@ Classes that deal with sound, graphics, input, etc.
 struct _sge_TTFont;
 
 #include "SDL.h"
+#include <string>
 
 enum GFX_Constants {
 	AlignHCenter	= 1,
@@ -33,6 +34,13 @@ int				DrawTextMSZ( const char* text, _sge_TTFont* font, int x, int y,
 
 void			DrawGradientText( const char* text, _sge_TTFont* font, int y,
 					SDL_Surface* target, bool a_bTranslate = true );
+
+// Measures UTF-8 string width with the given TTF font (UTF-8 aware).
+void			sge_TTF_SizeText( _sge_TTFont* font, const char* text, int* w, int* h );
+
+// Converts UTF-8 string to ASCII by replacing accented characters with their
+// base letter (e.g. é→e, ő→o). For use with bitmap fonts that only support ASCII.
+std::string		Utf8ToAscii( const char* utf8 );
 
 SDL_Color		MakeColor( Uint8 r, Uint8 g, Uint8 b );
 
@@ -82,6 +90,8 @@ extern _sge_TTFont* impactFont;		// Smallest font, for long descriptions
 extern _sge_TTFont* chatFont;		// small but legible.
 extern _sge_TTFont* bungeeSpiceFont;	// FighterStats: flying story text
 extern _sge_TTFont* comboFont;		// FighterStats: stats labels/values
+extern _sge_TTFont* rubikBubblesFont;	// Demo intro/story flying text
+extern _sge_TTFont* bigelowRulesFont;	// Fighter name HUD during fight (SedgwickAveDisplay)
 
 #ifdef sge_bm_text_H
 extern sge_bmpFont* fastFont;		// In-game text, e.g. combo text

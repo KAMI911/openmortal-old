@@ -249,7 +249,7 @@ int FighterStatsDemo::Advance( int a_iNumFrames, bool a_bFlip )
 	
 	if ( SState::IN_DEMO != g_oState.m_enGameMode )
 	{
-		sge_BF_textout( gamescreen, fastFont, Translate("Press F1 to skip..."), 230, 450 );
+		sge_BF_textout( gamescreen, fastFont, Utf8ToAscii(Translate("Press F1 to skip...")).c_str(), 230, 450 );
 	}
 	
 	SDL_Flip( gamescreen );

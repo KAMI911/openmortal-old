@@ -63,19 +63,17 @@ Down Back LPunch - WrISt shot
 Forward Back Forward LPunch - WrISt mash',
 
 	'TEAM-hu'	=>'Gonosz',
-	'STYLE-hu'	=>'Boh�c-fu',
-	'WEIGHT-hu'	=>'50kg + vas�gy',
-	'HEIGHT-hu'	=>'168cm',
-	'SHOE-hu'	=>'51',
+	'STYLE-hu'	=>'Bohóc-fu',
+	'WEIGHT-hu'	=>'50kg + vaságy',
 	'STORY-hu'	=>
-'Miut�n Wasaiwa baka janaijo elszajr�zta a kora legfejletebb tudom�nyos cuccos�t
-(v�letlen�l �gy beh�ztak neki, hogy berep�lt a laboratoriumba �s r�tekeredett a CsUKlo(tm)),
+'Miután Wasaiwa baka janaijo elszajrézta a kora legfejletebb tudományos cuccosát
+(véletlenül úgy behúztak neki, hogy berepült a laboratoriumba és rátekeredett a CsUKlo(tm)),
 
-azut�n minden tud�s�t latba vetve vissza utazott a m�ltba (elkezdte nyomkodni a gombokat a
-CsUKlo(tm)-en �s ez lett bel�le).
+azután minden tudását latba vetve vissza utazott a múltba (elkezdte nyomkodni a gombokat a
+CsUKlo(tm)-en és ez lett belőle).
 
-Ezekut�n m�r r�gt�n tudta, hogy itt el kell pusztitania a Szombatot! (� sem tudja, hogy hol
-is van �ppen illetve mit is csin�l...)',
+Ezekután már rögtön tudta, hogy itt el kell pusztitania a Szombatot! (ő sem tudja, hogy hol
+is van éppen illetve mit is csinál...)',
 	},
 
 
@@ -103,17 +101,13 @@ Down Back LPunch - Fireball
 (also works while crouching)
 Back Up HPunch - Burning Hands',
 
-	'NAME-hu'	=>'S�t�t Fekete Gonosz M�gus',
-	'TEAM-hu'	=>'Gonosz vez�r',
+	'NAME-hu'	=>'Sötét Fekete Gonosz Mágus',
+	'TEAM-hu'	=>'Gonosz vezér',
 	'STYLE-hu'	=>'Piro-fu',
-	'AGE-hu'	=>'30',
-	'WEIGHT-hu'	=>'70kg',
-	'HEIGHT-hu'	=>'180cm',
-	'SHOE-hu'	=>'42',
 	'STORY-hu'	=>
-'A Gonosz Gyilkos Fekete Ellenszenves S�t�t (elm�j�) t�zvar�zsl�k lig�j�nak
-tagja, kit azzal b�ztak meg, hogy elpuszt�tsa a szombatot egyszer, s
-mind�r�kre. Tal�n van valami h�ts� sz�nd�ka, amir�l senki sem tud? Nincs!',
+'A Gonosz Gyilkos Fekete Ellenszenves Sötét (elméjű) tüzvarázslók ligájának
+tagja, kit azzal bíztak meg, hogy elpusztítsa a szombatot egyszer, s
+mindörökre. Talán van valami hátsó szándéka, amiről senki sem tud? Nincs!',
 },
 
 
@@ -141,14 +135,10 @@ Forward Forward HPunch - Leaping punch',
 	'NAME-hu'	=>'Boxer',
 	'TEAM-hu'	=>'Gonosz',
 	'STYLE-hu'	=>'Kickbox-fu',
-	'AGE-hu'	=>'16',
-	'WEIGHT-hu'	=>'80kg',
-	'HEIGHT-hu'	=>'180cm',
-	'SHOE-hu'	=>'43',
 	'STORY-hu'	=>
-'Boxer az�rt csatlakozott a Mort�l Szombat csapathoz, hogy min�l t�bb
-embernek besomhasson, min�l t�bbsz�r, �s min�l nagyobbat. M�s c�lja ezen
-k�v�l nincs, de ez is remek�l elsz�rakoztatja k�z�pt�von',
+'Boxer azért csatlakozott a Mortál Szombat csapathoz, hogy minél több
+embernek besomhasson, minél többször, és minél nagyobbat. Más célja ezen
+kívül nincs, de ez is remekül elszórakoztatja középtávon',
 },
 
 
@@ -176,16 +166,12 @@ Forward Forward HPunch - Spit
 Back Down Forward - Baseball',
 
 	'NAME-hu'  =>'Cumi',
-	'TEAM-hu'  =>'Jo vezer',
-	'STYLE-hu' =>'N/A',
-	'AGE-hu'   =>'15',
-	'WEIGHT-hu'=>'55',
-	'HEIGHT-hu'=>'170',
-	'SHOE-hu'  =>'41.5',
+	'TEAM-hu'  =>'Jó vezér',
+	'STYLE-hu' =>'Felsimerhetetlen',
 	'STORY-hu' =>
-'Elete fo ambicioja volt, hogy autot vezessen. Most hogy ezt teljesitette, masodik fo
-amibicioja fele fordult: hogy nagy harcmuvessze valjon. Kezdetben ehhez megnezte
-a Kung fu sorozatot elejetol vegeig egyulteben. Kepzettsege jelenleg ebbol all.',
+'Élete fő ambiciója volt, hogy autót vezessen. Most hogy ezt teljesítette, második fő
+amibiciója felé fordult: hogy nagy harcművésszé váljon. Kezdetben ehhez megnézte
+a Kung-fu sorozatot eléjetől végéig együltében. Képzettsége jelenleg ebből áll.',
 },
 
 
@@ -212,14 +198,15 @@ join the good team... also he is frightened alone.',
 Forward Forward HPunch - Applause',
 
 
-	'STYLE-hu'	=> 'Neb�nts-FU',
+	'STYLE-hu'	=> 'Nebánts-FU',
+	'TEAM-hu'	=>'Jók',
 	'STORY-hu'	=>
-'Sok �vnyi hardcore gamerked�s ut�n, mik�zben el is h�zott j�l,
-kikapcsolt�k n�la a villanyt.
+'Sok évnyi hardcore gamerkedés után, miközben el is hízott jól,
+kikapcsolták nála a villanyt.
 
-Erre nagyon h�lye pof�t v�gott, �s ez igy is
-marad mindaddig, am�g le nem sz�mol �sellens�g�vel (vagy m�g ut�na is).
-Ez�rt csatlakozott a j�k kicsiny csapat�hoz... Meg am�gy is f�l egyed�l.',
+Erre nagyon hülye pofát vágott, és ez igy is
+marad mindaddig, amíg le nem számol ősellenségével (vagy még utána is).
+Ezért csatlakozott a jók kicsiny csapatához... Meg amúgy is fél egyedül.',
 },
 
 
@@ -245,15 +232,15 @@ it won\'t be until the next fight agains Evil...',
 	'KEYS'	=>
 'Down Back LPunch - Toss
 Forward Forward HKick - Scissor Kick',
-
+	'TEAM-hu'	=>'Jók',
 	'STORY-hu'	=>
-'kb. n�h�ny �vvel ezel�tt, (vagy tal�n egy kicsit kor�bban, esetleg
-k�s�bb) a felh�k k�z�tt egy p�ly�ban tal�ltak r� (zuhan�s k�zben).
+'Kb. néhány évvel ezelőtt, (vagy talán egy kicsit korábban, esetleg
+később) a felhők között egy pólyában találtak rá (zuhanás közben).
 
-A b�tor
-Songokut�l elleste a harcm�v�szet mesteri fort�lyait, igy talpra esett �s
-nem halt meg. Az�ta is halhatatlan. Ki tudja, m�g meddig? Tal�n a
-k�vetkez� harcig a gonosz ellen...',
+A bátor
+Songokutól elleste a harcművészet mesteri fortélyait, igy talpra esett és
+nem halt meg. Azóta is halhatatlan. Ki tudja, még meddig? Talán a
+következő harcig a gonosz ellen...',
 	},
 
 
@@ -284,15 +271,11 @@ Back Forward HPunc - Pierce',
 	'NAME-hu'	=>'Taka Ito',
 	'TEAM-hu'	=>'Gonosz',
 	'STYLE-hu'	=>'Kururin-do',
-	'AGE-hu'	=>'20',
-	'WEIGHT-hu' =>'85',
-	'HEIGHT-hu' =>'172',
-	'SHOE-hu'	=>'39',
 	'STORY-hu'	=>
-'A jap�n �ri�s Descant esk�dt ellens�ge, mi�ta �sszej�rta az �ltala frissen felmosott
-verand�t a 16 gener�ci� �ta csal�dja �ltal birtokolt foga-do-ban. Tud�s�t a s�t�t
-oldal szolg�lat�ba �ll�totta. Tud�s�t a "gondnok �tj�n" csak m�lys�ges megvet�se a
-vasaltorr� bakancsok ir�nt sz�rnyalja t�l.',
+'A japán óriás Descant esküdt ellensége, mióta összejárta az általa frissen felmosott
+verandát a 16 generáció óta családja által birtokolt foga-do-ban. Tudását a sötét
+oldal szolgálatába állította. Tudását a "gondnok útján" csak mélységes megvetése a
+vasaltorrú bakancsok iránt szárnyalja túl.',
 	},
 
 
@@ -323,24 +306,22 @@ Down Down LKick - Earthquake
 Back Forward Back HPunch - Nunchaku',
 
 	'NAME-hu'	=>'Grizli',
-	'TEAM-hu'	=>'J�',
-	'STYLE-hu'	=>'Gyak�s ala Medve',
-	'AGE-hu'	=>'21',
+	'TEAM-hu'	=>'Jók',
+	'STYLE-hu'	=>'Gyakás ala Medve',
 	'WEIGHT-hu'	=>'50000000',
-	'HEIGHT-hu'	=>'170',
-	'SHOE-hu'	=>'49',
+	'HEIGHT-hu'	=>'170cm',
 	'STORY-hu'	=>
-'Grili a lustas�g�r�l volt hires mindig. Olyannyira, hogy amilyen szinten
-azt csin�lja, az m�r m�v�szet. Az ut�bbi 5 �vben m�r a TV
-n�z�shez is lusta lett.
+'Grizli a lustaságáról volt híres mindig. Olyannyira, hogy amilyen szinten
+azt csinálja, az már művészet. Az utóbbi 5 évben már a TV
+nézéshez is lusta lett.
 
-Minden Szobaton tart edz�st a K�l�nbenmegintd�hbej�v�nk do
-stilusb�l, amit m�g kezd� kor�ban a TV-b�l saj�t�tott el. A stilus
-tiszteletbeli nagymestere maga B�d Szpencer, de sajnos miut�n B�d-r�l
-kider�lt, hogy szombatonk�nt dolgozik, Grizli elvette t�le a cimet, s
-az�ta mag�nak tartogatja.
+Minden Szobaton tart edzést a Különbenmegintdühbejövünk-do
+stilusból, amit még kezdő korában a TV-ből sajátított el. A stilus
+tiszteletbeli nagymestere maga Bád Szpencer, de sajnos miután Bád-ról
+kiderült, hogy szombatonként dolgozik, Grizli elvette tőle a cimet, s
+azóta magának tartogatja.
 
-Grizli a szombat ellenesek �d�z gy�l�l�je, a j� csapat oszlopos tagja.',
+Grizli a szombat ellenesek ádáz gyűlölője, a jó csapat oszlopos tagja.',
 	},
 
 
@@ -369,17 +350,13 @@ Forward Down HPunch - Knife Throw
 Forward Forward HPunch - Gun Hit',
 
 	'NAME-hu'	=>'Descant',
-	'TEAM-hu'	=>'J�',
+	'TEAM-hu'	=>'Jók',
 	'STYLE-hu'	=>'+halol',
-	'AGE-hu'	=>'58',
-	'WEIGHT-hu'=>'89',
-	'HEIGHT-hu'=>'180',
-	'SHOE-hu'	=>'44',
 	'STORY-hu'	=>
-'A Vietn�mi h�bor� sor�n k�pezt�k ki minden ismert fegyverre �s harcm~uv�szetre. M�r ott
-is az Oroszok �s az Amerikaik oldal�n harcolt, m�r aki �ppen t�bbet fizetett. Ezut�n a p�nzb"ol
-hibern�ltatta mag�t �s csak h�bor�k eset�n olvasztatja f�l mag�t, vagy most mikor a szombat
-bajba ker�l most is azon az oldalon van, ahol vastagabb a BUKSZA, most �pp a...',
+'A Vietnámi háború során képezték ki minden ismert fegyverre és harcművészetre. Már ott
+is az Oroszok és az Amerikaik oldalán harcolt, már aki éppen többet fizetett. Ezután a pénzből
+hibernáltatta magát és csak háborúk esetén olvasztatja föl magát, vagy most mikor a szombat
+bajba kerül most is azon az oldalon van, ahol vastagabb a BUKSZA, most épp a...',
 },
 
 
@@ -403,16 +380,15 @@ why he joined the Dark Evil Mage...',
 
 	'NAME-hu'	=>'Rising-san',
 	'TEAM-hu'	=>'Gonosz',
-	'STYLE-hu'	=>'P�cc-fu',
+	'STYLE-hu'	=>'Pöcc-fu',
 	'AGE-hu'	=>'500',
-	'WEIGHT-hu'	=>'N/A',
-	'HEIGHT-hu'	=>'50',
+	'WEIGHT-hu'	=>'Ismertelen',
 	'SHOE-hu'	=>'Nem visel',
 	'STORY-hu'	=>
-'Sok-sok �vvel ezel"ott elt�nt misztikus k�r�lm�nyek k�z�tt... egy szombati napon!
-�s most visszat�rt. Senki sem tudja honnan j�tt, de mag�val hozta puszt�t� technik�j�t
-melynek nincs p�rja a f�ld�n. Senki sem �rti mi�rt fogadta el a gonosz var�zsl
-megb�z�s�t...',
+'Sok-sok évvel ezelőtt eltűnt misztikus körülmények között... egy szombati napon!
+És most visszatért. Senki sem tudja honnan jött, de magával hozta pusztító technikáját
+melynek nincs párja a földön. Senki sem érti miért fogadta el a gonosz varázsl
+megbízását...',
 },
 
 
@@ -439,17 +415,17 @@ maniac laughter echoes far.',
 Back Forward HKick - Chop Chop
 Forward Forward LKick - Bonesaw',
 
-	'NAME-hu'	=>'F�r�szes �r�lt',
+	'NAME-hu'	=>'Fűrészes Őrült',
 	'TEAM-hu'	=>'Gonosz',
-	'STYLE-hu'	=>'Fany�v�',
+	'STYLE-hu'	=>'Fanyűvő',
 	'AGE-hu'	=>'35',
 	'WEIGHT-hu'	=>'110',
 	'HEIGHT-hu'	=>'120',
 	'SHOE-hu'	=>'49',
 	'STORY-hu'	=>
-'B�lcs�j�t egy f�n tal�lt�k meg. K�s�bb felapr�totta az eg�sz befogad� csal�dj�t, �s
-megetette a medv�kkel. Az�ta a kanadai erd�kben bolyongva v�gja a f�kat �s az
-emberfejeket. Forr� ny�ri �jszak�kon mindig hallatszik �r�lt kacaja.',
+'Bölcsőjét egy fán találták meg. Később felaprította az egész befogadó családját, és
+megetette a medvékkel. Azóta a kanadai erdőkben bolyongva vágja a fákat és az
+emberfejeket. Forró nyári éjszakákon mindig hallatszik őrült kacaja.',
 },
 
 
@@ -477,20 +453,20 @@ Forward Forward HPunch - Ramming Attack
 Back Down Back LPunch - Stab
 Back Forward LKick - Poke',
 
-	'NAME-hu'	=>'T�k�letlen Katona',
-	'TEAM-hu'	=>'J�',
-	'STYLE-hu'	=>'Kocsmabuny�',
+	'NAME-hu'	=>'Tökéletlen Katona',
+	'TEAM-hu'	=>'Jó',
+	'STYLE-hu'	=>'Kocsmabunyó',
 	'AGE-hu'	=>'50',
 	'WEIGHT-hu'	=>'100',
 	'HEIGHT-hu'	=>'180',
 	'SHOE-hu'	=>'44',
 	'STORY-hu'	=>
-'Gyermekkor�t meghat�rozta Drezda lebomb�z�sa. E trauma hat�s�ra katonai
-p�ly�ra �llt. Imm�ron 30 �ve a Bundeswehr k�tel�k�ben tizedes az
-el�l�ptet�s b�rminem~u es�lye n�lk�l.
+'Gyermekkorát meghatározta Drezda lebombázása. E trauma hatására katonai
+pályára állt. Immáron 30 éve a Bundeswehr kötelékében tizedes az
+előléptetés bárminemű esélye nélkül.
 
-Alantasait folytonosan kocsmai buny�inak t�rt�neteivel trakt�lja, am�g azok
-�thelyez�s�ket nem k�rik.',
+Alantasait folytonosan kocsmai bunyóinak történeteivel traktálja, amíg azok
+áthelyezésüket nem kérik.',
 },
 
 
@@ -523,7 +499,7 @@ kapta az Aisha ("mindent túlélő") nevet. Aztan gyermekkorától fogva sok
 természeti katasztrófat, terrortámadást átveszélt, és mar kezdett elege
 lenni az egészből, igy hát az egyik alkalommal kijelentette, hogy ha ezt
 túlelem, csatlakozom azokhoz a hülye Mortálosokhoz!',
-},	#'
+},
 
 
 
@@ -580,17 +556,16 @@ alone...',
 	'NAME-hu'	=>'Apatsuka Anyatsuba',
 	'TEAM-hu'	=>'Gonosz',
 	'STYLE-hu'	=>'Komor',
-	'AGE-hu'	=>'Feud�lis k�z�p...',
-	'WEIGHT-hu'	=>'Nagyon s�lyos!',
+	'AGE-hu'	=>'Feudális közép...',
+	'WEIGHT-hu'	=>'Nagyon súlyos!',
 	'STORY-hu'	=>
-'Apatsuk�t 4 �ves kora �ta nevelt�k sz�lei a szamur�j �letm�dra, szigor
-keretek k�z�tt. Apja az elm�lt 20 �v legh�resebb harcosa volt. Amint
-minden harci fog�st elsaj�t�tott apj�t�l, megskalpolta �s a skalpj�t
-fej�re illesztette, ezzel megf�leml�tve ellens�geit.
+'Apatsukát 4 éves kora óta nevelték szülei a szamuráj életmódra, szigor
+keretek között. Apja az elmúlt 20 év leghíresebb harcosa volt. Amint
+minden harci fogást elsajátított apjától, megskalpolta és a skalpját
+fejére illesztette, ezzel megfélemlítve ellenségeit.
 
-H�tk�zben n�ket
-hajszolt, szombaton sz�vott �s berugott. Azt�n �gy d�nt�tt, hogy ezen a
-szombaton csak � �rezheti j�l mag�t...',
+Hétközben nőket hajszolt, szombaton szívott és berugott. Aztán úgy döntött, hogy ezen a
+szombaton csak ő érezheti jól magát...',
 
 
 },
@@ -646,16 +621,6 @@ sub GetStatsTranslated($$)
 	my ($source, $stat) = @_;
 	my $val = $source->{"${stat}-$::LanguageCode"};
 	$val = $source->{$stat} unless defined $val;
-	# The -hu strings are stored as ISO-8859-2.  Four Hungarian characters
-	# differ from their Unicode (Latin-1) counterparts and must be re-encoded
-	# as proper UTF-8 so that DrawTextMSZ (sge_tt_textout_UTF8) renders them
-	# correctly: \xD5=Ő \xF5=ő  \xDB=Ű \xFB=ű
-	if ( defined $val && defined $::LanguageCode && $::LanguageCode eq 'hu' ) {
-		$val =~ s/\xD5/\xC5\x90/g;  # Ő -> UTF-8
-		$val =~ s/\xF5/\xC5\x91/g;  # ő -> UTF-8
-		$val =~ s/\xDB/\xC5\xB0/g;  # Ű -> UTF-8
-		$val =~ s/\xFB/\xC5\xB1/g;  # ű -> UTF-8
-	}
 	return $val;
 }
 

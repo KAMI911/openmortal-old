@@ -8,6 +8,7 @@
 
 #include <string.h>
 #include <malloc.h>
+#include <string>
 
 
 #include "config.h"
@@ -34,6 +35,57 @@ int CSurfaceLocker::m_giLockCount = 0;
 
 
 Uint16 *UTF8_to_UNICODE(Uint16 *unicode, const char *utf8, int len);
+
+
+std::string Utf8ToAscii( const char* utf8 )
+{
+	// Convert UTF-8 to Latin-1 (ISO-8859-1) for bitmap font rendering.
+	// Code points <= 0xFF are passed through directly as Latin-1 bytes.
+	// The two Hungarian characters not in Latin-1 are mapped to their
+	// closest Latin-1 equivalents: Ő→Ö, ő→ö, Ű→Ü, ű→ü.
+	std::string result;
+	const unsigned char* p = (const unsigned char*)utf8;
+	while ( *p )
+	{
+		Uint16 cp = *p;
+		int advance = 1;
+		if ( cp >= 0xF0 && p[1] && p[2] && p[3] )
+		{
+			advance = 4;
+			cp = '?';
+		}
+		else if ( cp >= 0xE0 && p[1] && p[2] )
+		{
+			advance = 3;
+			cp = ((cp & 0x0F) << 12) | ((p[1] & 0x3F) << 6) | (p[2] & 0x3F);
+		}
+		else if ( cp >= 0xC0 && p[1] )
+		{
+			advance = 2;
+			cp = ((cp & 0x1F) << 6) | (p[1] & 0x3F);
+		}
+		p += advance;
+
+		// Code points in Latin-1 range pass through directly.
+		if ( cp <= 0xFF )
+		{
+			result += (char)(unsigned char)cp;
+		}
+		else
+		{
+			// Characters outside Latin-1: map to closest Latin-1 equivalent.
+			switch ( cp )
+			{
+				case 0x150: result += (char)0xD6; break;  // Ő → Ö
+				case 0x151: result += (char)0xF6; break;  // ő → ö
+				case 0x170: result += (char)0xDC; break;  // Ű → Ü
+				case 0x171: result += (char)0xFC; break;  // ű → ü
+				default:    result += '?';         break;
+			}
+		}
+	}
+	return result;
+}
 
 
 void sge_TTF_SizeText( _sge_TTFont*font, const char* text, int* x, int* y )

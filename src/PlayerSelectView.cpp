@@ -544,8 +544,9 @@ void CPlayerSelectView::Draw()
 		if ( x<10 ) x = 10;
 		if ( i ) x = gamescreen->w - x - iPlayerNameWidth;
 		
-		sge_BF_textout( gamescreen, fastFont, g_oPlayerSelect.GetFighterName(i),
-			x, gamescreen->h - 40 + m_iFighterNameYOffset );
+		DrawTextMSZ( g_oPlayerSelect.GetFighterName(i), impactFont,
+			x, gamescreen->h - 40 + m_iFighterNameYOffset,
+			UseShadow, C_WHITE, gamescreen, false );
 	}
 
 	SDL_Flip( gamescreen );

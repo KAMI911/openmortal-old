@@ -9,6 +9,7 @@
 #include "FlyingChars.h"
 #include "sge_surface.h"
 #include "common.h"
+#include "gfx.h"
 
 
 // Decode one UTF-8 codepoint from *pp and advance *pp past the sequence.
@@ -638,8 +639,9 @@ int FlyingChars::GetCharWidth( uint32_t a_cChar )
 		}
 		char buf[8] = {};
 		utf8_encode( a_cChar, buf );
-		SDL_Rect r = sge_TTF_TextSize( m_poTTFont, buf );
-		return r.w;
+		int w, h;
+		sge_TTF_SizeText( m_poTTFont, buf, &w, &h );
+		return w;
 	}
 #endif // USE_TTF_FLYINGCHARS
 
