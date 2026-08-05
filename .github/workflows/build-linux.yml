@@ -33,7 +33,7 @@ jobs:
             build-essential autoconf automake libtool pkg-config wget \
             libperl-dev \
             libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev \
-            libfreetype6-dev libgif-dev
+            libfreetype6-dev
 
       - name: Build
         run: |
@@ -133,7 +133,7 @@ jobs:
                 build-essential autoconf automake libtool pkg-config wget \
                 libperl-dev \
                 libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev \
-                libfreetype6-dev libgif-dev
+                libfreetype6-dev
               autoreconf -i -f
               ./configure --prefix=/usr
               make -j$(nproc)
@@ -238,7 +238,7 @@ jobs:
             build-essential autoconf automake libtool pkg-config \
             libperl-dev \
             libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev \
-            libfreetype6-dev libgif-dev
+            libfreetype6-dev
 
       - name: Build
         run: |
@@ -288,7 +288,7 @@ jobs:
                 build-essential autoconf automake libtool pkg-config \
                 libperl-dev \
                 libsdl1.2-dev libsdl-image1.2-dev libsdl-mixer1.2-dev libsdl-net1.2-dev \
-                libfreetype6-dev libgif-dev
+                libfreetype6-dev
               autoreconf -i -f
               ./configure --prefix=/usr
               make -j$(nproc)

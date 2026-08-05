@@ -71,7 +71,7 @@ jobs:
                 libsdl-image1.2-dev \
                 libsdl-mixer1.2-dev \
                 libsdl-net1.2-dev \
-                libfreetype6-dev libgif-dev
+                libfreetype6-dev
               
               # Copy source to build directory
               cp -r /workspace /build
@@ -270,29 +270,14 @@ jobs:
                 )
               }
 
-              # giflib-devel does not exist at all on EL8/EL9 (neither in
-              # the base repos nor EPEL) — build the small plain-Makefile
-              # upstream release straight into /usr.
-              build_giflib_from_source() {
-                curl -fsSL -o /tmp/giflib.tar.gz \
-                  "https://sourceforge.net/projects/giflib/files/giflib-5.2.2.tar.gz/download"
-                mkdir -p /tmp/giflib
-                tar xzf /tmp/giflib.tar.gz -C /tmp/giflib --strip-components=1
-                (
-                  cd /tmp/giflib
-                  make -j"$(nproc)"
-                  make install PREFIX=/usr
-                )
-              }
-
               case "${SDL_MODE}" in
                 repo)
                   ${{ matrix.pkg_manager }} install -y \
-                    SDL-devel SDL_image-devel SDL_mixer-devel SDL_net-devel giflib-devel
+                    SDL-devel SDL_image-devel SDL_mixer-devel SDL_net-devel
                   ;;
                 compat)
                   ${{ matrix.pkg_manager }} install -y \
-                    sdl12-compat-devel SDL_image-devel SDL_mixer-devel SDL_net-devel giflib-devel
+                    sdl12-compat-devel SDL_image-devel SDL_mixer-devel SDL_net-devel
                   ;;
                 repo-mixer-source)
                   # SDL_mixer 1.2 has no devel package on this distro; get
@@ -300,7 +285,6 @@ jobs:
                   ${{ matrix.pkg_manager }} install -y \
                     SDL-devel SDL_image-devel SDL_net-devel
                   build_sdl_from_source SDL_mixer release-1.2.12
-                  build_giflib_from_source
                   ;;
                 source)
                   # No usable SDL 1.2 devel packages on this distro at all.
@@ -309,7 +293,6 @@ jobs:
                   build_sdl_from_source SDL_image release-1.2.12
                   build_sdl_from_source SDL_mixer release-1.2.12
                   build_sdl_from_source SDL_net   release-1.2.8
-                  build_giflib_from_source
                   ;;
               esac
 
@@ -402,7 +385,7 @@ jobs:
           apt install -y build-essential autoconf automake libtool pkg-config \
             dh-autoreconf debhelper devscripts fakeroot \
             libperl-dev libsdl1.2-dev libsdl-image1.2-dev \
-            libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev libgif-dev
+            libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
 
       - name: Build from source
         run: |
@@ -501,7 +484,7 @@ jobs:
           apt install -y build-essential autoconf automake libtool pkg-config \
             dh-autoreconf debhelper devscripts fakeroot \
             libperl-dev libsdl1.2-dev libsdl-image1.2-dev \
-            libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev libgif-dev
+            libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
 
       - name: Build from source
         run: |
@@ -641,7 +624,6 @@ jobs:
             mingw-w64-${{ matrix.env }}-SDL_image
             mingw-w64-${{ matrix.env }}-SDL_net
             mingw-w64-${{ matrix.env }}-freetype
-            mingw-w64-${{ matrix.env }}-giflib
             mingw-w64-${{ matrix.env }}-ntldd
             mingw-w64-${{ matrix.env }}-libiconv
 
