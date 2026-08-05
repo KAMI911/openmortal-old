@@ -36,6 +36,7 @@ BuildRequires:	SDL_net-devel
 
 BuildRequires:	freetype-devel
 BuildRequires:	perl-devel
+BuildRequires:	perl-ExtUtils-Embed
 
 %description
 OpenMortal is a spoof of the original Mortal Kombat fighting game. The

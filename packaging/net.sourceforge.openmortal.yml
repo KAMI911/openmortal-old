@@ -94,6 +94,14 @@ modules:
         url: https://github.com/libsdl-org/SDL_image.git
         tag: release-1.2.12
         commit: 220be3fd43a85921138072ed847b7e4bc5ad163e
+      # A fresh checkout can give configure.ac/Makefile.am a timestamp
+      # that looks newer than the pre-generated aclocal.m4/configure/
+      # Makefile.in, so make tries to regenerate them with whatever
+      # autoconf is in the SDK and fails ("generated for autoconf 2.61").
+      - type: shell
+        commands:
+          - touch aclocal.m4 configure
+          - find . -name 'Makefile.in' -exec touch {} +
     cleanup:
       - /share/aclocal
 
@@ -105,6 +113,10 @@ modules:
         url: https://github.com/libsdl-org/SDL_mixer.git
         tag: release-1.2.12
         commit: 1a14d94ed4271e45435ecb5512d61792e1a42932
+      - type: shell
+        commands:
+          - touch aclocal.m4 configure
+          - find . -name 'Makefile.in' -exec touch {} +
     cleanup:
       - /share/aclocal
 
@@ -116,6 +128,10 @@ modules:
         url: https://github.com/libsdl-org/SDL_net.git
         tag: release-1.2.8
         commit: 7aa8ffae32fda6455792c5538a8b64a655dd0721
+      - type: shell
+        commands:
+          - touch aclocal.m4 configure
+          - find . -name 'Makefile.in' -exec touch {} +
     cleanup:
       - /share/aclocal
 

@@ -198,6 +198,7 @@ jobs:
                 libtool \
                 pkgconfig \
                 perl-devel \
+                perl-ExtUtils-Embed \
                 freetype-devel \
                 tar \
                 gzip
@@ -224,6 +225,18 @@ jobs:
                     # is regenerated first.
                     libtoolize --force --copy
                     autoreconf -i -f -I acinclude
+                  else
+                    # A fresh git checkout can give configure.ac/Makefile.am
+                    # a timestamp that looks newer than the pre-generated
+                    # aclocal.m4/configure/Makefile.in, so make tries to
+                    # regenerate them with whatever autoconf happens to be
+                    # installed and fails ("this file was generated for
+                    # autoconf 2.61"). Touch them in dependency order so
+                    # make treats them as already up to date.
+                    touch aclocal.m4
+                    touch configure
+                    [ -f config.h.in ] && touch config.h.in
+                    find . -name "Makefile.in" -exec touch {} +
                   fi
                   # Modern Xlibint.h declares _XData32 with a const
                   # parameter; SDL-1.2s own copy of the prototype conflicts

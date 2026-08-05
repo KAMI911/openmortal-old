@@ -73,6 +73,18 @@ jobs:
                 # regenerated to match first.
                 libtoolize --force --copy
                 autoreconf -i -f -I acinclude
+              else
+                # A fresh git checkout can give configure.ac/Makefile.am a
+                # timestamp that looks newer than the pre-generated
+                # aclocal.m4/configure/Makefile.in, so make tries to
+                # regenerate them with whatever autoconf is installed and
+                # fails ("this file was generated for autoconf 2.61").
+                # Touch them in dependency order so make treats them as
+                # already up to date.
+                touch aclocal.m4
+                touch configure
+                [ -f config.h.in ] && touch config.h.in
+                find . -name 'Makefile.in' -exec touch {} +
               fi
               ./configure --prefix="${SDL_PREFIX}"
               make -j"$(sysctl -n hw.logicalcpu)"
