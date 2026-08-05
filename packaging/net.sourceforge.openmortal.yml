@@ -170,5 +170,6 @@ modules:
                        /app/share/icons/hicolor/64x64/apps/net.sourceforge.openmortal.png
       - install -Dm644 packaging/128x128/openmortal.png
                        /app/share/icons/hicolor/128x128/apps/net.sourceforge.openmortal.png
-      - install -Dm644 packaging/1024x1024/openmortal.png
-                       /app/share/icons/hicolor/1024x1024/apps/net.sourceforge.openmortal.png
+      # Flatpak's hicolor icon theme caps out at 512x512; the 1024x1024
+      # source image isn't a valid size to export there ("Image too
+      # large"), and there's no 256/512 variant in the repo to use instead.
