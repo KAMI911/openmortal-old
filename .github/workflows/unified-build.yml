@@ -2,11 +2,14 @@ name: OpenMortal Unified Multi-Platform Build
 
 on:
   push:
-    branches: [ upgrade, master ]
+    # TODO: drop "fixes" once these CI fixes are merged into master — it's
+    # here so this workflow runs automatically like the others while the
+    # RPM/DEB matrix fixes are being verified on this branch.
+    branches: [ upgrade, master, fixes ]
     tags:
       - "v*.*.*"
   pull_request:
-    branches: [ upgrade, master ]
+    branches: [ upgrade, master, fixes ]
   workflow_dispatch:
 
 env:
