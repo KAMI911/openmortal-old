@@ -1,0 +1,895 @@
+name: OpenMortal Unified Multi-Platform Build
+
+on:
+  push:
+    branches: [ upgrade, master ]
+    tags:
+      - "v*.*.*"
+  pull_request:
+    branches: [ upgrade, master ]
+  workflow_dispatch:
+
+env:
+  APPIMAGE_EXTRACT_AND_RUN: 1
+  VERSION: 0.7.30
+  PACKAGE_NAME: openmortal
+
+jobs:
+  # ============================================================================
+  # Debian/Ubuntu alapú build-ek
+  # ============================================================================
+  build-debs:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - debian:11
+          - debian:12
+          - debian:13
+          # - ubuntu:20.04
+          - ubuntu:22.04
+          - ubuntu:24.04
+          - ubuntu:25.04
+          - ubuntu:25.10
+          - ubuntu:26.04
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      
+      - name: Set up build environment
+        run: |
+          mkdir -p artifacts
+          chmod 777 artifacts
+      
+      - name: Build DEB package
+        run: |
+          docker run --rm \
+            -v "$PWD":/workspace \
+            -e DEBIAN_FRONTEND=noninteractive \
+            ${{ matrix.distro }} \
+            /bin/bash -c '
+              set -euo pipefail
+              
+              # Install build dependencies
+              apt-get update
+              apt-get install -y \
+                build-essential \
+                autoconf \
+                automake \
+                libtool \
+                pkg-config \
+                dh-autoreconf \
+                debhelper \
+                devscripts \
+                fakeroot \
+                libperl-dev \
+                libsdl1.2-dev \
+                libsdl-image1.2-dev \
+                libsdl-mixer1.2-dev \
+                libsdl-net1.2-dev \
+                libfreetype6-dev
+              
+              # Copy source to build directory
+              cp -r /workspace /build
+              cd /build
+              
+              # Build package
+              dpkg-buildpackage -us -uc -b
+              
+              # Copy artifacts back
+              find /build/.. -maxdepth 1 -name "*.deb" -exec cp {} /workspace/artifacts/ \;
+            '
+      
+      - name: Verify build output
+        run: |
+          if [ ! "$(ls -A artifacts/*.deb 2>/dev/null)" ]; then
+            echo "ERROR: No DEB packages were built!"
+            exit 1
+          fi
+          
+          echo "Built packages:"
+          ls -lh artifacts/
+
+      - name: Prepare artifact name
+        id: artifact
+        run: |
+          # Replace : with - for valid artifact name
+          ARTIFACT_NAME=$(echo "debs-${{ matrix.distro }}" | tr ':' '-')
+          echo "name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
+      
+      - name: Upload DEBs
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.artifact.outputs.name }}
+          path: artifacts/*.deb
+          if-no-files-found: error
+          retention-days: 30
+  # ============================================================================
+  # RPM alapú build-ek (Fedora, AlmaLinux, Rocky Linux)
+  # ============================================================================
+  build-rpms:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Fedora dropped the plain "SDL-devel" package; sdl12-compat-devel
+          # (SDL 1.2 API on top of SDL2) is what SDL_image/mixer/net-devel
+          # now depend on there.
+          - distro: fedora:41
+            pkg_manager: dnf
+            sdl_mode: compat
+          - distro: fedora:42
+            pkg_manager: dnf
+            sdl_mode: compat
+          - distro: fedora:43
+            pkg_manager: dnf
+            sdl_mode: compat
+          - distro: fedora:44
+            pkg_manager: dnf
+            sdl_mode: compat
+          - distro: fedora:45
+            pkg_manager: dnf
+            sdl_mode: compat
+          # EL8 has SDL-devel, SDL_image-devel and SDL_net-devel, but no
+          # SDL_mixer 1.2 devel package at all — build just that one from
+          # source, use repo packages for the rest.
+          - distro: almalinux:8
+            pkg_manager: dnf
+            sdl_mode: repo-mixer-source
+          # EL9's EPEL SDL_image/mixer/net-devel packages all depend on a
+          # "SDL-devel >= 1.2.x" that EPEL9 simply doesn't ship (neither the
+          # classic package nor a sdl12-compat-devel exist there), so dnf
+          # can't install any of them — build the whole SDL 1.2 stack from
+          # source instead (versions matched to the flatpak manifest).
+          - distro: almalinux:9
+            pkg_manager: dnf
+            sdl_mode: source
+          - distro: rockylinux:8
+            pkg_manager: dnf
+            sdl_mode: repo-mixer-source
+          - distro: rockylinux:9
+            pkg_manager: dnf
+            sdl_mode: source
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      
+      - name: Set up build environment
+        run: |
+          mkdir -p artifacts
+          chmod 777 artifacts
+      
+      - name: Build RPM package
+        run: |
+          docker run --rm \
+            -v "$PWD":/workspace \
+            -e SDL_MODE="${{ matrix.sdl_mode }}" \
+            ${{ matrix.distro }} \
+            /bin/bash -c '
+              set -euo pipefail
+
+              # Install EPEL for RHEL clones if needed
+              if [[ "${{ matrix.distro }}" == almalinux* ]] || [[ "${{ matrix.distro }}" == rockylinux* ]]; then
+                ${{ matrix.pkg_manager }} install -y epel-release
+              fi
+
+              # Install build dependencies. curl is deliberately not listed:
+              # EL9 images ship curl-minimal, which already provides a
+              # working /usr/bin/curl and conflicts with the full curl
+              # package when explicitly requested.
+              ${{ matrix.pkg_manager }} install -y \
+                rpm-build \
+                gcc \
+                gcc-c++ \
+                make \
+                autoconf \
+                automake \
+                libtool \
+                pkgconfig \
+                perl-devel \
+                perl-ExtUtils-Embed \
+                freetype-devel \
+                tar \
+                gzip
+
+              # Build one SDL-family module (repo:tag) from source straight
+              # into /usr, so pkg-config/%configure see it exactly like a
+              # normal system install would.
+              build_sdl_from_source() {
+                repo="$1"
+                tag="$2"
+                curl -fsSL -o "/tmp/${repo}.tar.gz" \
+                  "https://github.com/libsdl-org/${repo}/archive/refs/tags/${tag}.tar.gz"
+                mkdir -p "/tmp/${repo}"
+                tar xzf "/tmp/${repo}.tar.gz" -C "/tmp/${repo}" --strip-components=1
+                (
+                  cd "/tmp/${repo}"
+                  # SDL_image/mixer/net tags ship a pre-generated configure;
+                  # only bare SDL-1.2 needs autoreconf, and its configure.in
+                  # needs -I acinclude to find the AM_PATH_ALSA/AM_PATH_ESD
+                  # macros it references.
+                  if [ ! -x ./configure ]; then
+                    # SDL bundles its own (old) libtool.m4 family in
+                    # acinclude/, purely so its configure.in can find
+                    # AM_PATH_ALSA/AM_PATH_ESD from the same directory via
+                    # -I acinclude below. But that also makes aclocal pick
+                    # SDL-1.2s own outdated LT_INIT over the system
+                    # libtool, causing a "Version mismatch" build failure
+                    # later. Drop the redundant bundled libtool macros so
+                    # aclocal falls back to the current system ones.
+                    rm -f acinclude/libtool.m4 acinclude/ltoptions.m4 \
+                      acinclude/ltsugar.m4 acinclude/ltversion.m4 \
+                      "acinclude/lt~obsolete.m4" acinclude/ltdl.m4
+                    libtoolize --force --copy
+                    # autoreconf itself aborts the whole chain if any step
+                    # fails. On autoconf 2.69 (EL9), autoheader exits
+                    # non-zero for SDL-1.2s old undocumented AC_DEFINE
+                    # calls (just "missing template" warnings, not real
+                    # errors), which would otherwise kill the whole
+                    # reconfigure before configure gets generated at all.
+                    # Run the steps autoreconf would run individually so
+                    # that one failure does not abort the others.
+                    aclocal -I acinclude
+                    autoconf
+                    autoheader || true
+                    automake --add-missing --copy --foreign || true
+                  else
+                    # A fresh git checkout can give configure.ac/Makefile.am
+                    # a timestamp that looks newer than the pre-generated
+                    # aclocal.m4/configure/Makefile.in, so make tries to
+                    # regenerate them with whatever autoconf happens to be
+                    # installed and fails ("this file was generated for
+                    # autoconf 2.61"). Touch them in dependency order so
+                    # make treats them as already up to date.
+                    touch aclocal.m4
+                    touch configure
+                    [ -f config.h.in ] && touch config.h.in
+                    find . -name "Makefile.in" -exec touch {} +
+                  fi
+                  # Modern Xlibint.h declares _XData32 with a const
+                  # parameter; the SDL-1.2 copy of the prototype has no
+                  # const, so they conflict. Deleting the symbol instead of fixing
+                  # it breaks the link: other SDL X11 source files call
+                  # _XData32 directly, not just through the dynamic-
+                  # dispatch table this macro also defines. Add the
+                  # missing const to match Xlibint.h instead.
+                  if [ -f src/video/x11/SDL_x11sym.h ]; then
+                    sed -i "s/register long \*data,unsigned len),(dpy,data,len),return)/register const long *data,unsigned len),(dpy,data,len),return)/" src/video/x11/SDL_x11sym.h
+                  fi
+                  ./configure --prefix=/usr
+                  make -j"$(nproc)"
+                  make install
+                )
+              }
+
+              case "${SDL_MODE}" in
+                repo)
+                  ${{ matrix.pkg_manager }} install -y \
+                    SDL-devel SDL_image-devel SDL_mixer-devel SDL_net-devel
+                  ;;
+                compat)
+                  ${{ matrix.pkg_manager }} install -y \
+                    sdl12-compat-devel SDL_image-devel SDL_mixer-devel SDL_net-devel
+                  ;;
+                repo-mixer-source)
+                  # SDL_mixer 1.2 has no devel package on this distro; get
+                  # the rest from the repo and build just that one.
+                  ${{ matrix.pkg_manager }} install -y \
+                    SDL-devel SDL_image-devel SDL_net-devel
+                  build_sdl_from_source SDL_mixer release-1.2.12
+                  ;;
+                source)
+                  # No usable SDL 1.2 devel packages on this distro at all.
+                  ${{ matrix.pkg_manager }} install -y libX11-devel libXext-devel
+                  build_sdl_from_source SDL-1.2   release-1.2.15
+                  build_sdl_from_source SDL_image release-1.2.12
+                  build_sdl_from_source SDL_mixer release-1.2.12
+                  build_sdl_from_source SDL_net   release-1.2.8
+                  ;;
+              esac
+
+              # Copy source to build directory
+              cp -r /workspace /build
+              cd /build
+              
+              # Create RPM build structure
+              mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+              
+              # Create source tarball. Name and internal directory layout
+              # must match what the spec expects: Source0s basename is
+              # upgrade.tar.gz, and %autosetup -n openmortal-old-upgrade
+              # requires that exact top-level directory name inside it.
+              tar czf rpmbuild/SOURCES/upgrade.tar.gz \
+                --exclude=.git \
+                --exclude=rpmbuild \
+                --exclude=artifacts \
+                --transform "s,^\./,openmortal-old-upgrade/," \
+                .
+
+              ls -la rpmbuild/SOURCES/
+              # Copy spec file
+              if [ ! -f rpm/openmortal.spec ]; then
+                echo "ERROR: rpm/openmortal.spec not found!"
+                exit 1
+              fi
+              cp rpm/openmortal.spec rpmbuild/SPECS/
+              
+              # Build RPM
+              rpmbuild -ba \
+                --define "_topdir $(pwd)/rpmbuild" \
+                rpmbuild/SPECS/openmortal.spec
+              
+              # Copy artifacts back
+              find rpmbuild -name "*.rpm" -exec cp {} /workspace/artifacts/ \;
+            '
+      
+      - name: Verify build output
+        run: |
+          if [ ! "$(ls -A artifacts/*.rpm 2>/dev/null)" ]; then
+            echo "ERROR: No RPM packages were built!"
+            exit 1
+          fi
+          
+          echo "Built packages:"
+          ls -lh artifacts/
+
+      - name: Prepare artifact name
+        id: artifact
+        run: |
+          # Replace : with - for valid artifact name
+          ARTIFACT_NAME=$(echo "rpms-${{ matrix.distro }}" | tr ':' '-')
+          echo "name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
+      
+      - name: Upload RPMs
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.artifact.outputs.name }}
+          path: artifacts/*.rpm
+          if-no-files-found: error
+          retention-days: 30
+      
+
+  # ============================================================================
+  # AppImage és tarballs
+  # ============================================================================
+  build-appimage:
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:24.04
+    env:
+      OSNAME: linux-ubuntu-noble
+      PLATFORM: x86-64
+      DIST_FOLDER: /workspace/distribution
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Define paths
+        run: |
+          echo "PLATFORM_BUILD_PATH=${DIST_FOLDER}/linux-${PLATFORM}_build" >> $GITHUB_ENV
+          echo "PLATFORM_PACKAGE_PATH=${DIST_FOLDER}/linux-${PLATFORM}_package" >> $GITHUB_ENV
+          echo "PLATFORM_APPIMAGE_PATH=${DIST_FOLDER}/AppDir" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: |
+          apt update && apt upgrade -y
+          apt-get install -y wget file
+          apt install -y build-essential autoconf automake libtool pkg-config \
+            dh-autoreconf debhelper devscripts fakeroot \
+            libperl-dev libsdl1.2-dev libsdl-image1.2-dev \
+            libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
+
+      - name: Build from source
+        run: |
+          autoreconf -i -f
+          ./configure --prefix=/usr
+          make -j$(nproc)
+
+      - name: Create distributable archive
+        run: |
+          make dist
+
+      - name: Install to build path
+        run: |
+          make DESTDIR="${PLATFORM_BUILD_PATH}/" install
+  
+      - name: Prepare binary tarball
+        run: |
+          mkdir -p ${PLATFORM_PACKAGE_PATH}/usr/bin
+          mkdir -p ${PLATFORM_PACKAGE_PATH}/usr/share/openmortal
+          cp -a ${PLATFORM_BUILD_PATH}/usr/share ${PLATFORM_PACKAGE_PATH}/usr/
+          install -m755 ${PLATFORM_BUILD_PATH}/usr/bin/openmortal ${PLATFORM_PACKAGE_PATH}/usr/bin/openmortal
+          cd ${PLATFORM_PACKAGE_PATH}
+          tar zcvf /workspace/openmortal-${VERSION}_linux_${PLATFORM}.tar.gz .
+
+      - name: Prepare AppImage environment
+        run: |
+          mkdir -p ${PLATFORM_APPIMAGE_PATH}/usr/bin
+          mkdir -p ${PLATFORM_APPIMAGE_PATH}/usr/share/icons/hicolor/32x32/apps
+          mkdir -p ${PLATFORM_APPIMAGE_PATH}/usr/share/openmortal
+          
+          install -m644 data/gfx/icon.png ${PLATFORM_APPIMAGE_PATH}/usr/share/icons/hicolor/32x32/apps/openmortal.png
+          cp -a ${PLATFORM_BUILD_PATH}/usr/share ${PLATFORM_APPIMAGE_PATH}/usr/
+          install -m644 packaging/openmortal.AppImage.desktop ${PLATFORM_APPIMAGE_PATH}/openmortal.desktop
+          install -m755 ${PLATFORM_BUILD_PATH}/usr/bin/openmortal ${PLATFORM_APPIMAGE_PATH}/usr/bin/openmortal
+
+      - name: Download linuxdeploy and appimagetool
+        run: |
+          wget -qO /tmp/linuxdeploy-x86_64.AppImage "https://github.com/linuxdeploy/linuxdeploy/releases/latest/download/linuxdeploy-x86_64.AppImage"
+          chmod +x /tmp/linuxdeploy-x86_64.AppImage
+          wget -qO /tmp/appimagetool.AppImage "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
+          chmod +x /tmp/appimagetool.AppImage
+
+      - name: Create AppImage
+        run: |
+          /tmp/linuxdeploy-x86_64.AppImage \
+            --appdir ${PLATFORM_APPIMAGE_PATH} \
+            --desktop-file=${PLATFORM_APPIMAGE_PATH}/openmortal.desktop \
+            --icon-file=${PLATFORM_APPIMAGE_PATH}/usr/share/icons/hicolor/32x32/apps/openmortal.png
+          /tmp/appimagetool.AppImage ${PLATFORM_APPIMAGE_PATH}
+
+      - name: Upload AppImage
+        uses: actions/upload-artifact@v7
+        with:
+          name: openmortal-appimage-x86_64
+          path: ./*.AppImage
+          retention-days: 30
+
+      - name: Upload source tarball
+        uses: actions/upload-artifact@v7
+        with:
+          name: openmortal-source-tarball
+          path: ./openmortal-*.tar.gz
+          retention-days: 30
+
+      - name: Upload binary tarball
+        uses: actions/upload-artifact@v7
+        with:
+          name: openmortal-binary-tarball-x86_64
+          path: /workspace/openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}.tar.gz
+          retention-days: 30
+
+  # ============================================================================
+  # /usr/local prefix build
+  # ============================================================================
+  build-local-install:
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:24.04
+    env:
+      OSNAME: linux-ubuntu-noble
+      PLATFORM: x86-64
+      DIST_FOLDER: /workspace/distribution
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Define paths
+        run: |
+          echo "PLATFORM_BUILD_PATH=${DIST_FOLDER}/linux-${PLATFORM}_build" >> $GITHUB_ENV
+          echo "PLATFORM_PACKAGE_PATH=${DIST_FOLDER}/linux-${PLATFORM}_package" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: |
+          apt update && apt upgrade -y
+          apt-get install -y wget
+          apt install -y build-essential autoconf automake libtool pkg-config \
+            dh-autoreconf debhelper devscripts fakeroot \
+            libperl-dev libsdl1.2-dev libsdl-image1.2-dev \
+            libsdl-mixer1.2-dev libsdl-net1.2-dev libfreetype6-dev
+
+      - name: Build from source
+        run: |
+          autoreconf -i -f
+          ./configure
+          make -j$(nproc)
+
+      - name: Install to build path
+        run: |
+          make DESTDIR="${PLATFORM_BUILD_PATH}/" install
+  
+      - name: Create local install tarball
+        run: |
+          mkdir -p ${PLATFORM_PACKAGE_PATH}/usr/local/bin
+          mkdir -p ${PLATFORM_PACKAGE_PATH}/usr/local/share/openmortal
+          cp -a ${PLATFORM_BUILD_PATH}/usr/local/share ${PLATFORM_PACKAGE_PATH}/usr/local/
+          install -m755 ${PLATFORM_BUILD_PATH}/usr/local/bin/openmortal ${PLATFORM_PACKAGE_PATH}/usr/local/bin/openmortal
+          cd ${PLATFORM_PACKAGE_PATH}
+          tar zcvf /workspace/openmortal-${VERSION}_linux_${PLATFORM}-local.tar.gz .
+
+      - name: Upload local install tarball
+        uses: actions/upload-artifact@v7
+        with:
+          name: openmortal-local-install-tarball-x86_64
+          path: /workspace/openmortal-${{ env.VERSION }}_linux_${{ env.PLATFORM }}-local.tar.gz
+          retention-days: 30
+
+  # ============================================================================
+  # Flatpak (x86_64)
+  # ============================================================================
+  build-flatpak:
+    runs-on: ubuntu-latest
+    env:
+      FLATPAK_ID: net.sourceforge.openmortal
+      MANIFEST: packaging/net.sourceforge.openmortal.yml
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Install Flatpak and flatpak-builder
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak flatpak-builder desktop-file-utils
+
+      - name: Add Flathub remote and install x86_64 SDK/runtime
+        run: |
+          sudo flatpak remote-add --if-not-exists flathub \
+            https://flathub.org/repo/flathub.flatpakrepo
+          sudo flatpak install -y --arch=x86_64 \
+            org.freedesktop.Platform//24.08 \
+            org.freedesktop.Sdk//24.08
+
+      - name: Build Flatpak (x86_64)
+        run: |
+          flatpak-builder \
+            --arch=x86_64 \
+            --repo=repo \
+            --force-clean \
+            --ccache \
+            --disable-rofiles-fuse \
+            builddir-x86_64 \
+            "${{ env.MANIFEST }}"
+
+      - name: Export .flatpak bundle (x86_64)
+        run: |
+          flatpak build-bundle \
+            --arch=x86_64 \
+            repo \
+            "${{ env.FLATPAK_ID }}-${{ env.VERSION }}-x86_64.flatpak" \
+            "${{ env.FLATPAK_ID }}"
+
+      # NOTE: there is no i386 Flatpak leg. Flathub's org.freedesktop.Platform
+      # runtime is only published for x86_64 and aarch64 (confirmed via
+      # https://flathub.org/api/v2/summary/org.freedesktop.Platform) — the
+      # i386 arch was dropped years ago, so an i386 Flatpak build isn't
+      # possible.
+
+      - name: Upload Flatpak artifact (x86_64)
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ env.FLATPAK_ID }}-${{ env.VERSION }}-x86_64.flatpak
+          path: ${{ env.FLATPAK_ID }}-${{ env.VERSION }}-x86_64.flatpak
+
+  # ============================================================================
+  # Windows (MSYS2 / MinGW)
+  # ============================================================================
+  build-windows:
+    runs-on: ${{ matrix.runs-on }}
+    env:
+      ICU_VERSION: 73-2
+      SDL_MIXER_VERSION: 1.2.12
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # 32-bit: Perl from MSYS2 core; ICU and SDL_mixer built from source
+          - { icon: '⬛', sys: mingw32,    env: i686,          runs-on: 'windows-latest', host: 'i686-w64-mingw32',   build_deps: true,  continue: false }
+          # 64-bit variants: full mingw-w64 packages available
+          - { icon: '🟦', sys: mingw64,    env: x86_64,        runs-on: 'windows-latest', host: 'x86_64-w64-mingw32', build_deps: false, continue: false }
+          - { icon: '🟨', sys: ucrt64,     env: ucrt-x86_64,   runs-on: 'windows-latest', host: 'x86_64-w64-mingw32', build_deps: false, continue: false }
+          - { icon: '🟧', sys: clang64,    env: clang-x86_64,  runs-on: 'windows-latest', host: 'x86_64-w64-mingw32', build_deps: false, continue: false }
+          # ARM64: requires GitHub Teams/Enterprise runner — optional
+          - { icon: '🟩', sys: clangarm64, env: clang-aarch64, runs-on: 'windows-11-arm',  host: 'aarch64-w64-mingw32', build_deps: false, continue: true }
+
+    name: ${{ matrix.icon }} ${{ matrix.sys }}
+    continue-on-error: ${{ matrix.continue }}
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup MSYS2 (${{ matrix.sys }}) — base packages
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{ matrix.sys }}
+          update: true
+          install: >-
+            base-devel
+            automake
+            autoconf
+            libtool
+            unzip
+            mingw-w64-${{ matrix.env }}-toolchain
+            mingw-w64-${{ matrix.env }}-make
+            mingw-w64-${{ matrix.env }}-pkg-config
+            mingw-w64-${{ matrix.env }}-SDL
+            mingw-w64-${{ matrix.env }}-SDL_image
+            mingw-w64-${{ matrix.env }}-SDL_net
+            mingw-w64-${{ matrix.env }}-freetype
+            mingw-w64-${{ matrix.env }}-ntldd
+            mingw-w64-${{ matrix.env }}-libiconv
+
+      # ── 64-bit: install Perl, ICU, SDL_mixer from pre-built packages ────────
+      - name: Install additional packages (64-bit)
+        if: matrix.build_deps == false
+        shell: msys2 {0}
+        run: |
+          pacman --noconfirm -S --needed \
+            mingw-w64-${{ matrix.env }}-icu \
+            mingw-w64-${{ matrix.env }}-perl \
+            mingw-w64-${{ matrix.env }}-SDL_mixer
+
+      # ── 32-bit: mingw-w64-i686-perl/icu packages are unavailable or broken ─
+      - name: Install Perl for 32-bit (Strawberry Perl)
+        if: matrix.build_deps == true
+        shell: msys2 {0}
+        run: |
+          # MSYS2 doesn't ship mingw-w64-i686-perl at all (confirmed: no
+          # such package exists, only x86_64/ucrt64/clang64 get a mingw-w64
+          # Perl). MSYS2's own base `perl` package works as a fallback for
+          # running scripts, but it's a POSIX/Cygwin-style build — its
+          # embed headers pull in langinfo.h and other headers that don't
+          # exist when compiling against the real i686-w64-mingw32 target
+          # ("fatal error: langinfo.h: No such file or directory" building
+          # openmortal itself). Strawberry Perl is a Windows-native
+          # distribution built with its own MinGW toolchain (ABI-compatible
+          # with ours), which is the standard choice for embedding Perl in
+          # a MinGW-targeted Windows binary. Current Strawberry releases
+          # are 64-bit only; 5.38.2.1 is the last one with a published
+          # 32-bit portable build.
+          cd /tmp
+          wget -q https://github.com/StrawberryPerl/Perl-Dist-Strawberry/releases/download/SP_5382_32bit/strawberry-perl-5.38.2.1-32bit-portable.zip
+          mkdir -p /opt/strawberry
+          unzip -q strawberry-perl-5.38.2.1-32bit-portable.zip -d /opt/strawberry
+          # GITHUB_PATH doesn't reliably survive into later msys2-shell
+          # steps for a raw POSIX path like this (confirmed: the next step
+          # still picked up MSYS2's own /usr/bin/perl). configure.ac's
+          # AC_PATH_PROG(PERL, perl) honors a pre-set $PERL, so force it
+          # via GITHUB_ENV instead, which every later step does see.
+          echo "PERL=/opt/strawberry/perl/bin/perl" >> "$GITHUB_ENV"
+          export PATH="/opt/strawberry/perl/bin:$PATH"
+          perl --version
+          which perl
+          perl -MExtUtils::Embed -e ccopts
+          perl -MExtUtils::Embed -e ldopts
+
+      - name: Build ICU from source (32-bit)
+        if: matrix.build_deps == true
+        shell: msys2 {0}
+        run: |
+          cd /tmp
+          wget https://github.com/unicode-org/icu/releases/download/release-73-2/icu4c-73_2-src.tgz
+          tar xzf icu4c-73_2-src.tgz
+          cd icu/source
+          # Workaround for GCC 15.x __float128 / GLIBCXX_USE_FLOAT128 bug.
+          # -D_GLIBCXX_USE_FLOAT128=0 alone stopped being enough once the
+          # mingw32 toolchain moved to GCC 16: libstdc++'s <bits/c++config.h>
+          # auto-defines _GLIBCXX_USE_FLOAT128 from __SIZEOF_FLOAT128__
+          # unconditionally, silently overriding the command-line -D. i686
+          # has no real hardware/ABI support for __float128 anyway, so
+          # undefine the compiler's own advertised support for it instead of
+          # trying to override the derived macro after the fact.
+          export CXXFLAGS="-O2 -std=c++11 -D__NO_INLINE__ -fext-numeric-literals -U__SIZEOF_FLOAT128__ -U_GLIBCXX_USE_FLOAT128"
+          export CFLAGS="-O2 -D__NO_INLINE__"
+          ./configure \
+            --prefix=/mingw32 \
+            --host=i686-w64-mingw32 \
+            --disable-samples --disable-tests \
+            --enable-static --disable-shared \
+            --disable-renaming
+          # This configuration (--enable-static --disable-shared, MinGW
+          # cross build) makes ICU name its static archives with an 's'
+          # prefix (libsicuuc.a, libsicuin.a, libsicudt.a, libsicutu.a),
+          # but its own internal tools (makeconv etc.) still link against
+          # the un-prefixed name (-licuuc/-licuin/-licudt/-licutu), which
+          # only exists when shared libs are also built. Alias each
+          # libsicuXX.a to libicuXX.a as it appears and retry: every
+          # attempt gets further before failing on the next not-yet-built
+          # archive, until nothing is left to alias. This isn't a
+          # parallelism race (a fully serial `make` hit the exact same
+          # failure), so -j$(nproc) is fine here.
+          for i in 1 2 3 4 5 6; do
+            find . -name 'libs*.a' -exec bash -c '
+              alias="$(dirname "$1")/$(basename "$1" | sed "s/^libs/lib/")"
+              [ -e "$alias" ] || ln -s "$(basename "$1")" "$alias"
+            ' _ {} \;
+            make -j$(nproc) && break
+          done
+
+      - name: Build SDL_mixer from source (32-bit)
+        if: matrix.build_deps == true
+        shell: msys2 {0}
+        run: |
+          cd /tmp
+          wget https://www.libsdl.org/projects/SDL_mixer/release/SDL_mixer-${{ env.SDL_MIXER_VERSION }}.tar.gz
+          # The release tarball bundles a macOS Xcode project whose
+          # framework bundles are full of Versions/Current symlinks; MSYS's
+          # tar can't create those on Windows and aborts the whole
+          # extraction ("Cannot create symlink ... Exiting with failure
+          # status"). We only need the plain C sources, so skip Xcode/.
+          tar xzf SDL_mixer-${{ env.SDL_MIXER_VERSION }}.tar.gz \
+            --exclude="SDL_mixer-${{ env.SDL_MIXER_VERSION }}/Xcode"
+          cd SDL_mixer-${{ env.SDL_MIXER_VERSION }}
+          ./configure --prefix=/${{ matrix.sys }} --host=i686-w64-mingw32
+          make -j$(nproc)
+          make install
+
+      # ── Paths, configure, build ─────────────────────────────────────────────
+      - name: Define paths
+        shell: msys2 {0}
+        run: |
+          DIST="$(pwd)/distribution"
+          BUILD="${DIST}/windows-${{ matrix.env }}_build"
+          PKG="${DIST}/windows-${{ matrix.env }}_package"
+          echo "DIST_FOLDER=${DIST}"             >> "$GITHUB_ENV"
+          echo "PLATFORM_BUILD_PATH=${BUILD}"    >> "$GITHUB_ENV"
+          echo "PLATFORM_PACKAGE_PATH=${PKG}"    >> "$GITHUB_ENV"
+          # Windows-style paths for PowerShell / InnoSetup steps
+          echo "WIN_PLATFORM_PACKAGE_PATH=$(cygpath -w "${PKG}")" >> "$GITHUB_ENV"
+
+      - name: Configure project
+        shell: msys2 {0}
+        run: |
+          export SDL_CONFIG="/${{ matrix.sys }}/bin/sdl-config"
+          export PKG_CONFIG_PATH="/${{ matrix.sys }}/lib/pkgconfig"
+          autoreconf -i -f
+          ./configure \
+            --prefix=/${{ matrix.sys }} \
+            --host=${{ matrix.host }}
+
+      - name: Build
+        shell: msys2 {0}
+        run: |
+          make DESTDIR="${{ env.PLATFORM_BUILD_PATH }}" install -j$(nproc)
+
+      - name: Collect DLLs and package
+        shell: msys2 {0}
+        run: |
+          PREFIX="/${{ matrix.sys }}"
+          BUILD="${{ env.PLATFORM_BUILD_PATH }}"
+          PKG="${{ env.PLATFORM_PACKAGE_PATH }}"
+
+          mkdir -p "${PKG}${PREFIX}/bin"
+          mkdir -p "${PKG}${PREFIX}/share/openmortal"
+
+          cp -a "${BUILD}${PREFIX}/share" "${PKG}${PREFIX}/"
+          install -m755 "${BUILD}${PREFIX}/bin/openmortal.exe" \
+                        "${PKG}${PREFIX}/bin/openmortal.exe"
+
+          # Bundle required DLLs (exclude Windows system DLLs)
+          ntldd -R "${BUILD}${PREFIX}/bin/openmortal.exe" \
+            | grep -v -i "system32" \
+            | grep -v -i "winsxs" \
+            | grep -v -i "not found" \
+            | awk '{print $3}' \
+            | xargs -d '\n' -I{} cp -- "{}" "${PKG}${PREFIX}/bin/"
+
+          tar zcvf "openmortal-${{ env.VERSION }}_windows_${{ matrix.env }}.tar.gz" \
+            -C "${PKG}" .
+
+      - name: Upload portable archive artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: openmortal-${{ env.VERSION }}_windows_${{ matrix.env }}
+          path: openmortal-${{ env.VERSION }}_windows_${{ matrix.env }}.tar.gz
+
+      # ── InnoSetup installer ──────────────────────────────────────────────────
+      - name: Install InnoSetup 6
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "C:\Program Files (x86)\Inno Setup 6\ISCC.exe")) {
+            choco install innosetup -y --no-progress
+          }
+
+      - name: Create .ico from PNG (System.Drawing)
+        shell: pwsh
+        run: |
+          # ImageMagick is only reliably present on windows-latest (x64):
+          # windows-11-arm either lacks it or has a broken install (fails
+          # every invocation with "RegistryKeyLookupFailed CoderModulesPath"),
+          # and pulling it in via choco is slow and another moving part.
+          # System.Drawing is part of the .NET Framework that ships with
+          # Windows itself on every runner arch, so build the .ico directly
+          # with it instead — no external tool needed at all.
+          Add-Type -AssemblyName System.Drawing
+
+          $sizes = 256, 128, 64, 48, 32, 16
+          $src = [System.Drawing.Image]::FromFile((Resolve-Path "packaging\1024x1024\openmortal.png"))
+          $pngs = foreach ($s in $sizes) {
+            $bmp = New-Object System.Drawing.Bitmap $s, $s
+            $g = [System.Drawing.Graphics]::FromImage($bmp)
+            $g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+            $g.DrawImage($src, 0, 0, $s, $s)
+            $g.Dispose()
+            $ms = New-Object System.IO.MemoryStream
+            $bmp.Save($ms, [System.Drawing.Imaging.ImageFormat]::Png)
+            $bmp.Dispose()
+            , $ms.ToArray()
+          }
+          $src.Dispose()
+
+          # Modern (Vista+) ICO format: a standard ICONDIR/ICONDIRENTRY
+          # table where each entry's payload is just a full PNG file.
+          $fs = [System.IO.File]::Create("packaging\openmortal.ico")
+          $bw = New-Object System.IO.BinaryWriter $fs
+          $bw.Write([UInt16]0)          # reserved
+          $bw.Write([UInt16]1)          # type = icon
+          $bw.Write([UInt16]$sizes.Count)
+
+          $offset = 6 + 16 * $sizes.Count
+          for ($i = 0; $i -lt $sizes.Count; $i++) {
+            $dim = [byte]($(if ($sizes[$i] -eq 256) { 0 } else { $sizes[$i] }))
+            $bw.Write($dim)                          # width (0 means 256)
+            $bw.Write($dim)                          # height
+            $bw.Write([byte]0)                       # color count
+            $bw.Write([byte]0)                        # reserved
+            $bw.Write([UInt16]1)                      # planes
+            $bw.Write([UInt16]32)                     # bits per pixel
+            $bw.Write([UInt32]$pngs[$i].Length)
+            $bw.Write([UInt32]$offset)
+            $offset += $pngs[$i].Length
+          }
+          foreach ($png in $pngs) { $bw.Write($png) }
+          $bw.Close()
+
+      - name: Build InnoSetup installer
+        shell: pwsh
+        run: |
+          $iscc    = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          # Source dir is the staged package tree for this MSYS2 variant
+          $srcDir  = "${{ env.WIN_PLATFORM_PACKAGE_PATH }}\${{ matrix.sys }}"
+
+          New-Item -ItemType Directory -Force "packaging\installer" | Out-Null
+
+          & $iscc `
+            "/DSourceDir=$srcDir" `
+            "/DAppArch=${{ matrix.env }}" `
+            "packaging\openmortal.iss"
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: openmortal-${{ env.VERSION }}_windows_${{ matrix.env }}_setup
+          path: packaging/installer/openmortal-${{ env.VERSION }}-windows-${{ matrix.env }}-setup.exe
+
+  # ============================================================================
+  # Release létrehozása tag esetén
+  # ============================================================================
+  create-release:
+    needs: [build-debs, build-rpms, build-appimage, build-local-install, build-flatpak, build-windows]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: all-artifacts
+      
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: all-artifacts/**/*
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,175 @@
+app-id: net.sourceforge.openmortal
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+sdk: org.freedesktop.Sdk
+
+command: openmortal
+
+# ── Sandbox permissions ───────────────────────────────────────────────────────
+finish-args:
+  - --share=ipc          # MIT-SHM for SDL
+  - --socket=x11         # X11 display (SDL 1.2 has no Wayland backend)
+  - --socket=pulseaudio  # Audio
+  - --device=all         # Joystick / gamepad access
+
+# ── Build options ─────────────────────────────────────────────────────────────
+build-options:
+  cflags: -O2
+  cxxflags: -O2
+  # Perl installs some .so modules (e.g. auto/threads/threads.so, libperl.so
+  # itself) read-only by design. flatpak-builder's debuginfo-extraction pass
+  # runs over the whole /app tree after every module finishes, not just that
+  # module's own files, so later modules (sdl, openmortal, ...) kept hitting
+  # "eu-strip: Permission denied" on those same perl files even with
+  # no-debuginfo set only on the perl module. Disable it globally instead —
+  # debug symbols aren't useful inside the sandboxed app anyway.
+  no-debuginfo: true
+
+# ── Modules ───────────────────────────────────────────────────────────────────
+# Build order: Perl → SDL 1.2 stack → OpenMortal
+# The Freedesktop runtime/SDK does not ship SDL 1.2 or libperl, so we bundle
+# everything needed.
+
+modules:
+
+  # ── Perl (required for embedded scripting in OpenMortal) ───────────────────
+  # OpenMortal embeds Perl via the C API (perl -MExtUtils::Embed).
+  # We build a shared Perl so that libperl.so can be bundled in the Flatpak.
+  - name: perl
+    buildsystem: simple
+    build-commands:
+      - >
+        ./Configure -des
+        -Dprefix=/app
+        -Dvendorprefix=/app
+        -Dman1dir=/app/share/man/man1
+        -Dman3dir=/app/share/man/man3
+        -Duseshrplib
+        -Dusethreads
+        -Doptimize='-O2'
+      - make -j${FLATPAK_BUILDER_N_JOBS}
+      - make install
+    sources:
+      - type: archive
+        url: https://www.cpan.org/src/5.0/perl-5.38.2.tar.gz
+        sha256: a0a31534451eb7b83c7d6594a497543a54d488bc90ca00f5e34762577f40655e
+    cleanup:
+      - /share/man
+      - /lib/perl5/*/pod
+      - /bin/perldoc
+      - /bin/perlthanks
+      - /bin/ptar*
+
+  # ── SDL 1.2 ───────────────────────────────────────────────────────────────
+  - name: sdl
+    buildsystem: autotools
+    config-opts:
+      - --disable-video-wayland   # SDL 1.2 has no Wayland backend
+      - --enable-video-x11
+      - --enable-alsa
+      - --enable-pulseaudio
+      - --enable-joystick
+    sources:
+      - type: git
+        url: https://github.com/libsdl-org/SDL-1.2.git
+        tag: release-1.2.15
+        commit: 457d4e55ffe1b6ad4c4fa4559dbda8360bf8253d
+      # The freedesktop SDK's Xlibint.h declares _XData32 with a `const`
+      # parameter; SDL_x11sym.h's own copy of the prototype doesn't, so
+      # they conflict under a modern compiler. Deleting the symbol (as
+      # upstream's "safe to be missing" comment suggests) breaks the link
+      # instead: other SDL X11 source files call _XData32 directly, not
+      # just through the dynamic-dispatch table this macro also defines.
+      # Add the missing const to match Xlibint.h instead.
+      - type: shell
+        commands:
+          - sed -i 's/register long \*data,unsigned len),(dpy,data,len),return)/register const long *data,unsigned len),(dpy,data,len),return)/' src/video/x11/SDL_x11sym.h
+    cleanup:
+      - /bin/sdl-config
+      - /share/aclocal
+
+  # ── SDL_image 1.2 ─────────────────────────────────────────────────────────
+  - name: sdl-image
+    buildsystem: autotools
+    sources:
+      - type: git
+        url: https://github.com/libsdl-org/SDL_image.git
+        tag: release-1.2.12
+        commit: 220be3fd43a85921138072ed847b7e4bc5ad163e
+      # A fresh checkout can give configure.ac/Makefile.am a timestamp
+      # that looks newer than the pre-generated aclocal.m4/configure/
+      # Makefile.in, so make tries to regenerate them with whatever
+      # autoconf is in the SDK and fails ("generated for autoconf 2.61").
+      - type: shell
+        commands:
+          - touch aclocal.m4 configure
+          - find . -name 'Makefile.in' -exec touch {} +
+    cleanup:
+      - /share/aclocal
+
+  # ── SDL_mixer 1.2 ─────────────────────────────────────────────────────────
+  - name: sdl-mixer
+    buildsystem: autotools
+    sources:
+      - type: git
+        url: https://github.com/libsdl-org/SDL_mixer.git
+        tag: release-1.2.12
+        commit: 1a14d94ed4271e45435ecb5512d61792e1a42932
+      - type: shell
+        commands:
+          - touch aclocal.m4 configure
+          - find . -name 'Makefile.in' -exec touch {} +
+    cleanup:
+      - /share/aclocal
+
+  # ── SDL_net 1.2 ───────────────────────────────────────────────────────────
+  - name: sdl-net
+    buildsystem: autotools
+    sources:
+      - type: git
+        url: https://github.com/libsdl-org/SDL_net.git
+        tag: release-1.2.8
+        commit: 7aa8ffae32fda6455792c5538a8b64a655dd0721
+      - type: shell
+        commands:
+          - touch aclocal.m4 configure
+          - find . -name 'Makefile.in' -exec touch {} +
+    cleanup:
+      - /share/aclocal
+
+  # ── OpenMortal ────────────────────────────────────────────────────────────
+  - name: openmortal
+    buildsystem: autotools
+    config-opts:
+      - --prefix=/app
+    build-options:
+      # Perl embed flags must resolve to /app (where we installed Perl above)
+      env:
+        PERL: /app/bin/perl
+    sources:
+      - type: dir
+        path: ..
+      # configure/compile/depcomp/etc. aren't tracked in git (every other
+      # build path — deb, rpm, macOS, Windows — already runs autoreconf
+      # itself first), and `type: dir` only sees git-tracked files, so
+      # regenerate them here too rather than relying on a committed copy.
+      - type: shell
+        commands:
+          - autoreconf -i -f
+
+    # Install the .desktop file and icons into the standard Flatpak locations
+    post-install:
+      - install -Dm644 packaging/openmortal.AppImage.desktop
+                       /app/share/applications/net.sourceforge.openmortal.desktop
+      - desktop-file-edit --set-key=Icon
+                          --set-value=net.sourceforge.openmortal
+                          /app/share/applications/net.sourceforge.openmortal.desktop
+      - install -Dm644 packaging/32x32/openmortal.png
+                       /app/share/icons/hicolor/32x32/apps/net.sourceforge.openmortal.png
+      - install -Dm644 packaging/64x64/openmortal.png
+                       /app/share/icons/hicolor/64x64/apps/net.sourceforge.openmortal.png
+      - install -Dm644 packaging/128x128/openmortal.png
+                       /app/share/icons/hicolor/128x128/apps/net.sourceforge.openmortal.png
+      # Flatpak's hicolor icon theme caps out at 512x512; the 1024x1024
+      # source image isn't a valid size to export there ("Image too
+      # large"), and there's no 256/512 variant in the repo to use instead.
