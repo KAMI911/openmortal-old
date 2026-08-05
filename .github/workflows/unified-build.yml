@@ -215,6 +215,10 @@ jobs:
                       # its configure.in needs -I acinclude to find the
                       # AM_PATH_ALSA/AM_PATH_ESD macros it references.
                       if [ ! -x ./configure ]; then
+                        # Checked-in ltmain.sh can predate the system
+                        # libtool, causing a "Version mismatch" build
+                        # failure unless it is regenerated first.
+                        libtoolize --force --copy
                         autoreconf -i -f -I acinclude
                       fi
                       ./configure --prefix=/usr
