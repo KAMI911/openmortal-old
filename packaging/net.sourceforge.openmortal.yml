@@ -149,6 +149,13 @@ modules:
     sources:
       - type: dir
         path: ..
+      # configure/compile/depcomp/etc. aren't tracked in git (every other
+      # build path — deb, rpm, macOS, Windows — already runs autoreconf
+      # itself first), and `type: dir` only sees git-tracked files, so
+      # regenerate them here too rather than relying on a committed copy.
+      - type: shell
+        commands:
+          - autoreconf -i -f
 
     # Install the .desktop file and icons into the standard Flatpak locations
     post-install:
