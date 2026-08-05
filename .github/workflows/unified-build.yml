@@ -271,11 +271,15 @@ jobs:
               # Create RPM build structure
               mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
               
-              # Create source tarball
-              tar czf rpmbuild/SOURCES/openmortal-${VERSION:-1.0}.tar.gz \
+              # Create source tarball. Name and internal directory layout
+              # must match what the spec expects: Source0s basename is
+              # upgrade.tar.gz, and %autosetup -n openmortal-old-upgrade
+              # requires that exact top-level directory name inside it.
+              tar czf rpmbuild/SOURCES/upgrade.tar.gz \
                 --exclude=.git \
                 --exclude=rpmbuild \
                 --exclude=artifacts \
+                --transform "s,^\./,openmortal-old-upgrade/," \
                 .
 
               ls -la rpmbuild/SOURCES/
