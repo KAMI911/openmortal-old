@@ -167,7 +167,7 @@ jobs:
             /bin/bash -c '
               set -e
               apt-get update
-              apt-get install -y wget
+              apt-get install -y wget file
 
               APPDIR="/workspace/AppDir-i386"
               mkdir -p "${APPDIR}/usr/bin"
