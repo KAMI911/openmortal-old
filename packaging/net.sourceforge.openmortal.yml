@@ -73,6 +73,14 @@ modules:
         url: https://github.com/libsdl-org/SDL-1.2.git
         tag: release-1.2.15
         commit: 457d4e55ffe1b6ad4c4fa4559dbda8360bf8253d
+      # The freedesktop SDK's Xlibint.h declares _XData32 with a `const`
+      # parameter; SDL_x11sym.h's own copy of the prototype doesn't have
+      # one, so they conflict under a modern compiler. Upstream's own
+      # comment on these two symbols says they're "not required... safe
+      # for them to be missing", so just drop them.
+      - type: shell
+        commands:
+          - sed -i '/_XData32\|_XRead32/d' src/video/x11/SDL_x11sym.h
     cleanup:
       - /bin/sdl-config
       - /share/aclocal

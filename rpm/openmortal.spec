@@ -12,21 +12,29 @@ Source0:        https://github.com/KAMI911/openmortal-old/archive/refs/heads/upg
 
 %if 0%{?fedora}
 # Fedora dropped the plain SDL-devel package; sdl12-compat-devel (SDL 1.2
-# API on top of SDL2) is what SDL_image/mixer/net-devel depend on there.
+# API on top of SDL2) is what SDL_image/mixer/net-devel depend on there,
+# and all three of those are installable as-is.
 BuildRequires:	sdl12-compat-devel
-%else
-# EL8 still ships a real SDL-devel. EL9 has neither this nor
-# sdl12-compat-devel — the whole SDL 1.2 stack has to be built from source
-# there (see .github/workflows/unified-build.yml, sdl_mode: source).
-BuildRequires:	SDL-devel
-%endif
-
 BuildRequires:	SDL_image-devel
 BuildRequires:	SDL_mixer-devel
 BuildRequires:	SDL_net-devel
+%endif
 
-BuildRequires:	freetype2-devel
-BuildRequires:	libnsl-devel
+%if 0%{?rhel} == 8
+# EL8 ships a real SDL-devel, SDL_image-devel and SDL_net-devel, but no
+# SDL_mixer 1.2 devel package at all — CI builds just that one from
+# source into /usr (see .github/workflows/unified-build.yml).
+BuildRequires:	SDL-devel
+BuildRequires:	SDL_image-devel
+BuildRequires:	SDL_net-devel
+%endif
+
+# EL9 (0%{?rhel} == 9): none of SDL/SDL_image/SDL_mixer/SDL_net-devel are
+# installable — EPEL9's *-devel packages all depend on an SDL-devel that
+# EPEL9 doesn't ship. CI builds the whole stack from source directly into
+# /usr before rpmbuild runs (sdl_mode: source), so nothing to declare here.
+
+BuildRequires:	freetype-devel
 BuildRequires:	perl-devel
 
 %description
