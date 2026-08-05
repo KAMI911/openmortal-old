@@ -641,13 +641,33 @@ jobs:
             mingw-w64-${{ matrix.env }}-SDL_mixer
 
       # ── 32-bit: mingw-w64-i686-perl/icu packages are unavailable or broken ─
-      - name: Install Perl for 32-bit (MSYS2 core Perl)
+      - name: Install Perl for 32-bit (Strawberry Perl)
         if: matrix.build_deps == true
         shell: msys2 {0}
         run: |
-          pacman --noconfirm -S perl
+          # MSYS2 doesn't ship mingw-w64-i686-perl at all (confirmed: no
+          # such package exists, only x86_64/ucrt64/clang64 get a mingw-w64
+          # Perl). MSYS2's own base `perl` package works as a fallback for
+          # running scripts, but it's a POSIX/Cygwin-style build — its
+          # embed headers pull in langinfo.h and other headers that don't
+          # exist when compiling against the real i686-w64-mingw32 target
+          # ("fatal error: langinfo.h: No such file or directory" building
+          # openmortal itself). Strawberry Perl is a Windows-native
+          # distribution built with its own MinGW toolchain (ABI-compatible
+          # with ours), which is the standard choice for embedding Perl in
+          # a MinGW-targeted Windows binary. Current Strawberry releases
+          # are 64-bit only; 5.38.2.1 is the last one with a published
+          # 32-bit portable build.
+          cd /tmp
+          wget -q https://github.com/StrawberryPerl/Perl-Dist-Strawberry/releases/download/SP_5382_32bit/strawberry-perl-5.38.2.1-32bit-portable.zip
+          mkdir -p /opt/strawberry
+          unzip -q strawberry-perl-5.38.2.1-32bit-portable.zip -d /opt/strawberry
+          echo "/opt/strawberry/perl/bin" >> "$GITHUB_PATH"
+          export PATH="/opt/strawberry/perl/bin:$PATH"
           perl --version
           which perl
+          perl -MExtUtils::Embed -e ccopts
+          perl -MExtUtils::Embed -e ldopts
 
       - name: Build ICU from source (32-bit)
         if: matrix.build_deps == true
