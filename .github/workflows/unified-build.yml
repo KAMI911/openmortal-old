@@ -696,7 +696,13 @@ jobs:
         run: |
           cd /tmp
           wget https://www.libsdl.org/projects/SDL_mixer/release/SDL_mixer-${{ env.SDL_MIXER_VERSION }}.tar.gz
-          tar xzf SDL_mixer-${{ env.SDL_MIXER_VERSION }}.tar.gz
+          # The release tarball bundles a macOS Xcode project whose
+          # framework bundles are full of Versions/Current symlinks; MSYS's
+          # tar can't create those on Windows and aborts the whole
+          # extraction ("Cannot create symlink ... Exiting with failure
+          # status"). We only need the plain C sources, so skip Xcode/.
+          tar xzf SDL_mixer-${{ env.SDL_MIXER_VERSION }}.tar.gz \
+            --exclude="SDL_mixer-${{ env.SDL_MIXER_VERSION }}/Xcode"
           cd SDL_mixer-${{ env.SDL_MIXER_VERSION }}
           ./configure --prefix=/${{ matrix.sys }} --host=i686-w64-mingw32
           make -j$(nproc)
