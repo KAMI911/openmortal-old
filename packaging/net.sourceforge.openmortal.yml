@@ -16,6 +16,14 @@ finish-args:
 build-options:
   cflags: -O2
   cxxflags: -O2
+  # Perl installs some .so modules (e.g. auto/threads/threads.so, libperl.so
+  # itself) read-only by design. flatpak-builder's debuginfo-extraction pass
+  # runs over the whole /app tree after every module finishes, not just that
+  # module's own files, so later modules (sdl, openmortal, ...) kept hitting
+  # "eu-strip: Permission denied" on those same perl files even with
+  # no-debuginfo set only on the perl module. Disable it globally instead —
+  # debug symbols aren't useful inside the sandboxed app anyway.
+  no-debuginfo: true
 
 # ── Modules ───────────────────────────────────────────────────────────────────
 # Build order: Perl → SDL 1.2 stack → OpenMortal
@@ -29,13 +37,6 @@ modules:
   # We build a shared Perl so that libperl.so can be bundled in the Flatpak.
   - name: perl
     buildsystem: simple
-    # Perl installs some .so modules (e.g. auto/threads/threads.so) read-only
-    # by design; flatpak-builder's debuginfo extraction needs to rewrite
-    # those files in place and fails with EACCES. Debug symbols for the
-    # embedded Perl runtime aren't useful inside the sandboxed app anyway.
-    # (no-debuginfo belongs under build-options, not directly on the module.)
-    build-options:
-      no-debuginfo: true
     build-commands:
       - >
         ./Configure -des

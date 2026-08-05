@@ -132,6 +132,12 @@ jobs:
           - distro: fedora:43
             pkg_manager: dnf
             sdl_mode: compat
+          - distro: fedora:44
+            pkg_manager: dnf
+            sdl_mode: compat
+          - distro: fedora:45
+            pkg_manager: dnf
+            sdl_mode: compat
           # EL8 has SDL-devel, SDL_image-devel and SDL_net-devel, but no
           # SDL_mixer 1.2 devel package at all — build just that one from
           # source, use repo packages for the rest.
@@ -181,7 +187,7 @@ jobs:
               # Install build dependencies. curl is deliberately not listed:
               # EL9 images ship curl-minimal, which already provides a
               # working /usr/bin/curl and conflicts with the full curl
-              # package if it's requested explicitly.
+              # package when explicitly requested.
               ${{ matrix.pkg_manager }} install -y \
                 rpm-build \
                 gcc \
