@@ -673,8 +673,13 @@ jobs:
             --disable-samples --disable-tests \
             --enable-static --disable-shared \
             --disable-renaming
-          make -j$(nproc) || make
-          make install
+          # -j$(nproc) races: tools/ (makeconv etc.) can start linking
+          # against ../../lib/libicuuc.a before common/'s archive step
+          # finishes, and once that partial state exists, a plain retry
+          # doesn't reliably rebuild it (make sees the .o files as already
+          # up to date). Build serially instead — ICU is small enough that
+          # the extra time doesn't matter.
+          make
 
       - name: Build SDL_mixer from source (32-bit)
         if: matrix.build_deps == true
