@@ -141,8 +141,15 @@ protected:
 #include <string>
 
 #ifdef _WIN32
+/* sdl-config passes -Dmain=SDL_main, which blindly rewrites every bare
+ * "main" token in this translation unit. windows.h (pulled in via shlobj.h
+ * below) has internal CRT declarations that use that identifier, so it
+ * must be included with the macro off; redefine it below so our own
+ * main() further down still gets renamed correctly. */
+#undef main
 #include <windows.h>
 #include <shlobj.h>
+#define main SDL_main
 #endif
 
 #include "common.h"
