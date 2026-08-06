@@ -751,6 +751,16 @@ jobs:
           export SDL_CONFIG="/${{ matrix.sys }}/bin/sdl-config"
           export PKG_CONFIG_PATH="/${{ matrix.sys }}/lib/pkgconfig"
           autoreconf -i -f
+          # DIAGNOSTIC: real Windows 10 (19041.2788) crashes openmortal.exe
+          # in ntdll.dll (0xc0000005) at the exact same offset on every
+          # single rebuild, right after every bundled DLL finishes loading
+          # — a deterministic, loader-time crash, not random corruption.
+          # openmortal.exe has HIGH_ENTROPY_VA + DYNAMIC_BASE set (full
+          # 64-bit ASLR); testing whether the relocation table the linker
+          # produces for that is what this specific (2020-era) Windows
+          # loader is choking on. Remove once we confirm which flag (or
+          # neither) actually matters.
+          export LDFLAGS="-Wl,--disable-dynamicbase -Wl,--disable-high-entropy-va"
           ./configure \
             --prefix=/${{ matrix.sys }} \
             --host=${{ matrix.host }}
