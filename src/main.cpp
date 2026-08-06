@@ -165,9 +165,13 @@ protected:
 #if defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
 // Override the compiled-in (non-portable, autoconf-time) pkgdatadir
 // with a path relative to the exe for a portable Windows install.
+// Matches the actual packaging layout (both the portable tarball and
+// the installer ship game data under share/openmortal/, sibling of
+// bin/ -- see unified-build.yml's "Collect DLLs and package" step and
+// packaging/openmortal.iss).
 #undef MSZ_DATADIR
 #include <windows.h>
-#define MSZ_DATADIR "../data"
+#define MSZ_DATADIR "../share/openmortal"
 
 #endif
 
