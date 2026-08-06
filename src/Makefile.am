@@ -8,7 +8,8 @@ openmortal_SOURCES = \
 	Chooser.cpp       gfx.cpp          PlayerSelect.cpp            State.cpp \
 	common.cpp        Joystick.cpp     PlayerSelectView.cpp        TextArea.cpp \
 	Demo.cpp          main.cpp         RlePack.cpp \
-	FighterStats.cpp  menu.cpp         sge_bm_text.cpp
+	FighterStats.cpp  menu.cpp         sge_bm_text.cpp \
+	WinMainWin32.cpp
 
 EXTRA_DIST = $(openmortal_SOURCES)\
 	Audio.h       Event.h         menu.h                    PlayerSelectView.h  sge_tt_text.h \
