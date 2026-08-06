@@ -23,10 +23,9 @@
 #include <string.h>
 #include <string>
 
-/* Not extern "C" -- main.cpp's main() is renamed to SDL_main via
- * sdl-config's -Dmain=SDL_main and keeps ordinary C++ linkage, so this
- * declaration must match that (SDL_main.h itself declares it the same
- * way). */
+/* Not extern "C" -- main.cpp names its entry point SDL_main directly on
+ * Windows and keeps ordinary C++ linkage, so this declaration must match
+ * that (SDL_main.h itself declares it the same way). */
 extern int SDL_main(int argc, char *argv[]);
 
 static void RedirectStdioToAppData()
