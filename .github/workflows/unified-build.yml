@@ -805,6 +805,23 @@ jobs:
             | awk '{print $3}' \
             | xargs -d '\n' -I{} cp -- "{}" "${PKG}${PREFIX}/bin/"
 
+          # Strawberry Perl (32-bit leg only) lives outside the MSYS2
+          # mingw32 sysroot ntldd just scanned, so its perl538.dll never
+          # gets picked up above even though openmortal.exe needs it at
+          # runtime — on a machine without Strawberry Perl installed, the
+          # OS refuses to even start the process (DLL resolution happens
+          # at load time, before any of our own code — including the
+          # MessageBoxA error dialog — ever runs), which looks like the
+          # game silently doing nothing. Bundle it explicitly. Its other
+          # runtime deps (libgcc_s_dw2-1.dll, libstdc++-6.dll) are left as
+          # the newer copies ntldd already bundled from MSYS2's own gcc —
+          # GCC's unwind/C++ runtime ABI has stayed compatible across
+          # versions specifically to support this kind of cross-toolchain
+          # DLL sharing.
+          if [ "${{ matrix.build_deps }}" = "true" ]; then
+            cp -- /opt/strawberry/perl/bin/perl538.dll "${PKG}${PREFIX}/bin/"
+          fi
+
           tar zcvf "openmortal-${{ env.VERSION }}_windows_${{ matrix.env }}.tar.gz" \
             -C "${PKG}" .
 
