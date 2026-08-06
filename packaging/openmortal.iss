@@ -76,7 +76,7 @@ Compression=lzma2/ultra64
 SolidCompression=yes
 
 ; Uninstall
-UninstallDisplayIcon={app}\{#AppExeName}
+UninstallDisplayIcon={app}\bin\{#AppExeName}
 UninstallDisplayName={#AppName} {#AppVersion}
 
 ; Version metadata embedded in the installer EXE
@@ -103,19 +103,25 @@ Name: "desktopicon"; \
 ; ── [Files] ──────────────────────────────────────────────────────────────────
 
 [Files]
-; Game executable
+; Game executable and data go in bin\ / share\openmortal\, matching the
+; portable tarball layout exactly — init_data_dir() in main.cpp locates
+; game data at "<exe dir>\..\share\openmortal" (stepping up one level
+; when the exe's own directory is literally named "bin"). Installing
+; straight into {app}\ with data under {app}\data (the previous layout)
+; put data somewhere the exe never looks, so it started but couldn't
+; find anything and silently failed.
 Source: "{#SourceDir}\bin\{#AppExeName}"; \
-  DestDir: "{app}"; \
+  DestDir: "{app}\bin"; \
   Flags: ignoreversion
 
 ; Bundled runtime DLLs (SDL, FreeType, Perl, etc.)
 Source: "{#SourceDir}\bin\*.dll"; \
-  DestDir: "{app}"; \
+  DestDir: "{app}\bin"; \
   Flags: ignoreversion
 
 ; Game data — characters, graphics, fonts, sounds, scripts
 Source: "{#SourceDir}\share\openmortal\*"; \
-  DestDir: "{app}\data"; \
+  DestDir: "{app}\share\openmortal"; \
   Flags: ignoreversion recursesubdirs createallsubdirs
 
 ; ── [Icons] / Start Menu ─────────────────────────────────────────────────────
@@ -123,8 +129,8 @@ Source: "{#SourceDir}\share\openmortal\*"; \
 [Icons]
 ; Start Menu entry
 Name: "{group}\{#AppName}"; \
-  Filename: "{app}\{#AppExeName}"; \
-  WorkingDir: "{app}"; \
+  Filename: "{app}\bin\{#AppExeName}"; \
+  WorkingDir: "{app}\bin"; \
   Comment: "{#AppDescription}"
 
 ; Uninstall entry in Start Menu
@@ -133,15 +139,15 @@ Name: "{group}\{cm:UninstallProgram,{#AppName}}"; \
 
 ; Optional desktop shortcut (unchecked by default — see [Tasks])
 Name: "{autodesktop}\{#AppName}"; \
-  Filename: "{app}\{#AppExeName}"; \
-  WorkingDir: "{app}"; \
+  Filename: "{app}\bin\{#AppExeName}"; \
+  WorkingDir: "{app}\bin"; \
   Comment: "{#AppDescription}"; \
   Tasks: desktopicon
 
 ; ── [Run] — post-install launch offer ────────────────────────────────────────
 
 [Run]
-Filename: "{app}\{#AppExeName}"; \
+Filename: "{app}\bin\{#AppExeName}"; \
   Description: "{cm:LaunchProgram,{#StringChange(AppName, '&', '&&')}}"; \
-  WorkingDir: "{app}"; \
+  WorkingDir: "{app}\bin"; \
   Flags: nowait postinstall skipifsilent
