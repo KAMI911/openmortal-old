@@ -340,7 +340,7 @@ SDLKey GetKey( bool a_bTranslate )
 SDL_Surface* LoadBackground( const char* a_pcFilename, int a_iNumColors, int a_iPaletteOffset, bool a_bTransparent )
 {
 	char acFilepath[FILENAME_MAX+1];
-	strcpy( acFilepath, DATADIR );
+	strcpy( acFilepath, MSZ_DATADIR );
 	strcat( acFilepath, "/gfx/" );
 	strcat( acFilepath, a_pcFilename );
 

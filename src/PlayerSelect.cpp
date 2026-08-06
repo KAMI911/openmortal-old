@@ -167,7 +167,7 @@ RlePack* PlayerSelect::LoadFighter( FighterEnum m_enFighter )		// static
 	g_oBackend.PerlEvalF( "GetFighterStats(%d);", m_enFighter );
 	s = g_oBackend.GetPerlString( "Datafile" );
 
-	strcpy( a_pcFilename, DATADIR );
+	strcpy( a_pcFilename, MSZ_DATADIR );
 	strcat( a_pcFilename, "/characters/" );
 	strcat( a_pcFilename, s );
 

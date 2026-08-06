@@ -163,9 +163,11 @@ protected:
 
 
 #if defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
-#undef DATADIR                // GRRR.. windows keyword...
+// Override the compiled-in (non-portable, autoconf-time) pkgdatadir
+// with a path relative to the exe for a portable Windows install.
+#undef MSZ_DATADIR
 #include <windows.h>
-#define DATADIR "../data"
+#define MSZ_DATADIR "../data"
 
 #endif
 
@@ -202,7 +204,7 @@ void Complain( const char* a_pcError )
 
 _sge_TTFont* LoadTTF( const char* a_pcFilename, int a_iSize )
 {
-	std::string sPath = std::string(DATADIR) + "/fonts/" + a_pcFilename;
+	std::string sPath = std::string(MSZ_DATADIR) + "/fonts/" + a_pcFilename;
 	_sge_TTFont* poFont = sge_TTF_OpenFont( sPath.c_str(), a_iSize );
 	
 	if ( NULL == poFont )
@@ -216,7 +218,7 @@ _sge_TTFont* LoadTTF( const char* a_pcFilename, int a_iSize )
 
 sge_bmpFont* LoadBMPFont( const char* a_pcFilename )
 {
-	std::string sPath = std::string(DATADIR) + "/fonts/" + a_pcFilename;
+	std::string sPath = std::string(MSZ_DATADIR) + "/fonts/" + a_pcFilename;
 	sge_bmpFont* poFont = sge_BF_OpenFont( sPath.c_str(), SGE_BFSFONT | SGE_BFTRANSP );
 	if ( NULL == poFont )
 	{
@@ -243,7 +245,7 @@ int init()
 	}
 	
 	SDL_WM_SetCaption( "OpenMortal", "OpenMortal" );
-	std::string sPath = std::string(DATADIR) + "/gfx/icon.png";
+	std::string sPath = std::string(MSZ_DATADIR) + "/gfx/icon.png";
 	SDL_WM_SetIcon(IMG_Load(sPath.c_str()), NULL);
 	SDL_ShowCursor( SDL_DISABLE );
 
@@ -350,7 +352,7 @@ int DrawMainScreen()
 	SDL_Rect r;
 	r.x = r.y = 0;
 	
-	std::string sStaffFilename = DATADIR;
+	std::string sStaffFilename = MSZ_DATADIR;
 	sStaffFilename += "/characters/staff.dat";
 	RlePack pack( sStaffFilename.c_str(), 256 );
 	pack.ApplyPalette();
@@ -372,9 +374,9 @@ int DrawMainScreen()
 	/*
 	int i;
 
-	g_oBackend.PerlEvalF( "eval( \"require '%s/characters/Kinga.pl';\" )", DATADIR );
-	g_oBackend.PerlEvalF( "eval( \"require '%s/characters/Ambrus.pl';\" )", DATADIR );
-	g_oBackend.PerlEvalF( "eval( \"require '%s/characters/Dani.pl';\" )", DATADIR );
+	g_oBackend.PerlEvalF( "eval( \"require '%s/characters/Kinga.pl';\" )", MSZ_DATADIR );
+	g_oBackend.PerlEvalF( "eval( \"require '%s/characters/Ambrus.pl';\" )", MSZ_DATADIR );
+	g_oBackend.PerlEvalF( "eval( \"require '%s/characters/Dani.pl';\" )", MSZ_DATADIR );
 
 	for ( i=0; i<15; ++i )
 	{
@@ -383,7 +385,7 @@ int DrawMainScreen()
 		if ( filename[i] != NULL )
 		{
 			debug( "Loading fighter %s", filename[i] );
-			g_oBackend.PerlEvalF( "eval( \"require '%s/characters/%s';\" )", DATADIR, filename[i] );
+			g_oBackend.PerlEvalF( "eval( \"require '%s/characters/%s';\" )", MSZ_DATADIR, filename[i] );
 
 
 		}
@@ -398,10 +400,10 @@ int DrawMainScreen()
 #ifdef MACOSX
 	//[segabor]
 	char char_buf[256];
-	sprintf(char_buf, "%s/characters", DATADIR);
+	sprintf(char_buf, "%s/characters", MSZ_DATADIR);
 	g_oBackend.PerlEvalF( "$CppRetval = GetNumberOfFighterFiles('%s')", char_buf );
 #else
-	g_oBackend.PerlEvalF( "$CppRetval = GetNumberOfFighterFiles('%s')", DATADIR "/characters" );
+	g_oBackend.PerlEvalF( "$CppRetval = GetNumberOfFighterFiles('%s')", MSZ_DATADIR "/characters" );
 #endif
 	iNumFighterFiles = g_oBackend.GetPerlInt( "CppRetval" );
 	
@@ -677,7 +679,7 @@ int main(int argc, char *argv[])
 		
 		for ( i=0; i<15; ++i )
 		{
-			sprintf( acReplayFile, DATADIR "/msz%i.replay", i );
+			sprintf( acReplayFile, MSZ_DATADIR "/msz%i.replay", i );
 			DrawTextMSZ( acReplayFile, impactFont, 10, 10, 0, C_WHITE, gamescreen );
 			SDL_Delay(5000 );
 			

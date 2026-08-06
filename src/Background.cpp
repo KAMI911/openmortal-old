@@ -71,7 +71,7 @@ void Background::Load( int a_iBackgroundNumber )
 	char acFilename[FILENAME_MAX+1];
 
 	// 1. Try loading a description-based background.
-	sprintf( acFilename, "%s/gfx/level%d.desc", DATADIR, a_iBackgroundNumber );
+	sprintf( acFilename, "%s/gfx/level%d.desc", MSZ_DATADIR, a_iBackgroundNumber );
 	std::ifstream oInput( acFilename );
 	if ( !oInput.is_open() )
 	{

@@ -83,7 +83,7 @@ void CChooser::Init()
 		g_oBackend.PerlEvalF( "GetFighterStats(%d);", enFighter );
 		s = g_oBackend.GetPerlString( "Portrait" );
 		
-		strcpy( pcFilename, DATADIR );
+		strcpy( pcFilename, MSZ_DATADIR );
 		strcat( pcFilename, "/characters/" );
 		strcat( pcFilename, s );
 		

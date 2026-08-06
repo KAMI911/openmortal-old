@@ -20,7 +20,7 @@ EXTRA_DIST = $(openmortal_SOURCES)\
 	Demo.h        gfx.h           PlayerSelectController.h  sge_primitives.h \
 	DrawRle.h     Joystick.h      PlayerSelect.h            sge_surface.h
 
-CXXFLAGS= @CXXFLAGS@ -DDATADIR=\"${pkgdatadir}\" -Wall
+CXXFLAGS= @CXXFLAGS@ -DMSZ_DATADIR=\"${pkgdatadir}\" -Wall
 
 # set the include path found by configure
 #INCLUDES= $(all_includes)
