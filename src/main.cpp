@@ -123,6 +123,18 @@ protected:
 */
 
 
+/* Captured before any other header (notably Perl's, which are enormous
+ * and manipulate a lot of platform macros for their own portability
+ * layer) gets a chance to touch _WIN32 -- the entry point below is
+ * chosen based on this, not a fresh #ifdef _WIN32, since a real Windows
+ * CI build showed the late-file check picking the non-Windows branch
+ * despite compiling with a mingw cross compiler. */
+#ifdef _WIN32
+#define OPENMORTAL_TARGET_WIN32 1
+#else
+#define OPENMORTAL_TARGET_WIN32 0
+#endif
+
 #include "config.h"
 
 #include "PlayerSelect.h"
@@ -573,14 +585,18 @@ void ChatLoop()
 void PgTest();
 
 
-#ifdef _WIN32
+#if OPENMORTAL_TARGET_WIN32
 /* Named directly rather than relying on sdl-config's -Dmain=SDL_main
  * command-line macro to rename a plain main() here: that rename didn't
  * survive through this file's later Perl header includes in practice
  * (linker ended up with a "main" symbol instead of "SDL_main", leaving
  * WinMainWin32.cpp's call to SDL_main() unresolved) -- confirmed via a
  * real Windows CI build. Naming it explicitly sidesteps the fragility
- * entirely.
+ * entirely. Using OPENMORTAL_TARGET_WIN32 (captured at the top of this
+ * file) rather than re-testing _WIN32 here: a real build showed this
+ * exact #ifdef _WIN32 picking the wrong branch this late in the file,
+ * meaning something in between (almost certainly Perl's headers) had
+ * undefined it.
  */
 int SDL_main(int argc, char *argv[])
 #else
