@@ -72,7 +72,17 @@ jobs:
                 # causing "Version mismatch" at build time unless it's
                 # regenerated to match first.
                 libtoolize --force --copy
-                autoreconf -i -f -I acinclude
+                # acinclude/ also ships its own vendored (2.2.6-era)
+                # libtool.m4 for AM_PATH_ALSA/ESD's sake. aclocal searches
+                # -I dirs in the order given, so without Homebrew's libtool
+                # macro dir listed first, acinclude's stale copy wins and
+                # the generated configure ends up with an LT_INIT from
+                # libtool 2.2.6 while ltmain.sh (from libtoolize above) is
+                # 2.6.2 -- "Version mismatch" at build time, reproduced on
+                # Apple Silicon runners.
+                autoreconf -i -f \
+                  -I "${HOMEBREW_PREFIX}/opt/libtool/share/aclocal" \
+                  -I acinclude
               else
                 # A fresh git checkout can give configure.ac/Makefile.am a
                 # timestamp that looks newer than the pre-generated
