@@ -17,6 +17,15 @@
  */
 #ifdef _WIN32
 
+/* Makefile.am's CXXFLAGS defines DATADIR globally for every .cpp file
+ * (the game's own data directory path) -- but windows.h's objidl.h
+ * declares an unrelated enum type also named DATADIR, so our macro
+ * clobbers it into invalid syntax the moment windows.h is included.
+ * main.cpp has carried its own "GRRR.. windows keyword..." #undef for
+ * this since the DOS-era codebase; this file doesn't use DATADIR at all,
+ * so just drop it before pulling windows.h in. */
+#undef DATADIR
+
 #include <windows.h>
 #include <shlobj.h>
 #include <stdio.h>
