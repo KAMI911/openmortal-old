@@ -119,6 +119,20 @@ AM_PATH_SDL($SDL_VERSION,
 	:,
 	AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
 )
+dnl On Windows, don't link SDL's prebuilt SDLmain -- it installs its own
+dnl WinMain that unconditionally redirects stdout/stderr to files next to
+dnl the exe, which crashes when that directory isn't writable (e.g.
+dnl Program Files without elevation). main.cpp provides its own WinMain
+dnl that redirects to a location that's always writable instead.
+case "$host" in
+	*-mingw32*|*-w64-mingw32*)
+		SDL_LIBS=`echo "$SDL_LIBS" | sed -e 's/-lSDLmain//'`
+		dnl -lshell32 for SHGetFolderPathA (stdio redirect target), used by
+		dnl our own WinMain in main.cpp
+		LIBS="$LIBS -lshell32"
+		;;
+esac
+
 CXXFLAGS="$CXXFLAGS $SDL_CFLAGS"
 LIBS="$LIBS $SDL_LIBS"
 
