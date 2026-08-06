@@ -59,6 +59,19 @@ AllowNoIcons=yes
 ; 32-bit location automatically because autopf respects the installer arch.
 ArchitecturesInstallIn64BitMode=x64compatible arm64
 
+; Don't require admin rights. SDL's Windows entry point (SDLmain) redirects
+; stdout/stderr to stdout.txt/stderr.txt next to the exe before our own
+; main() ever runs; when installed to Program Files (default, admin-write-
+; protected) that freopen() fails with ACCESS_DENIED, and the very next
+; CRT stdio call in the app crashes with an access violation deep in
+; ntdll.dll — reproduced 100% of the time on real Windows via Process
+; Monitor. With PrivilegesRequired=lowest, {autopf} above resolves to
+; %LOCALAPPDATA%\Programs instead of Program Files, which is writable, so
+; the redirect succeeds and the crash never happens. Users who still want
+; a machine-wide install can elevate via the privileges dialog.
+PrivilegesRequired=lowest
+PrivilegesRequiredOverridesAllowed=dialog
+
 ; Output
 ; NOTE: relative to this script's own folder (packaging\), not SourceDir —
 ; SourceDir points at the per-arch staged package tree, which doesn't
