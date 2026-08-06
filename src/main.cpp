@@ -140,18 +140,6 @@ protected:
 #include <time.h>
 #include <string>
 
-#ifdef _WIN32
-/* sdl-config passes -Dmain=SDL_main, which blindly rewrites every bare
- * "main" token in this translation unit. windows.h (pulled in via shlobj.h
- * below) has internal CRT declarations that use that identifier, so it
- * must be included with the macro off; redefine it below so our own
- * main() further down still gets renamed correctly. */
-#undef main
-#include <windows.h>
-#include <shlobj.h>
-#define main SDL_main
-#endif
-
 #include "common.h"
 #include "gfx.h"
 #include "Audio.h"
@@ -659,39 +647,6 @@ void ChatLoop()
 
 void PgTest();
 
-
-#ifdef _WIN32
-/* SDL's prebuilt Windows entry point (SDLmain, which we no longer link
- * against -- see configure.ac) unconditionally calls freopen() on
- * stdout.txt/stderr.txt next to the exe before the app gets control. When
- * installed somewhere the current user can't write to (e.g. Program Files
- * without elevation), that freopen() fails and the very next CRT stdio
- * call crashes with an access violation deep in ntdll.dll -- confirmed via
- * Process Monitor on real hardware. We provide our own WinMain and
- * redirect to a location that's always writable, regardless of install
- * location or privilege level.
- */
-static void RedirectStdioToAppData()
-{
-	char szPath[MAX_PATH];
-	if ( FAILED( SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, szPath) ) )
-		return;
-
-	strncat(szPath, "\\OpenMortal", MAX_PATH - strlen(szPath) - 1);
-	CreateDirectoryA(szPath, NULL);
-
-	std::string szOut = std::string(szPath) + "\\stdout.txt";
-	std::string szErr = std::string(szPath) + "\\stderr.txt";
-	freopen(szOut.c_str(), "w", stdout);
-	freopen(szErr.c_str(), "w", stderr);
-}
-
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
-{
-	RedirectStdioToAppData();
-	return SDL_main(__argc, __argv);
-}
-#endif
 
 int main(int argc, char *argv[])
 {
