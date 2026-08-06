@@ -797,6 +797,18 @@ jobs:
           install -m755 "${BUILD}${PREFIX}/bin/openmortal.exe" \
                         "${PKG}${PREFIX}/bin/openmortal.exe"
 
+          # Embedded Perl's compiled-in @INC is a set of paths relative to
+          # its own binary's location (lib/perl5/{core,vendor,site}_perl,
+          # sibling of bin/ -- same convention as share/openmortal below).
+          # Without those .pm files present, perl_parse() can't even find
+          # its own bootstrap modules and the process dies with an access
+          # violation instead of a graceful "Can't locate ... in @INC" --
+          # confirmed via Process Monitor on real hardware. Bundle them.
+          if [ -d "${BUILD}${PREFIX}/lib/perl5" ]; then
+            mkdir -p "${PKG}${PREFIX}/lib"
+            cp -a "${BUILD}${PREFIX}/lib/perl5" "${PKG}${PREFIX}/lib/"
+          fi
+
           # Bundle required DLLs (exclude Windows system DLLs)
           ntldd -R "${BUILD}${PREFIX}/bin/openmortal.exe" \
             | grep -v -i "system32" \

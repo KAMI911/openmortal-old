@@ -137,6 +137,15 @@ Source: "{#SourceDir}\share\openmortal\*"; \
   DestDir: "{app}\share\openmortal"; \
   Flags: ignoreversion recursesubdirs createallsubdirs
 
+; Embedded Perl's own standard library (core_perl etc.) — its compiled-in
+; @INC expects this as a sibling of bin\, same convention as share\ above.
+; Without it perl_parse() can't find its own bootstrap modules and the
+; process crashes instead of failing gracefully. Optional flag: skipped
+; for legs where the source tree has none (e.g. if ever absent).
+Source: "{#SourceDir}\lib\perl5\*"; \
+  DestDir: "{app}\lib\perl5"; \
+  Flags: ignoreversion recursesubdirs createallsubdirs skipifsourcedoesntexist
+
 ; ── [Icons] / Start Menu ─────────────────────────────────────────────────────
 
 [Icons]
