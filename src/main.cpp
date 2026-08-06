@@ -648,7 +648,19 @@ void ChatLoop()
 void PgTest();
 
 
+#ifdef _WIN32
+/* Named directly rather than relying on sdl-config's -Dmain=SDL_main
+ * command-line macro to rename a plain main() here: that rename didn't
+ * survive through this file's later Perl header includes in practice
+ * (linker ended up with a "main" symbol instead of "SDL_main", leaving
+ * WinMainWin32.cpp's call to SDL_main() unresolved) -- confirmed via a
+ * real Windows CI build. Naming it explicitly sidesteps the fragility
+ * entirely.
+ */
+int SDL_main(int argc, char *argv[])
+#else
 int main(int argc, char *argv[])
+#endif
 {
 #ifdef _WIN32
 	init_data_dir();
