@@ -797,6 +797,15 @@ jobs:
             | awk '{print $3}' \
             | xargs -d '\n' -I{} cp -- "{}" "${PKG}${PREFIX}/bin/"
 
+          # SDL_mixer loads its MOD-file codec (libmikmod) lazily via
+          # LoadLibrary at runtime, not through its own import table, so
+          # ntldd's import-table scan above never sees it -- confirmed via
+          # a real Windows run: "Mix_LoadMUS: Failed loading
+          # libmikmod-3.dll", background music silently never plays.
+          if [ -f "${PREFIX}/bin/libmikmod-3.dll" ]; then
+            cp -- "${PREFIX}/bin/libmikmod-3.dll" "${PKG}${PREFIX}/bin/"
+          fi
+
           # Strawberry Perl (32-bit leg only) lives outside the MSYS2
           # mingw32 sysroot ntldd just scanned, so its perl538.dll never
           # gets picked up above even though openmortal.exe needs it at
