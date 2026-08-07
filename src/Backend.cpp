@@ -16,6 +16,25 @@
 #include <vector>
 #include <stdarg.h>
 #include "MszPerl.h"
+#include <XSUB.h>
+
+/* perl_parse()'s xsinit argument was NULL below, which meant DynaLoader
+ * never got bootstrapped -- so any Perl module needing a compiled/XS
+ * component (even core ones like Win32.pm, pulled in transitively by
+ * Cwd.pm on Windows) failed with "Can't load module ..., dynamic
+ * loading not available in this perl." Confirmed via a real Windows
+ * run. Standard perlembed boilerplate for enabling it (perldoc
+ * perlembed).
+ */
+EXTERN_C void boot_DynaLoader( pTHX_ CV* cv );
+
+EXTERN_C void xs_init( pTHX )
+{
+	static const char file[] = __FILE__;
+	dXSUB_SYS;
+	PERL_UNUSED_CONTEXT;
+	newXS( "DynaLoader::boot_DynaLoader", boot_DynaLoader, file );
+}
 
 
 /***************************************************************************
@@ -196,7 +215,7 @@ bool Backend::Construct()
 	}
 	
 	perl_construct( my_perl );
-	if ( perl_parse( my_perl, NULL, perl_argc, perl_argv, (char**)NULL ) )
+	if ( perl_parse( my_perl, xs_init, perl_argc, perl_argv, (char**)NULL ) )
 	{
 		char *error = SvPV_nolen(get_sv("@", FALSE));
 		fprintf( stderr, "%s", error );
