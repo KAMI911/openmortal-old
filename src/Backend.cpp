@@ -17,6 +17,9 @@
 #include <stdarg.h>
 #include "MszPerl.h"
 #include <XSUB.h>
+#ifdef _WIN32
+#include <direct.h>
+#endif
 
 /* perl_parse()'s xsinit argument was NULL below, which meant DynaLoader
  * never got bootstrapped -- so any Perl module needing a compiled/XS
@@ -178,12 +181,15 @@ bool Backend::Construct()
 	sFileName += "/script";
 
 #ifdef _WIN32
-	// CWD stays wherever the process was launched from on Windows (no
-	// chdir() below), so the script has to be handed a real path rather
-	// than a bare "Backend.pl" relative name.
-	std::string sBackendFile = sFileName + "/Backend.pl";
-	std::vector<char> vBackendFile( sBackendFile.begin(), sBackendFile.end() );
-	vBackendFile.push_back( '\0' );
+	// Backend.pl and the rest of the backend scripts assume they're
+	// running from their own directory -- DataHelper.pl, for instance,
+	// opens character data with a bare "../characters/$DatName". Without
+	// this chdir(), that resolved relative to wherever the exe was
+	// launched from instead (bin\), landing on nonexistent
+	// {app}\characters\... paths and leaving every player sprite
+	// unloaded during selection and gameplay -- confirmed via Process
+	// Monitor on a real Windows run.
+	_chdir( sFileName.c_str() );
 
 	// Embedded Perl's compiled-in default @INC points at the CI build
 	// machine's own absolute paths (e.g. D:\a\_temp\msys64\...\lib\
@@ -191,13 +197,14 @@ bool Backend::Construct()
 	// even though the installer bundles the actual .pm files alongside
 	// the game data. Confirmed via a real Windows run: "Can't locate
 	// FindBin.pm in @INC (@INC entries checked: )". Tell it explicitly
-	// where to look, same as MSZ_DATADIR: relative to the exe's own
-	// bin\ directory.
-	std::string sPerlLib = "-I../lib/perl5/core_perl";
+	// where to look -- relative to the new cwd (script\, after the
+	// chdir() above), same three levels up as MSZ_DATADIR "../share/
+	// openmortal" is relative to bin\.
+	std::string sPerlLib = "-I../../../lib/perl5/core_perl";
 	std::vector<char> vPerlLib( sPerlLib.begin(), sPerlLib.end() );
 	vPerlLib.push_back( '\0' );
 
-	char *perl_argv[] = { (char*)"", vPerlLib.data(), vBackendFile.data() };
+	char *perl_argv[] = { (char*)"", vPerlLib.data(), (char*)"Backend.pl" };
 	int perl_argc = 3;
 #else
 	chdir( sFileName.c_str() );
