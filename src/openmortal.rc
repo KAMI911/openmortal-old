@@ -1,5 +1,12 @@
 #include <windows.h>
 
+/* Built by the "Create .ico from PNG" CI step before this file gets
+ * compiled -- gives openmortal.exe its own Explorer icon, and also
+ * covers the uninstaller: InnoSetup's UninstallDisplayIcon just points
+ * at the exe, so without an icon embedded here that entry in Add/Remove
+ * Programs was blank. */
+IDI_ICON1 ICON "../packaging/openmortal.ico"
+
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 0,7,2,0
  PRODUCTVERSION 0,7,2,0
