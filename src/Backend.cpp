@@ -13,6 +13,7 @@
 #include "State.h"
 
 #include <string>
+#include <vector>
 #include <stdarg.h>
 #include "MszPerl.h"
 
@@ -157,14 +158,35 @@ bool Backend::Construct()
 	std::string sFileName = MSZ_DATADIR;
 	sFileName += "/script";
 
-#ifndef _WIN32
+#ifdef _WIN32
+	// CWD stays wherever the process was launched from on Windows (no
+	// chdir() below), so the script has to be handed a real path rather
+	// than a bare "Backend.pl" relative name.
+	std::string sBackendFile = sFileName + "/Backend.pl";
+	std::vector<char> vBackendFile( sBackendFile.begin(), sBackendFile.end() );
+	vBackendFile.push_back( '\0' );
+
+	// Embedded Perl's compiled-in default @INC points at the CI build
+	// machine's own absolute paths (e.g. D:\a\_temp\msys64\...\lib\
+	// perl5\core_perl), which don't exist on the end user's machine --
+	// even though the installer bundles the actual .pm files alongside
+	// the game data. Confirmed via a real Windows run: "Can't locate
+	// FindBin.pm in @INC (@INC entries checked: )". Tell it explicitly
+	// where to look, same as MSZ_DATADIR: relative to the exe's own
+	// bin\ directory.
+	std::string sPerlLib = "-I../lib/perl5/core_perl";
+	std::vector<char> vPerlLib( sPerlLib.begin(), sPerlLib.end() );
+	vPerlLib.push_back( '\0' );
+
+	char *perl_argv[] = { (char*)"", vPerlLib.data(), vBackendFile.data() };
+	int perl_argc = 3;
+#else
 	chdir( sFileName.c_str() );
-#endif
-	
 //	char *perl_argv[] = {"", "-d:Trace", "Backend.pl"};
 //	int perl_argc = 3;
 	char *perl_argv[] = {"", "Backend.pl"};
 	int perl_argc = 2;
+#endif
 	my_perl = perl_alloc();
 	if ( my_perl == NULL )
 	{
