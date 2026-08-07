@@ -162,14 +162,33 @@ bool Backend::Construct()
 	std::string sBackendFile = sFileName + "/Backend.pl";
 	std::vector<char> vBackendFile( sBackendFile.begin(), sBackendFile.end() );
 	vBackendFile.push_back( '\0' );
-	char *perl_argv[] = { (char*)"", vBackendFile.data() };
+
+	// g_szDataDir is "<prefix>/share/openmortal". Embedded Perl's own
+	// compiled-in @INC defaults point at the CI build machine's own
+	// paths (e.g. D:\a\_temp\msys64\...\lib\perl5\core_perl), which don't
+	// exist on the end user's machine -- even though the installer
+	// bundles the actual .pm files at "<prefix>/lib/perl5/core_perl",
+	// Perl has no way to know to look there unless told explicitly.
+	// Confirmed via a real Windows run: "Can't locate FindBin.pm in
+	// @INC (@INC entries checked: )". -I it in via perl_argv, same
+	// mechanism the "perl" command line tool itself uses.
+	std::string sPrefix = g_szDataDir;
+	size_t suffixPos = sPrefix.rfind( "/share/openmortal" );
+	if ( suffixPos != std::string::npos )
+		sPrefix.erase( suffixPos );
+	std::string sPerlLib = "-I" + sPrefix + "/lib/perl5/core_perl";
+	std::vector<char> vPerlLib( sPerlLib.begin(), sPerlLib.end() );
+	vPerlLib.push_back( '\0' );
+
+	char *perl_argv[] = { (char*)"", vPerlLib.data(), vBackendFile.data() };
+	int perl_argc = 3;
 #else
 	chdir( sFileName.c_str() );
 //	char *perl_argv[] = {"", "-d:Trace", "Backend.pl"};
 //	int perl_argc = 3;
 	char *perl_argv[] = { (char*)"", (char*)"Backend.pl" };
-#endif
 	int perl_argc = 2;
+#endif
 	my_perl = perl_alloc();
 	if ( my_perl == NULL )
 	{
