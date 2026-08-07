@@ -136,6 +136,16 @@ esac
 CXXFLAGS="$CXXFLAGS $SDL_CFLAGS"
 LIBS="$LIBS $SDL_LIBS"
 
+dnl For embedding openmortal.rc (VERSIONINFO: File description, version,
+dnl product name/version, copyright -- otherwise the exe's Properties >
+dnl Details tab in Windows Explorer is entirely blank).
+case "$host" in
+	*-mingw32*|*-w64-mingw32*)
+		AC_CHECK_TOOL([RC], [windres])
+		;;
+esac
+AM_CONDITIONAL([HAVE_RC], [test "x$RC" != "x"])
+
 dnl Check for SDL_image
 
 AC_CHECK_LIB(SDL_image,

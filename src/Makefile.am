@@ -12,6 +12,13 @@ openmortal_SOURCES = \
 	Jukebox.cpp       AnimGif.cpp      BossKey.cpp \
 	WinMainWin32.cpp
 
+if HAVE_RC
+openmortal_SOURCES += openmortal.rc
+SUFFIXES = .rc
+.rc.o:
+	$(RC) -i $< -o $@
+endif
+
 EXTRA_DIST = $(openmortal_SOURCES)\
 	Audio.h       BossKey.h       Event.h         menu.h    PlayerSelectView.h  sge_tt_text.h \
 	Backend.h     FighterEnum.h   MortalNetwork.h           RlePack.h           State.h \
