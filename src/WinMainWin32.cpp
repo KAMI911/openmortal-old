@@ -23,10 +23,17 @@
 #include <string.h>
 #include <string>
 
-/* Not extern "C" -- main.cpp names its entry point SDL_main directly on
- * Windows and keeps ordinary C++ linkage, so this declaration must match
- * that (SDL_main.h itself declares it the same way). */
-extern int SDL_main(int argc, char *argv[]);
+/* extern "C" is required here, confirmed via nm on a real build: main.cpp
+ * includes SDL.h, which pulls in SDL_main.h -- and like every C library
+ * header, SDL wraps its declarations in extern "C" for C++ callers. That
+ * earlier extern "C" declaration of SDL_main makes main.cpp's actual
+ * definition inherit C linkage too (a linkage-specification, once
+ * established for a name, sticks for all following declarations/
+ * definitions of it), producing an unmangled "SDL_main" symbol. This file
+ * never sees SDL_main.h, so without this, our own declaration would get
+ * ordinary mangled C++ linkage instead -- a mismatch the linker reports
+ * as an undefined symbol despite the function very much existing. */
+extern "C" int SDL_main(int argc, char *argv[]);
 
 static void RedirectStdioToAppData()
 {
