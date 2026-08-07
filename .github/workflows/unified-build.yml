@@ -760,6 +760,15 @@ jobs:
         run: |
           make DESTDIR="${{ env.PLATFORM_BUILD_PATH }}" install -j$(nproc)
 
+      - name: Diagnose SDL_main symbol on link failure
+        if: failure()
+        shell: msys2 {0}
+        run: |
+          echo "--- main.o symbols matching 'main' ---"
+          nm src/main.o | grep -i main || true
+          echo "--- WinMainWin32.o symbols matching 'main' ---"
+          nm src/WinMainWin32.o | grep -i main || true
+
       - name: Collect DLLs and package
         shell: msys2 {0}
         run: |
