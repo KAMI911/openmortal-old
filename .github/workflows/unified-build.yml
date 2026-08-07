@@ -745,6 +745,62 @@ jobs:
           # Windows-style paths for PowerShell / InnoSetup steps
           echo "WIN_PLATFORM_PACKAGE_PATH=$(cygpath -w "${PKG}")" >> "$GITHUB_ENV"
 
+      - name: Create .ico from PNG (System.Drawing)
+        shell: pwsh
+        run: |
+          # Needed before "Build" below: openmortal.rc embeds this icon
+          # into the exe itself (Explorer icon, uninstaller icon in Add/
+          # Remove Programs -- both were blank without it), so it has to
+          # exist on disk before windres runs, not just before InnoSetup.
+          #
+          # ImageMagick is only reliably present on windows-latest (x64):
+          # windows-11-arm either lacks it or has a broken install (fails
+          # every invocation with "RegistryKeyLookupFailed CoderModulesPath"),
+          # and pulling it in via choco is slow and another moving part.
+          # System.Drawing is part of the .NET Framework that ships with
+          # Windows itself on every runner arch, so build the .ico directly
+          # with it instead — no external tool needed at all.
+          Add-Type -AssemblyName System.Drawing
+
+          $sizes = 256, 128, 64, 48, 32, 16
+          $src = [System.Drawing.Image]::FromFile((Resolve-Path "packaging\1024x1024\openmortal.png"))
+          $pngs = foreach ($s in $sizes) {
+            $bmp = New-Object System.Drawing.Bitmap $s, $s
+            $g = [System.Drawing.Graphics]::FromImage($bmp)
+            $g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+            $g.DrawImage($src, 0, 0, $s, $s)
+            $g.Dispose()
+            $ms = New-Object System.IO.MemoryStream
+            $bmp.Save($ms, [System.Drawing.Imaging.ImageFormat]::Png)
+            $bmp.Dispose()
+            , $ms.ToArray()
+          }
+          $src.Dispose()
+
+          # Modern (Vista+) ICO format: a standard ICONDIR/ICONDIRENTRY
+          # table where each entry's payload is just a full PNG file.
+          $fs = [System.IO.File]::Create("packaging\openmortal.ico")
+          $bw = New-Object System.IO.BinaryWriter $fs
+          $bw.Write([UInt16]0)          # reserved
+          $bw.Write([UInt16]1)          # type = icon
+          $bw.Write([UInt16]$sizes.Count)
+
+          $offset = 6 + 16 * $sizes.Count
+          for ($i = 0; $i -lt $sizes.Count; $i++) {
+            $dim = [byte]($(if ($sizes[$i] -eq 256) { 0 } else { $sizes[$i] }))
+            $bw.Write($dim)                          # width (0 means 256)
+            $bw.Write($dim)                          # height
+            $bw.Write([byte]0)                       # color count
+            $bw.Write([byte]0)                        # reserved
+            $bw.Write([UInt16]1)                      # planes
+            $bw.Write([UInt16]32)                     # bits per pixel
+            $bw.Write([UInt32]$pngs[$i].Length)
+            $bw.Write([UInt32]$offset)
+            $offset += $pngs[$i].Length
+          }
+          foreach ($png in $pngs) { $bw.Write($png) }
+          $bw.Close()
+
       - name: Configure project
         shell: msys2 {0}
         run: |
@@ -839,57 +895,6 @@ jobs:
           if (-not (Test-Path "C:\Program Files (x86)\Inno Setup 6\ISCC.exe")) {
             choco install innosetup -y --no-progress
           }
-
-      - name: Create .ico from PNG (System.Drawing)
-        shell: pwsh
-        run: |
-          # ImageMagick is only reliably present on windows-latest (x64):
-          # windows-11-arm either lacks it or has a broken install (fails
-          # every invocation with "RegistryKeyLookupFailed CoderModulesPath"),
-          # and pulling it in via choco is slow and another moving part.
-          # System.Drawing is part of the .NET Framework that ships with
-          # Windows itself on every runner arch, so build the .ico directly
-          # with it instead — no external tool needed at all.
-          Add-Type -AssemblyName System.Drawing
-
-          $sizes = 256, 128, 64, 48, 32, 16
-          $src = [System.Drawing.Image]::FromFile((Resolve-Path "packaging\1024x1024\openmortal.png"))
-          $pngs = foreach ($s in $sizes) {
-            $bmp = New-Object System.Drawing.Bitmap $s, $s
-            $g = [System.Drawing.Graphics]::FromImage($bmp)
-            $g.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
-            $g.DrawImage($src, 0, 0, $s, $s)
-            $g.Dispose()
-            $ms = New-Object System.IO.MemoryStream
-            $bmp.Save($ms, [System.Drawing.Imaging.ImageFormat]::Png)
-            $bmp.Dispose()
-            , $ms.ToArray()
-          }
-          $src.Dispose()
-
-          # Modern (Vista+) ICO format: a standard ICONDIR/ICONDIRENTRY
-          # table where each entry's payload is just a full PNG file.
-          $fs = [System.IO.File]::Create("packaging\openmortal.ico")
-          $bw = New-Object System.IO.BinaryWriter $fs
-          $bw.Write([UInt16]0)          # reserved
-          $bw.Write([UInt16]1)          # type = icon
-          $bw.Write([UInt16]$sizes.Count)
-
-          $offset = 6 + 16 * $sizes.Count
-          for ($i = 0; $i -lt $sizes.Count; $i++) {
-            $dim = [byte]($(if ($sizes[$i] -eq 256) { 0 } else { $sizes[$i] }))
-            $bw.Write($dim)                          # width (0 means 256)
-            $bw.Write($dim)                          # height
-            $bw.Write([byte]0)                       # color count
-            $bw.Write([byte]0)                        # reserved
-            $bw.Write([UInt16]1)                      # planes
-            $bw.Write([UInt16]32)                     # bits per pixel
-            $bw.Write([UInt32]$pngs[$i].Length)
-            $bw.Write([UInt32]$offset)
-            $offset += $pngs[$i].Length
-          }
-          foreach ($png in $pngs) { $bw.Write($png) }
-          $bw.Close()
 
       - name: Build InnoSetup installer
         shell: pwsh
