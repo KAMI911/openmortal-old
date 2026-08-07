@@ -592,6 +592,11 @@ void PgTest();
 
 
 #if OPENMORTAL_TARGET_WIN32
+#warning "OPENMORTAL DIAG: OPENMORTAL_TARGET_WIN32 branch taken, defining SDL_main"
+#else
+#warning "OPENMORTAL DIAG: non-WIN32 branch taken, defining main -- OPENMORTAL_TARGET_WIN32 was 0"
+#endif
+#if OPENMORTAL_TARGET_WIN32
 /* Named directly rather than relying on sdl-config's -Dmain=SDL_main
  * command-line macro to rename a plain main() here: that rename didn't
  * survive through this file's later Perl header includes in practice
