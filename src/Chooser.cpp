@@ -12,6 +12,7 @@
 #include "Backend.h"
 #include "Event.h"
 #include "State.h"
+#include "WinDataDir.h"
 
 #include "SDL_image.h"
 #include "gfx.h"

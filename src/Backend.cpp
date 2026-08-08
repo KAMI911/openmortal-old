@@ -11,6 +11,7 @@
 #include "Backend.h"
 #include "Audio.h"
 #include "State.h"
+#include "WinDataDir.h"
 
 #include <string>
 #include <vector>
@@ -198,8 +199,8 @@ bool Backend::Construct()
 	// the game data. Confirmed via a real Windows run: "Can't locate
 	// FindBin.pm in @INC (@INC entries checked: )". Tell it explicitly
 	// where to look -- relative to the new cwd (script\, after the
-	// chdir() above), same three levels up as MSZ_DATADIR "../share/
-	// openmortal" is relative to bin\.
+	// chdir() above): three levels up is {app}\, same root
+	// GetOpenMortalDataDir() (see WinDataDir.h) anchors MSZ_DATADIR to.
 	std::string sPerlLib = "-I../../../lib/perl5/core_perl";
 	std::vector<char> vPerlLib( sPerlLib.begin(), sPerlLib.end() );
 	vPerlLib.push_back( '\0' );

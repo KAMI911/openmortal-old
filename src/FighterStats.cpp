@@ -22,6 +22,7 @@
 #include "Backend.h"
 #include "State.h"
 #include "FighterStats.h"
+#include "WinDataDir.h"
 
 #include "MszPerl.h"
 

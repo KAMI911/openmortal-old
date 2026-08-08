@@ -24,6 +24,7 @@
 #endif
 #include "State.h"
 #include "Event.h"
+#include "WinDataDir.h"
 
 
 int CSurfaceLocker::m_giLockCount = 0;

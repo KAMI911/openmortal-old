@@ -9,6 +9,7 @@
 #include "Audio.h"
 #include "State.h"
 #include "common.h"
+#include "WinDataDir.h"
 
 #include "SDL_mixer.h"
 

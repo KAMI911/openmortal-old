@@ -163,17 +163,9 @@ protected:
 
 
 #if defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
-// Override the compiled-in (non-portable, autoconf-time) pkgdatadir
-// with a path relative to the exe for a portable Windows install.
-// Matches the actual packaging layout (both the portable tarball and
-// the installer ship game data under share/openmortal/, sibling of
-// bin/ -- see unified-build.yml's "Collect DLLs and package" step and
-// packaging/openmortal.iss).
-#undef MSZ_DATADIR
 #include <windows.h>
-#define MSZ_DATADIR "../share/openmortal"
-
 #endif
+#include "WinDataDir.h"
 
 _sge_TTFont* inkFont;
 _sge_TTFont* impactFont;
@@ -401,14 +393,13 @@ int DrawMainScreen()
 
 	int iNumFighterFiles, i;
 
-#ifdef MACOSX
-	//[segabor]
+	// Built with sprintf rather than MSZ_DATADIR "/characters" (string
+	// literal concatenation): on Windows MSZ_DATADIR expands to a
+	// function call (see WinDataDir.h), which can't be concatenated
+	// with an adjacent literal.
 	char char_buf[256];
 	sprintf(char_buf, "%s/characters", MSZ_DATADIR);
 	g_oBackend.PerlEvalF( "$CppRetval = GetNumberOfFighterFiles('%s')", char_buf );
-#else
-	g_oBackend.PerlEvalF( "$CppRetval = GetNumberOfFighterFiles('%s')", MSZ_DATADIR "/characters" );
-#endif
 	iNumFighterFiles = g_oBackend.GetPerlInt( "CppRetval" );
 	
 	for ( i=0; i<iNumFighterFiles; ++i )
