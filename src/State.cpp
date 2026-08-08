@@ -45,14 +45,30 @@ std::string GetConfigHeader()
 }
 
 
+#ifdef _WIN32
+/* In WinMainWin32.cpp, kept isolated from windows.h -- this file already
+ * pulls in Perl's headers (MszPerl.h below), and windows.h + perl.h in
+ * the same translation unit is its own mess of macro collisions. */
+extern std::string GetOpenMortalAppDataDir();
+#endif
+
 std::string GetConfigFilename()
 {
 #ifdef _WIN32
+	// Next to the exe (the old behaviour, via argv[0]) lands in Program
+	// Files when installed normally, which a non-admin user can't write
+	// to -- confirmed via a real Windows run: "Unable to open config
+	// file: C:\Program Files\OpenMortal\bin\openmortal.exe.ini".
+	std::string sAppData = GetOpenMortalAppDataDir();
+	if ( !sAppData.empty() )
+	{
+		return sAppData + "\\openmortal.ini";
+	}
 	if ( NULL != g_oState.m_pcArgv0 )
 	{
 		return std::string(g_oState.m_pcArgv0) + ".ini";
 	}
-	return "c:\\openmortal.ini";	
+	return "c:\\openmortal.ini";
 #elif defined(MACOSX)
 	//[segabor] get os-ified path
 	const char* pcHome = getenv("HOME");

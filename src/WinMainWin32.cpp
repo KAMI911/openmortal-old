@@ -35,17 +35,32 @@
  * as an undefined symbol despite the function very much existing. */
 extern "C" int SDL_main(int argc, char *argv[]);
 
-static void RedirectStdioToAppData()
+/* %LOCALAPPDATA%\OpenMortal -- always writable regardless of install
+ * location or privilege level, unlike next to the exe (Program Files).
+ * Shared with State.cpp (openmortal.ini) via GetOpenMortalAppDataDir()
+ * below: that file can't include <windows.h> itself for the same reason
+ * this one is a separate translation unit in the first place (see the
+ * file-level comment above).
+ */
+std::string GetOpenMortalAppDataDir()
 {
 	char szPath[MAX_PATH];
 	if ( FAILED( SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, szPath) ) )
-		return;
+		return std::string();
 
 	strncat(szPath, "\\OpenMortal", MAX_PATH - strlen(szPath) - 1);
 	CreateDirectoryA(szPath, NULL);
+	return std::string(szPath);
+}
 
-	std::string szOut = std::string(szPath) + "\\stdout.txt";
-	std::string szErr = std::string(szPath) + "\\stderr.txt";
+static void RedirectStdioToAppData()
+{
+	std::string szPath = GetOpenMortalAppDataDir();
+	if ( szPath.empty() )
+		return;
+
+	std::string szOut = szPath + "\\stdout.txt";
+	std::string szErr = szPath + "\\stderr.txt";
 	freopen(szOut.c_str(), "w", stdout);
 	freopen(szErr.c_str(), "w", stderr);
 }
