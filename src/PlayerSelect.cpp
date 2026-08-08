@@ -25,7 +25,6 @@
 #include "Backend.h"
 #include "State.h"
 #include "MortalNetwork.h"
-#include "WinDataDir.h"
 #include "Chooser.h"
 #include "sge_tt_text.h"
 #include "TextArea.h"

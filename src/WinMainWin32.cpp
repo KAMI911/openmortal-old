@@ -65,32 +65,6 @@ static void RedirectStdioToAppData()
 	freopen(szErr.c_str(), "w", stderr);
 }
 
-/* Resolves MSZ_DATADIR (see WinDataDir.h) to an absolute path relative
- * to the exe's own location: {app}\bin\openmortal.exe -> {app}\share\
- * openmortal, matching the packaging layout (share\ is a sibling of
- * bin\ in both the portable tarball and the InnoSetup install -- see
- * unified-build.yml's "Collect DLLs and package" step and
- * packaging/openmortal.iss). Cached after the first call since the
- * exe's own location never changes at runtime, regardless of what the
- * process cwd gets chdir()'d to later (see Backend.cpp).
- */
-std::string GetOpenMortalDataDir()
-{
-	static std::string s_sDataDir;
-	if ( !s_sDataDir.empty() )
-		return s_sDataDir;
-
-	char szPath[MAX_PATH];
-	GetModuleFileNameA( NULL, szPath, MAX_PATH );
-
-	std::string sExePath( szPath );
-	size_t iSlash = sExePath.find_last_of( '\\' );
-	std::string sBinDir = ( iSlash != std::string::npos ) ? sExePath.substr( 0, iSlash ) : ".";
-
-	s_sDataDir = sBinDir + "\\..\\share\\openmortal";
-	return s_sDataDir;
-}
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	RedirectStdioToAppData();

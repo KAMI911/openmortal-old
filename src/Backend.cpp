@@ -11,7 +11,6 @@
 #include "Backend.h"
 #include "Audio.h"
 #include "State.h"
-#include "WinDataDir.h"
 
 #include <string>
 #include <vector>
@@ -200,7 +199,7 @@ bool Backend::Construct()
 	// FindBin.pm in @INC (@INC entries checked: )". Tell it explicitly
 	// where to look -- relative to the new cwd (script\, after the
 	// chdir() above): three levels up is {app}\, same root
-	// GetOpenMortalDataDir() (see WinDataDir.h) anchors MSZ_DATADIR to.
+	// init_data_dir() (main.cpp) anchors g_szDataDir/MSZ_DATADIR to.
 	std::string sPerlLib = "-I../../../lib/perl5/core_perl";
 	std::vector<char> vPerlLib( sPerlLib.begin(), sPerlLib.end() );
 	vPerlLib.push_back( '\0' );

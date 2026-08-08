@@ -12,7 +12,6 @@
 #include "sge_surface.h"
 #include "gfx.h"
 #include "common.h"
-#include "WinDataDir.h"
 #include <string>
 #include <fstream>
 

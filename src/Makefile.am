@@ -25,8 +25,7 @@ EXTRA_DIST = $(openmortal_SOURCES)\
 	Chooser.h     FlyingChars.h   MszPerl.h                 sge_config.h \
 	common.h      Game.h          OnlineChat.h              sge_internal.h \
 	Demo.h        gfx.h           PlayerSelectController.h  sge_primitives.h \
-	DrawRle.h     Joystick.h      PlayerSelect.h            sge_surface.h \
-	WinDataDir.h
+	DrawRle.h     Joystick.h      PlayerSelect.h            sge_surface.h
 
 CXXFLAGS= @CXXFLAGS@ -DMSZ_DATADIR=\"${pkgdatadir}\" -Wall
 

@@ -30,6 +30,27 @@ void debug( const char* format, ... );
 #endif
 
 // -----------------------------------------------------------------------
+// Runtime data directory
+// -----------------------------------------------------------------------
+// MSZ_DATADIR normally compiles in the autoconf-time pkgdatadir, which
+// on Windows is the CI build machine's own absolute install prefix
+// (e.g. D:\a\_temp\msys64\ucrt64\share\openmortal) -- it doesn't exist
+// on the end user's machine. Confirmed via Process Monitor across all
+// three Windows toolchains (mingw64, ucrt64, clang64): Backend.cpp's
+// chdir() into "<that path>\script" failed with
+// STATUS_OBJECT_PATH_NOT_FOUND, cascading into "couldn't start
+// backend." On Windows the binary is relocatable instead: g_szDataDir
+// is filled in once at startup (main.cpp's init_data_dir(), via
+// GetModuleFileName) from the exe's own location, so the game works
+// wherever it's installed. On all other platforms MSZ_DATADIR stays
+// the compile-time constant Makefile.am sets via -DMSZ_DATADIR=...
+#ifdef _WIN32
+extern char g_szDataDir[];
+#undef MSZ_DATADIR
+#define MSZ_DATADIR ((const char*)g_szDataDir)
+#endif
+
+// -----------------------------------------------------------------------
 // Main program methods
 // -----------------------------------------------------------------------
 

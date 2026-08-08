@@ -162,10 +162,30 @@ protected:
 #include "MortalNetwork.h"
 
 
-#if defined(_WIN32) || defined(WIN32) || defined(_WINDOWS)
+#ifdef _WIN32
 #include <windows.h>
+
+// Runtime data directory -- set once by init_data_dir() before main().
+// MSZ_DATADIR is #defined to this array in common.h for Windows builds.
+char g_szDataDir[4096];
+
+static void init_data_dir()
+{
+	char exe_path[MAX_PATH];
+	GetModuleFileNameA(NULL, exe_path, MAX_PATH);
+	char* last_sep = strrchr(exe_path, '\\');
+	if ( last_sep ) *last_sep = '\0';
+	// If the exe lives in a "bin" subdirectory, step up one more level so
+	// that share\openmortal is found relative to the prefix root.
+	char* bin_sep = strrchr(exe_path, '\\');
+	if ( bin_sep && _stricmp(bin_sep + 1, "bin") == 0 )
+		*bin_sep = '\0';
+	snprintf(g_szDataDir, sizeof(g_szDataDir), "%s\\share\\openmortal", exe_path);
+	// Normalise backslashes so SDL/fopen paths work on Windows
+	for ( char* p = g_szDataDir; *p; ++p )
+		if ( *p == '\\' ) *p = '/';
+}
 #endif
-#include "WinDataDir.h"
 
 _sge_TTFont* inkFont;
 _sge_TTFont* impactFont;
@@ -395,8 +415,8 @@ int DrawMainScreen()
 
 	// Built with sprintf rather than MSZ_DATADIR "/characters" (string
 	// literal concatenation): on Windows MSZ_DATADIR expands to a
-	// function call (see WinDataDir.h), which can't be concatenated
-	// with an adjacent literal.
+	// g_szDataDir expression (see common.h), which can't be concatenated
+	// with an adjacent literal the way an actual string literal could.
 	char char_buf[256];
 	sprintf(char_buf, "%s/characters", MSZ_DATADIR);
 	g_oBackend.PerlEvalF( "$CppRetval = GetNumberOfFighterFiles('%s')", char_buf );
@@ -600,6 +620,9 @@ int SDL_main(int argc, char *argv[])
 int main(int argc, char *argv[])
 #endif
 {
+#ifdef _WIN32
+	init_data_dir();
+#endif
 	srand( (unsigned int)time(NULL) );
 	if ( 0 != init2() )
 	{
