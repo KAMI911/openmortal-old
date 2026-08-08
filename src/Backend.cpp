@@ -17,6 +17,9 @@
 #include <stdarg.h>
 #include "MszPerl.h"
 #include <XSUB.h>
+#ifdef _WIN32
+#include <direct.h>
+#endif
 
 /* perl_parse()'s xsinit argument was NULL below, which meant DynaLoader
  * never got bootstrapped -- so any Perl module needing a compiled/XS
@@ -178,6 +181,19 @@ bool Backend::Construct()
 	sFileName += "/script";
 
 #ifdef _WIN32
+	// Backend.pl and the rest of the backend scripts assume they're
+	// running from their own directory -- DataHelper.pl, for instance,
+	// opens character data with a bare "../characters/$DatName". Without
+	// this chdir(), that resolved relative to wherever the exe was
+	// launched from instead (bin\), landing on nonexistent
+	// {app}\characters\... paths and leaving every player sprite
+	// unloaded during selection and gameplay -- confirmed via Process
+	// Monitor on a real Windows run. Backend.pl itself is still handed
+	// its full absolute path below (vBackendFile), so this chdir()
+	// doesn't affect finding that -- only the scripts' own later
+	// relative opens.
+	_chdir( sFileName.c_str() );
+
 	std::string sBackendFile = sFileName + "/Backend.pl";
 	std::vector<char> vBackendFile( sBackendFile.begin(), sBackendFile.end() );
 	vBackendFile.push_back( '\0' );
