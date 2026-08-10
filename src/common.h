@@ -42,6 +42,27 @@ extern char g_szDataDir[];
 #undef MSZ_DATADIR
 #endif
 #define MSZ_DATADIR ((const char*)g_szDataDir)
+#elif defined(__linux__)
+// Same class of bug, AppImage flavour: the AppImage is built with
+// --prefix=/usr, so MSZ_DATADIR compiles in "/usr/share/openmortal" --
+// correct for a real system install (deb/rpm), but wrong for an
+// AppImage, which mounts itself at a throwaway path (e.g.
+// /tmp/.mount_XXXXXX) and never touches the real /usr. Confirmed via a
+// user report (GitHub issue #4): "Can't open perl script "Backend.pl":
+// No such file or directory" -- Backend.cpp's chdir() into the
+// compiled-in (nonexistent, on that machine) /usr/share/openmortal/
+// script silently failed (its return value goes unchecked), so the
+// bare "Backend.pl" argv handed to perl_parse() next was never found
+// either. GetDataDir() (main.cpp) checks $APPDIR, which linuxdeploy's
+// generated AppRun always sets to the actual mount point before
+// exec'ing the binary, and only overrides MSZ_DATADIR when it's set --
+// a normal system install still gets the original compile-time value.
+extern const char* GetDataDir();
+#define MSZ_DATADIR_COMPILED MSZ_DATADIR
+#ifdef MSZ_DATADIR
+#undef MSZ_DATADIR
+#endif
+#define MSZ_DATADIR GetDataDir()
 #endif
 
 // -----------------------------------------------------------------------
