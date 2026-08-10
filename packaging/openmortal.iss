@@ -29,7 +29,7 @@
 #endif
 
 #define AppName        "OpenMortal"
-#define AppVersion     "0.7.30"
+#define AppVersion     "0.7.31"
 #define AppPublisher   "OpenMortal Team"
 #define AppURL         "https://openmortal.sourceforge.net/"
 #define AppExeName     "openmortal.exe"

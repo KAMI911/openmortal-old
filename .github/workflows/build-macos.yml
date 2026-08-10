@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  VERSION: 0.7.30
+  VERSION: 0.7.31
   # Kept in sync with the git tags/commits pinned in packaging/net.sourceforge.openmortal.yml
   SDL_VERSION: 1.2.15
   SDL_IMAGE_VERSION: 1.2.12
