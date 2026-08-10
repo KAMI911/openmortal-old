@@ -8,8 +8,8 @@
 IDI_ICON1 ICON "../packaging/openmortal.ico"
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,7,2,0
- PRODUCTVERSION 0,7,2,0
+ FILEVERSION 0,7,3,0
+ PRODUCTVERSION 0,7,3,0
  FILEFLAGSMASK 0x3fL
  FILEFLAGS 0x0L
  FILEOS VOS_NT_WINDOWS32
@@ -22,12 +22,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "OpenMortal Team"
             VALUE "FileDescription", "OpenMortal - a humorous parody of Mortal Kombat"
-            VALUE "FileVersion", "0.7.2.0"
+            VALUE "FileVersion", "0.7.3.0"
             VALUE "InternalName", "openmortal"
             VALUE "LegalCopyright", "Copyright (C) 2003-2024 OpenMortal Team"
             VALUE "OriginalFilename", "openmortal.exe"
             VALUE "ProductName", "OpenMortal"
-            VALUE "ProductVersion", "0.7.2.0"
+            VALUE "ProductVersion", "0.7.3.0"
         END
     END
     BLOCK "VarFileInfo"
