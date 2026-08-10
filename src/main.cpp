@@ -185,6 +185,23 @@ static void init_data_dir()
 	for ( char* p = g_szDataDir; *p; ++p )
 		if ( *p == '\\' ) *p = '/';
 }
+#elif defined(__linux__)
+// GetDataDir() (see common.h) falls back to the compile-time
+// MSZ_DATADIR_COMPILED unless $APPDIR is set (linuxdeploy's generated
+// AppRun always sets it, to the AppImage's actual mount point, before
+// exec'ing this binary) -- see common.h for why that matters.
+const char* GetDataDir()
+{
+	static std::string s;
+	if ( s.empty() )
+	{
+		const char* pcAppDir = getenv( "APPDIR" );
+		s = ( pcAppDir && *pcAppDir )
+			? std::string( pcAppDir ) + "/usr/share/openmortal"
+			: MSZ_DATADIR_COMPILED;
+	}
+	return s.c_str();
+}
 #endif
 
 _sge_TTFont* inkFont;
