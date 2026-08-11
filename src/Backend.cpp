@@ -221,8 +221,42 @@ bool Backend::Construct()
 	chdir( sFileName.c_str() );
 //	char *perl_argv[] = {"", "-d:Trace", "Backend.pl"};
 //	int perl_argc = 3;
-	char *perl_argv[] = { (char*)"", (char*)"Backend.pl" };
-	int perl_argc = 2;
+
+	// Embedded Perl's compiled-in default @INC is baked in from the CI
+	// build machine's own Perl install. Inside the AppImage that library
+	// (libperl.so, bundled by linuxdeploy because openmortal links
+	// against it) still resolves to those paths, but the AppImage itself
+	// doesn't carry the core .pm files (FindBin.pm and friends) -- only
+	// the shared library, since linuxdeploy just follows ELF deps and
+	// has no notion of Perl's own module search path. On an end-user
+	// system without the OS's own perl-modules package installed, that's
+	// "Can't locate FindBin.pm in @INC". Same class of bug as the
+	// Windows leg above and the same fix: point -I explicitly at a
+	// bundled copy. $APPDIR is set by linuxdeploy's generated AppRun to
+	// the AppImage's mount point (see GetDataDir() in main.cpp, which
+	// already relies on it) and is unset for the deb/rpm/flatpak builds,
+	// where the system/runtime Perl's own default @INC already covers
+	// this -- so this only ever engages inside the AppImage.
+	std::string sPerlLib;
+	const char* pcAppDir = getenv( "APPDIR" );
+	if ( pcAppDir && *pcAppDir )
+		sPerlLib = std::string( "-I" ) + pcAppDir + "/usr/lib/perl5";
+
+	char *perl_argv[3];
+	int perl_argc;
+	if ( !sPerlLib.empty() )
+	{
+		perl_argv[0] = (char*)"";
+		perl_argv[1] = const_cast<char*>( sPerlLib.c_str() );
+		perl_argv[2] = (char*)"Backend.pl";
+		perl_argc = 3;
+	}
+	else
+	{
+		perl_argv[0] = (char*)"";
+		perl_argv[1] = (char*)"Backend.pl";
+		perl_argc = 2;
+	}
 #endif
 	my_perl = perl_alloc();
 	if ( my_perl == NULL )

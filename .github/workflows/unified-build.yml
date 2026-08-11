@@ -443,6 +443,23 @@ jobs:
           install -m644 packaging/openmortal.AppImage.desktop ${PLATFORM_APPIMAGE_PATH}/openmortal.desktop
           install -m755 ${PLATFORM_BUILD_PATH}/usr/bin/openmortal ${PLATFORM_APPIMAGE_PATH}/usr/bin/openmortal
 
+          # Embedded Perl needs its own runtime .pm files (FindBin.pm and
+          # friends) bundled -- see Backend.cpp's $APPDIR handling. linuxdeploy
+          # only follows openmortal's ELF deps (which is how libperl.so.5.38
+          # itself gets pulled in below), it has no notion of Perl's own
+          # module search path, so without this an end-user system that
+          # lacks the OS's own perl-modules package fails with "Can't locate
+          # FindBin.pm in @INC". Merge the pure-perl core modules
+          # (FindBin.pm lives here) and perl-base's compiled core extensions
+          # (e.g. DynaLoader.pm, required by xs_init() in Backend.cpp) into
+          # one bundled tree; the two source dirs don't overlap so a plain
+          # merge is safe.
+          PERL_VERSION="$(perl -MConfig -e 'print $Config{version}')"
+          DEB_MULTIARCH="$(dpkg-architecture -qDEB_HOST_MULTIARCH)"
+          mkdir -p ${PLATFORM_APPIMAGE_PATH}/usr/lib/perl5
+          cp -a "/usr/share/perl/${PERL_VERSION}/." ${PLATFORM_APPIMAGE_PATH}/usr/lib/perl5/
+          cp -a "/usr/lib/${DEB_MULTIARCH}/perl-base/." ${PLATFORM_APPIMAGE_PATH}/usr/lib/perl5/
+
       - name: Download linuxdeploy and appimagetool
         run: |
           wget -qO /tmp/linuxdeploy-x86_64.AppImage "https://github.com/linuxdeploy/linuxdeploy/releases/latest/download/linuxdeploy-x86_64.AppImage"
