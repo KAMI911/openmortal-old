@@ -14,6 +14,9 @@ env:
   SDL_IMAGE_VERSION: 1.2.12
   SDL_MIXER_VERSION: 1.2.12
   SDL_NET_VERSION: 1.2.8
+  # GitHub's macOS runner image pre-taps aws/tap, which Homebrew's tap-trust
+  # check then refuses to use, aborting `brew update`/`brew install`.
+  HOMEBREW_NO_REQUIRE_TAP_TRUST: 1
 
 jobs:
   macos:
@@ -21,13 +24,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Intel Mac (x86_64)
-          - { runs-on: macos-13,     arch: x86_64 }
-          # Apple Silicon (arm64) — macos-14+ runs on M-series hardware
-          - { runs-on: macos-latest, arch: arm64  }
+          # GitHub retired Intel (x86_64) hosted macOS runners; every image
+          # from macos-14 on is Apple Silicon only. Build on two macOS
+          # versions instead of two architectures.
+          - { runs-on: macos-14,     arch: arm64, label: arm64-macos14 }
+          - { runs-on: macos-latest, arch: arm64, label: arm64-macos15 }
 
     runs-on: ${{ matrix.runs-on }}
-    name: macOS ${{ matrix.arch }}
+    name: macOS ${{ matrix.label }}
 
     steps:
       - uses: actions/checkout@v7
@@ -135,11 +139,11 @@ jobs:
 
       - name: Package
         run: |
-          tar zcf "openmortal-${{ env.VERSION }}_macos_${{ matrix.arch }}.tar.gz" \
+          tar zcf "openmortal-${{ env.VERSION }}_macos_${{ matrix.label }}.tar.gz" \
             -C dist .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: openmortal-${{ env.VERSION }}_macos_${{ matrix.arch }}
-          path: openmortal-${{ env.VERSION }}_macos_${{ matrix.arch }}.tar.gz
+          name: openmortal-${{ env.VERSION }}_macos_${{ matrix.label }}
+          path: openmortal-${{ env.VERSION }}_macos_${{ matrix.label }}.tar.gz
